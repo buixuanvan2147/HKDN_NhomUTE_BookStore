@@ -1,0 +1,247 @@
+﻿@model BCCK_CSharp_BookShop.Models.TheLoai
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+
+<style>
+    /* --- Các style cơ bản (giữ nguyên từ trang trước) --- */
+    body {
+        background-color: #2D3748;
+        color: #ffffff;
+    }
+
+    .content-wrapper {
+        background-color: #1A202C;
+        min-height: calc(100vh - 56px);
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .container-fluid {
+        padding: 1.5rem 1rem;
+    }
+
+    /* --- Style cho tiêu đề trang --- */
+    h2 {
+        color: #A0AEC0;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        padding-top: 1rem;
+    }
+
+    /* --- Style cho form container --- */
+    .form-container {
+        background-color: #2D3748; /* Nền của form */
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 2rem;
+        max-width: 600px; /* Giới hạn chiều rộng form */
+        margin: 0 auto; /* Canh giữa form */
+    }
+
+        .form-container h4 {
+            color: #A0AEC0;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+    .form-horizontal .form-group {
+        margin-bottom: 1rem; /* Khoảng cách giữa các nhóm form */
+        display: flex; /* Dùng flexbox cho layout ngang */
+        align-items: center; /* Canh giữa các item theo chiều dọc */
+    }
+
+    /* Labels */
+    .form-horizontal .control-label {
+        color: #A0AEC0;
+        font-weight: 600;
+        padding-right: 15px; /* Khoảng cách với input */
+        text-align: right; /* Căn phải label */
+        flex-basis: 25%; /* Chiếm 25% chiều rộng cho label */
+        white-space: nowrap; /* Ngăn label xuống dòng */
+    }
+
+    /* Input fields container */
+    .form-horizontal .col-md-10 {
+        flex-basis: 75%; /* Chiếm 75% chiều rộng cho input */
+        padding-left: 0; /* Bỏ padding mặc định của col-md-10 */
+        padding-right: 0;
+    }
+
+    /* Input fields */
+    .form-control {
+        background-color: #1A202C; /* Nền input */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff; /* Màu chữ input */
+        border-radius: 4px;
+        padding: 0.5rem 0.75rem;
+        width: 100%; /* Chiếm toàn bộ chiều rộng có sẵn */
+        box-shadow: none; /* Bỏ shadow mặc định */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #60A5FA; /* Màu border khi focus */
+            box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25); /* Shadow khi focus */
+            background-color: #1A202C; /* Đảm bảo màu nền không đổi khi focus */
+            color: #ffffff; /* Đảm bảo màu chữ không đổi khi focus */
+        }
+
+    /* Validation messages */
+    .text-danger {
+        color: #ef4444; /* Màu đỏ cho lỗi */
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: block; /* Đảm bảo mỗi lỗi hiển thị trên một dòng mới */
+    }
+
+    /* Submit button container */
+    .form-group .col-md-offset-2 {
+        margin-left: 25%; /* Căn lề cho nút submit tương ứng với input */
+    }
+
+    .form-group .col-md-10 {
+        flex-basis: 75%;
+    }
+
+    /* Save button */
+    .btn-save {
+        background-color: #28a745; /* Màu xanh lá cây tương tự "Create" */
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: inline-flex; /* Dùng flexbox để căn giữa icon và text */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+    }
+
+        .btn-save:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+    /* Back to list link container */
+    .back-link-container {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+
+    /* Back to list link */
+    .back-link {
+        color: #60A5FA; /* Màu xanh dương cho link */
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+        display: inline-flex; /* Dùng flexbox để căn giữa icon và text */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        justify-content: center; /* Căn giữa theo chiều ngang */
+    }
+
+        .back-link:hover {
+            color: #3B82F6;
+            text-decoration: underline;
+        }
+
+    /* Icon spacing */
+    .me-2 {
+        margin-right: 0.5rem; /* Khoảng cách giữa icon và text */
+    }
+
+    /* --- Media Queries --- */
+    @@media (max-width: 767.98px) {
+        .form-horizontal .form-group {
+            flex-direction: column; /* Stack label và input trên màn hình nhỏ */
+            align-items: flex-start; /* Căn trái các item */
+        }
+
+        .form-horizontal .control-label {
+            text-align: left; /* Căn trái label trên mobile */
+            flex-basis: auto; /* Tự động chiều rộng */
+            width: 100%; /* Chiếm toàn bộ chiều rộng */
+            margin-bottom: 0.5rem; /* Khoảng cách dưới label */
+        }
+
+        .form-horizontal .col-md-10 {
+            flex-basis: auto;
+            width: 100%;
+        }
+
+        .form-group .col-md-offset-2 {
+            margin-left: 0; /* Bỏ offset trên mobile */
+            width: 100%;
+            text-align: center; /* Canh giữa nút submit */
+        }
+
+        .btn-save,
+        .back-link {
+            width: 100%; /* Nút và link chiếm toàn bộ chiều rộng trên mobile */
+            margin: 0.5rem 0; /* Thêm khoảng cách dọc giữa các nút */
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <h2>Chỉnh Sửa Thể Loại</h2>
+
+    <div class="form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>Thông tin Thể Loại</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.MaTheLoai) @* Mã thể loại được ẩn đi để gửi về server *@
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">Mã Thể Loại:</label> @* Nhãn tiếng Việt trực tiếp *@
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.MaTheLoai, new { @class = "form-control", @readonly = "readonly" })
+                        @* Hiển thị mã thể loại nhưng không cho phép chỉnh sửa *@
+                        @Html.ValidationMessageFor(model => model.MaTheLoai, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-2">Tên Thể Loại:</label> @* Nhãn tiếng Việt trực tiếp *@
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TenTheLoai, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TenTheLoai, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-save">
+                            <i class="fas fa-save me-2"></i> Lưu Thay Đổi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="back-link-container">
+        <a href="@Url.Action("Index", "QTV_QLSP_TheLoai")" class="btn back-link">
+            <i class="fas fa-arrow-alt-circle-left me-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

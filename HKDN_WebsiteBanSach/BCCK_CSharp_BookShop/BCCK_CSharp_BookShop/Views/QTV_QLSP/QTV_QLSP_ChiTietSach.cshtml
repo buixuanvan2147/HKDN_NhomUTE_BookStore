@@ -1,0 +1,528 @@
+﻿@model BCCK_CSharp_BookShop.Models.Sach
+@{
+    ViewBag.Title = "QTV_QLSP_ChiTietSach";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* Chủ đề màu tối tổng thể */
+    .book-details-section {
+        background-color: #1A202C;
+        color: #E2E8F0;
+        font-family: 'Inter', 'Arial', sans-serif;
+        line-height: 1.6;
+        padding: 2rem 1rem;
+        min-height: calc(100vh - 56px);
+    }
+
+    .book-container {
+        background-color: #2D3748;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Bố cục chính */
+    .book-details-wrapper {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    /* Phần thông tin sách chính */
+    .book-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .book-details {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        background-color: #252F3F;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .book-image {
+        flex: 0 0 30%;
+        max-width: 30%;
+    }
+
+    .book-image img {
+        width: 100%;
+        height: auto;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #4A5568;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .book-image img:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .book-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .book-info h4 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #E2E8F0;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .book-info p {
+        font-size: 1.1rem;
+        color: #A0AEC0;
+        margin-bottom: 0.5rem;
+    }
+
+    .book-info h5 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4FD1C5;
+        margin-bottom: 0.75rem;
+    }
+
+    .book-info .rating {
+        color: #F6E05E;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .book-info .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .book-info .info-item span.label {
+        color: #A0AEC0;
+        font-weight: 500;
+    }
+
+    .book-info .info-item span.value {
+        color: #E2E8F0;
+    }
+
+    /* Nút tab tùy chỉnh */
+    .custom-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .custom-tab {
+        background-color: #3D4A5E;
+        color: #A0AEC0;
+        font-size: 1.125rem;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .custom-tab.active {
+        background-color: #4FD1C5;
+        color: #1A202C;
+    }
+
+    .custom-tab:hover {
+        background-color: #4FD1C5;
+        color: #1A202C;
+    }
+
+    /* Nội dung tab */
+    .tab-content {
+        background-color: #252F3F;
+        border-radius: 8px;
+        padding: 1.5rem;
+        font-size: 1rem;
+        color: #E2E8F0;
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content p {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Bảng thông tin chi tiết */
+    .details-table {
+        background-color: #2D3748;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .details-table .row {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #4A5568;
+        transition: background-color 0.3s ease;
+    }
+
+    .details-table .row:last-child {
+        border-bottom: none;
+    }
+
+    .details-table .row.bg-light {
+        background-color: #3D4A5E !important;
+    }
+
+    .details-table .row:hover {
+        background-color: #3D4A5E;
+    }
+
+    .details-table .col-6 {
+        padding: 0.25rem;
+        font-size: 1rem;
+    }
+
+    .details-table .col-6:first-child {
+        color: #A0AEC0;
+        font-weight: 500;
+    }
+
+    .details-table .col-6:last-child {
+        color: #E2E8F0;
+        font-weight: 400;
+    }
+
+    /* Đánh giá */
+    .review-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #4A5568;
+    }
+
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-item img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4A5568;
+    }
+
+    .review-item .review-content {
+        flex: 1;
+    }
+
+    .review-item .review-content p {
+        font-size: 0.875rem;
+        color: #A0AEC0;
+        margin-bottom: 0.25rem;
+    }
+
+    .review-item .review-content h5 {
+        font-size: 1rem;
+        color: #E2E8F0;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-item .review-content .rating {
+        color: #F6E05E;
+        font-size: 0.875rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        flex: 0 0 300px;
+        background-color: #252F3F;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar p {
+        font-size: 1rem;
+        color: #E2E8F0;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sidebar p span {
+        color: #4FD1C5;
+        font-weight: 500;
+    }
+
+    .sidebar .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 6px;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .sidebar .btn-warning {
+        background-color: #F6AD55;
+        border-color: #F6AD55;
+        color: #1A202C;
+    }
+
+    .sidebar .btn-warning:hover {
+        background-color: #ED8936;
+        border-color: #ED8936;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @@media (max-width: 991.98px) {
+        .book-details-wrapper {
+            flex-direction: column;
+        }
+
+        .book-details {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .book-image,
+        .book-info {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .book-info h4,
+        .book-info h5,
+        .book-info p,
+        .book-info .info-item {
+            text-align: center;
+        }
+
+        .book-info .rating {
+            justify-content: center;
+        }
+
+        .sidebar {
+            flex: 1;
+            margin-top: 2rem;
+        }
+
+        .custom-tabs {
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .book-container {
+            padding: 1rem;
+        }
+
+        .book-details {
+            padding: 1rem;
+        }
+
+        .book-info h4 {
+            font-size: 1.5rem;
+        }
+
+        .book-info h5 {
+            font-size: 1.75rem;
+        }
+
+        .book-info p,
+        .book-info .info-item,
+        .tab-content,
+        .details-table .col-6,
+        .sidebar p {
+            font-size: 0.875rem;
+        }
+
+        .review-item img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .custom-tab {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+    }
+</style>
+
+<div class="book-details-section">
+    <div class="book-container">
+        <div class="book-details-wrapper">
+            <!-- Phần chính: Thông tin sách và mô tả -->
+            <div class="book-main">
+                <!-- Phần ảnh và thông tin sách -->
+                <div class="book-details">
+                    <div class="book-image">
+                        <a href="#">
+                            <img src="~/Content/images/@(Model.URLAnhBia ?? "sach_default.jpg")" class="img-fluid rounded" alt="Ảnh bìa sách">
+                        </a>
+                    </div>
+                    <div class="book-info">
+                        <h4 class="fw-bold mb-3">@(Model.TenSach ?? "Không có tiêu đề")</h4>
+                        <h5 class="fw-bold mb-3">Giá Bán: @Model.Gia.ToString("N0")</h5>
+                        <div class="rating d-flex mb-4">
+                            Đánh giá:
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <p class="mb-3">Thể Loại: @(Model.TheLoai != null ? Model.TheLoai.TenTheLoai : "Không xác định")</p>
+                        <p class="mb-3">Mã Sách: @(Model.MaSach ?? "Không có mã")</p>
+                        <p class="mb-3">Tác Giả: @(Model.TacGia ?? "Không có tác giả")</p>
+                    </div>
+                </div>
+
+                <!-- Nút tab tùy chỉnh -->
+                <div class="custom-tabs">
+                    <button class="custom-tab active" onclick="showTab('description')">Mô Tả</button>
+                    <button class="custom-tab" onclick="showTab('reviews')">Đánh Giá</button>
+                </div>
+
+                <!-- Nội dung tab -->
+                <div id="description" class="tab-content active">
+                    <div class="details-table">
+                        <div class="row g-4">
+                            <div class="col-6" style="width: 100%;">
+                                <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                    <div style="text-align: left;" class="col-6">
+                                        <p class="mb-0">Nhà Xuất Bản</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-0" id="nhaXuatBan">@(Model.NhaXuatBan ?? "Không có nhà xuất bản")</p>
+                                    </div>
+                                </div>
+                                <div class="row text-center align-items-center justify-content-center py-2">
+                                    <div style="text-align: left;" class="col-6">
+                                        <p class="mb-0">Năm Xuất Bản</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p id="namXuatBan" class="mb-0">@(Model.NamXuatBan.HasValue ? Model.NamXuatBan.Value.ToString() : "Không có thông tin")</p>
+                                    </div>
+                                </div>
+                                <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                    <div style="text-align: left;" class="col-6">
+                                        <p class="mb-0">Cập Nhật Gần Nhất</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p id="capNhat" class="mb-0">@(Model.NgayTao.HasValue ? Model.NgayTao.Value.ToString("dd/MM/yyyy") : "Không có thông tin")</p>
+                                    </div>
+                                </div>
+                                <div class="row text-center align-items-center justify-content-center py-2">
+                                    <div style="text-align: left;" class="col-6">
+                                        <p class="mb-0">Mô Tả</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p id="namXuatBan" class="mb-0">@(Model.MoTa ?? "Không có mô tả")</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reviews" class="tab-content">
+                    <div class="review-item">
+                        <img src="~/Content/images/index_Home_defaultUser2.jpg" class="img-fluid rounded-circle p-3" alt="Reviewer">
+                        <div class="review-content">
+                            <p class="mb-2">24/05/2025</p>
+                            <div class="d-flex justify-content-between">
+                                <h5>Bùi Xuân Văn</h5>
+                                <div class="d-flex mb-3 rating">
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                            </div>
+                            <p>Chính sách đổi trả rõ ràng, rất uy tín. Mình sẽ giới thiệu cho bạn bè.</p>
+                        </div>
+                    </div>
+                    <div class="review-item">
+                        <img src="~/Content/images/index_Home_defaultUser1.jpg" class="img-fluid rounded-circle p-3" alt="Reviewer">
+                        <div class="review-content">
+                            <p class="mb-2">23/05/2025</p>
+                            <div class="d-flex justify-content-between">
+                                <h5>Nguyễn Văn Khánh</h5>
+                                <div class="d-flex mb-3 rating">
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                            </div>
+                            <p>Không gian mua sắm online thân thiện, gợi ý sách rất hay và sát với sở thích.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar: Số lượng và nút hành động -->
+            <div class="sidebar">
+                <p>Số Lượng Hiện Còn: <span>@(Model.SoLuongTon ?? 0)</span></p>
+                <p>Số Lượng Đã Bán: <span>@(Model.SoLuongDaBan ?? 0)</span></p>
+                <!-- Nút chỉnh sửa -->
+                <a href="@Url.Action("QTV_QLSP_SuaSach", "QTV_QLSP", new { id = Model.MaSach })" class="btn btn-sm btn-warning">
+                    Chỉnh Sửa
+                </a>
+                <!-- Nút xóa -->
+                <a href="@Url.Action("QTV_QLSP_XoaSach", "QTV_QLSP", new { id = @Model.MaSach })"
+                   onclick="return confirm('Xác nhận xóa sách?');"
+                   class="btn btn-sm btn-warning">Xóa
+                </a>
+                <!-- Nút quay lại -->
+                <a href="@Url.Action("QuanLySanPham_QuanTriVien", "QuanTriVien")" class="btn btn-sm btn-warning">
+                    Quay Lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        function showTab(tabId) {
+            // Ẩn tất cả nội dung tab
+            document.querySelectorAll('.tab-content').forEach(function (content) {
+                content.classList.remove('active');
+            });
+
+            // Xóa trạng thái active của tất cả nút tab
+            document.querySelectorAll('.custom-tab').forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+
+            // Hiển thị nội dung tab được chọn
+            document.getElementById(tabId).classList.add('active');
+
+            // Thêm trạng thái active cho nút được nhấn
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+}

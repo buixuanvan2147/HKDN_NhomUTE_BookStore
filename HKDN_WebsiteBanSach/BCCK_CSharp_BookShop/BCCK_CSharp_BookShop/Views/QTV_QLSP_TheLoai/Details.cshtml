@@ -1,0 +1,232 @@
+﻿@model BCCK_CSharp_BookShop.Models.TheLoai
+
+@{
+    ViewBag.Title = "Chi Tiết Thể Loại"; // Tiêu đề rõ ràng hơn cho tab trình duyệt
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* --- Basic styles (consistent with other pages) --- */
+    body {
+        background-color: #2D3748;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Add a modern font */
+    }
+
+    .content-wrapper {
+        background-color: #1A202C;
+        min-height: calc(100vh - 56px); /* Ensure wrapper takes full height minus header */
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .container-fluid {
+        padding: 1.5rem 1rem;
+    }
+
+    /* --- Page Title Style --- */
+    h2 {
+        color: #A0AEC0;
+        margin-bottom: 2rem; /* Increased margin for better separation */
+        font-size: 2.2rem; /* Slightly larger for prominence */
+        font-weight: 700;
+        text-align: center;
+        padding-top: 1rem;
+        letter-spacing: 0.05em; /* Add subtle letter spacing */
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Soft text shadow */
+    }
+
+    /* --- Details Container (main content box) --- */
+    .details-container {
+        background-color: #2D3748; /* Dark background for the details box */
+        border-radius: 12px; /* Slightly more rounded corners */
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Stronger, softer shadow */
+        padding: 2.5rem; /* Increased padding */
+        max-width: 650px; /* Slightly wider for better content flow */
+        margin: 0 auto 2rem auto; /* Center with more bottom margin */
+        border: 1px solid rgba(255, 255, 255, 0.08); /* Subtle border for definition */
+    }
+
+        .details-container h4 {
+            color: #A0AEC0;
+            margin-bottom: 1.5rem; /* Increased margin */
+            font-size: 1.6rem; /* Slightly larger */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Slightly stronger separator */
+            padding-bottom: 0.75rem; /* More padding */
+            text-align: center; /* Center this sub-heading as well */
+            font-weight: 600;
+        }
+
+    /* --- Description List (dl-horizontal) Styling using CSS Grid --- */
+    .dl-horizontal {
+        margin-bottom: 1.5rem;
+        display: grid; /* Use CSS Grid for precise alignment */
+        grid-template-columns: 180px 1fr; /* Fixed width for label, rest for value */
+        gap: 1rem 25px; /* Increased row and column gap for spaciousness */
+        align-items: baseline; /* Align items to their baselines */
+    }
+
+        .dl-horizontal dt {
+            color: #A0AEC0; /* Lighter gray for labels */
+            font-weight: 600;
+            text-align: right; /* Align labels to the right */
+            white-space: nowrap; /* Prevent label wrapping */
+            padding-right: 15px; /* Ensure some space even with grid gap */
+        }
+
+        .dl-horizontal dd {
+            color: #ffffff; /* White for values */
+            text-align: left; /* Align values to the left */
+            word-break: break-word; /* Allow long words to break */
+        }
+
+    /* --- Action Buttons Container --- */
+    .action-buttons-container {
+        margin-top: 2rem; /* Increased margin to separate from details box */
+        text-align: center; /* Center the buttons */
+        display: flex; /* Use flexbox for button arrangement */
+        justify-content: center; /* Center buttons horizontally */
+        gap: 1.5rem; /* Space between buttons */
+    }
+
+    /* --- Individual Button Styles (reusing existing themes) --- */
+    .btn-edit-details {
+        background-color: #FCD34D; /* Warning/Yellow for Edit */
+        border: none;
+        color: #1A202C; /* Dark text for yellow button */
+        padding: 0.8rem 2rem; /* More padding for a larger touch target */
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .btn-edit-details:hover {
+            background-color: #FBBF24;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* More pronounced shadow on hover */
+            color: #1A202C; /* Ensure text color remains dark on hover */
+            text-decoration: none;
+        }
+
+    /* --- Back Link Style (styled as a button for consistency) --- */
+    .back-link {
+        color: #60A5FA; /* Blue for the link */
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem 2rem; /* Consistent padding with edit button */
+        border-radius: 8px;
+        border: 1px solid #60A5FA; /* Subtle blue border */
+        background-color: transparent; /* Transparent background */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .back-link:hover {
+            color: #3B82F6;
+            text-decoration: none; /* No underline on hover */
+            background-color: rgba(96, 165, 250, 0.1); /* Light blue tint on hover */
+            transform: translateY(-2px);
+            border-color: #3B82F6; /* Darker border on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+    /* Icon spacing */
+    .me-2 {
+        margin-right: 0.5rem;
+    }
+
+    /* --- Media Queries (Adjustments for Responsiveness) --- */
+    @@media (max-width: 767.98px) {
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        .details-container {
+            padding: 1.5rem;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+            .details-container h4 {
+                font-size: 1.3rem;
+            }
+
+        .dl-horizontal {
+            grid-template-columns: 1fr; /* Stack labels and values on small screens */
+            gap: 0.5rem 0; /* Adjust gap for stacking */
+        }
+
+            .dl-horizontal dt,
+            .dl-horizontal dd {
+                text-align: left; /* Align all text to the left on small screens */
+                padding-right: 0; /* Remove extra padding */
+            }
+
+        .action-buttons-container {
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 1rem; /* Space between stacked buttons */
+        }
+
+        .btn-edit-details,
+        .back-link {
+            width: 100%; /* Full width buttons */
+            margin: 0; /* Remove horizontal margin */
+            padding: 0.75rem 1.5rem; /* Slightly reduced padding for mobile */
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <h2>Chi Tiết Thể Loại</h2>
+
+    <div class="details-container">
+        <h4>Thông tin Thể Loại</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                Mã Thể Loại:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.MaTheLoai)
+            </dd>
+
+            <dt>
+                Tên Thể Loại:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.TenTheLoai)
+            </dd>
+
+            @* You can add other properties of TheLoai here if they exist and you want to display them *@
+            @* <dt>
+                    Tên thuộc tính khác:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.SomeOtherProperty)
+                </dd> *@
+
+        </dl>
+    </div>
+
+    <div class="action-buttons-container">
+        <a href="@Url.Action("Edit", "QTV_QLSP_TheLoai", new { id = Model.MaTheLoai })" class="btn btn-edit-details">
+            <i class="fas fa-edit me-2"></i> Chỉnh Sửa
+        </a>
+        <a href="@Url.Action("Index", "QTV_QLSP_TheLoai")" class="btn back-link">
+            <i class="fas fa-arrow-alt-circle-left me-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

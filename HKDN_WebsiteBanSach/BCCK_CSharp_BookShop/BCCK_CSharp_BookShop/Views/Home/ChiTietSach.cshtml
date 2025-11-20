@@ -1,0 +1,203 @@
+﻿@model BCCK_CSharp_BookShop.ViewModel.ChiTietSachVM
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .product-img {
+        max-height: 400px;
+        object-fit: contain;
+        width: 100%;
+        border-radius: 0.375rem;
+    }
+
+    .quantity-control {
+        width: 150px;
+        display: flex;
+        align-items: center;
+    }
+
+        .quantity-control .btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-control input {
+            width: 70px;
+            text-align: center;
+            border-radius: 0;
+            height: 40px;
+        }
+
+    .btn-add-to-cart {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.3s;
+    }
+
+        .btn-add-to-cart:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Chi tiết sản phẩm</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")">Sách</a></li>
+        <li class="breadcrumb-item active text-white">Chi tiết</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+<!-- Single Product Start -->
+<div class="container-fluid py-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            <a href="@Url.Action("ChiTietSach", "Home", new { maSach = Model.MaSach })">
+                                <img src="~/Content/images/@Model.Hinh" class="img-fluid product-img rounded" alt="@Model.TenSach">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h4 class="fw-bold mb-3">@Model.TenSach</h4>
+                        <h4 class="fw-bold mb-3">Tác giả: @Model.TacGia</h4>
+                        <p class="mb-3">Thể loại: @Model.TenTheLoai</p>
+                        <h5 class="fw-bold mb-3">Giá: @Model.DonGia.ToString("N0") đồng</h5>
+                        <p class="mb-3">Tồn kho: 98</p>
+                        <div class="d-flex mb-4">
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <p class="mb-4">Mô tả: @Model.MoTa</p>
+
+                        @using (Html.BeginForm("ThemVaoGioHang", "KhachHang", FormMethod.Post, new { id = "addToCartForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("maSach", Model.MaSach)
+                            <div class="input-group quantity-control mb-5">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-minus rounded-circle bg-yellow border" onclick="changeQuantity(-1)">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control form-control-sm border bg-light" id="soLuong" name="soLuong" value="1" readonly>
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-sm btn-plus rounded-circle bg-yellow border" onclick="changeQuantity(1)">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <style>
+                                .bg-yellow {
+                                    background-color: #ffc107 !important; /* Màu vàng Bootstrap */
+                                    color: #212529; /* Màu chữ đen cho tương phản */
+                                }
+
+                                    .bg-yellow:hover {
+                                        background-color: #e0a800 !important; /* Màu vàng đậm hơn khi hover */
+                                    }
+
+                                    .bg-yellow .fa {
+                                        color: #212529; /* Đảm bảo biểu tượng +/- có màu đen */
+                                    }
+                            </style>
+                            <button type="submit" class="btn btn-add-to-cart">Thêm vào giỏ hàng</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Single Product End -->
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Thêm thành công vào giỏ hàng!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="okButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeQuantity(delta) {
+            var input = document.getElementById('soLuong');
+            var currentValue = parseInt(input.value);
+            var newValue = currentValue + delta;
+            if (newValue >= 1 && newValue <= @Model.SoLuongTon) {
+                input.value = newValue;
+            }
+        }
+
+        $(document).ready(function () {
+            $("#addToCartForm").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+
+                // Kiểm tra trạng thái đăng nhập trước
+                $.ajax({
+                    url: '@Url.Action("KiemTraDangNhap", "KhachHang")',
+                    type: 'POST',
+                    success: function (response) {
+                        if (response.loggedIn) {
+                            // Nếu đã đăng nhập, gửi yêu cầu thêm vào giỏ hàng
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: form.attr('method'),
+                                data: form.serialize(),
+                                success: function (response) {
+                                    if (response.success) {
+                                        $("#cartModal").modal('show');
+                                    } else {
+                                        alert(response.message);
+                                    }
+                                },
+                                error: function () {
+                                    alert("Đã có lỗi xảy ra khi thêm vào giỏ hàng.");
+                                }
+                            });
+                        } else {
+                            // Nếu chưa đăng nhập, chuyển đến trang đăng nhập
+                            window.location.href = '@Url.Action("DangNhap", "Home")';
+                        }
+                    },
+                    error: function () {
+                        alert("Đã có lỗi xảy ra khi kiểm tra đăng nhập.");
+                    }
+                });
+            });
+
+            $("#okButton").click(function () {
+                window.location.href = '@Url.Action("Index_Home", "Home")';
+            });
+        });
+    </script>
+}

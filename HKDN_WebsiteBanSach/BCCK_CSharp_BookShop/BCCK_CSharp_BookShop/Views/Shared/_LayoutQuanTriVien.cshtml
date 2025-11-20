@@ -1,0 +1,316 @@
+﻿@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.AspNetCore.Html
+
+@functions {
+    // Hàm này kiểm tra xem controller và action hiện tại có khớp với tham số truyền vào không
+    // và trả về chuỗi "selected" nếu khớp, ngược lại trả về chuỗi rỗng.
+    public string IsActive(string controller, string action)
+    {
+        // Lấy thông tin route hiện tại từ ViewContext
+        var routeData = ViewContext.RouteData;
+        var currentAction = routeData.Values["action"]?.ToString();
+        var currentController = routeData.Values["controller"]?.ToString();
+
+        // So sánh không phân biệt chữ hoa, chữ thường và kiểm tra null an toàn
+        // Thêm kiểm tra HttpContext để đảm bảo có thể truy cập Session hoặc User nếu cần trong tương lai
+        if (currentController != null && currentAction != null)
+        {
+            return (controller.ToLower() == currentController.ToLower() && action.ToLower() == currentAction.ToLower()) ? "selected" : "";
+        }
+        return ""; // Trả về rỗng nếu không có dữ liệu route
+    }
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản Trị Viên</title> @* Sử dụng ViewData["Title"] thay vì ViewBag.Title để nhất quán *@
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkprimary: '#1A202C', /* Màu nền tối chủ đạo cho sidebar */
+                        darksecondary: '#2D3748', /* Màu nền phụ tối cho các thành phần */
+                        darktext: '#ffffff', /* Màu chữ trắng trên nền tối */
+                        darkaccent: '#4FD1C5', /* Màu nhấn chính (teal) */
+                        darkhover: '#4A5568', /* Màu nền khi hover */
+                        darkactive: '#63B3ED', /* Màu nền khi active/selected */
+                    },
+                    boxShadow: {
+                        'custom': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05)', /* Bóng tùy chỉnh */
+                    },
+                    transitionProperty: {
+                        'transform-scale': 'transform, scale', /* Hiệu ứng scale khi hover */
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Thiết lập font chữ và tối ưu hiển thị trên các trình duyệt */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased; /* Làm mịn font trên Chrome/Safari */
+            -moz-osx-font-smoothing: grayscale; /* Làm mịn font trên Firefox macOS */
+            margin: 0; /* Xóa margin mặc định của body */
+            padding: 0; /* Xóa padding mặc định của body */
+        }
+
+        /* Container chính chiếm toàn bộ chiều cao và không có khoảng trống */
+        .container {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh; /* Đảm bảo container chiếm toàn bộ chiều cao màn hình */
+            width: 100%; /* Đảm bảo container chiếm toàn bộ chiều rộng */
+        }
+
+        /* Tùy chỉnh thanh cuộn cho sidebar */
+        .sidebar-scroll {
+            scrollbar-width: thin; /* Độ rộng thanh cuộn trên Firefox */
+            scrollbar-color: #4A5568 #2D3748; /* Màu thumb và track trên Firefox */
+        }
+
+            /* Tùy chỉnh thanh cuộn cho Chrome, Safari, Edge */
+            .sidebar-scroll::-webkit-scrollbar {
+                width: 8px; /* Độ rộng thanh cuộn */
+            }
+
+            .sidebar-scroll::-webkit-scrollbar-track {
+                background: #2D3748; /* Màu nền của track */
+                border-radius: 12px; /* Bo góc track */
+                margin: 8px 0; /* Khoảng cách trên/dưới */
+            }
+
+            .sidebar-scroll::-webkit-scrollbar-thumb {
+                background-color: #4A5568; /* Màu của thumb */
+                border-radius: 12px; /* Bo góc thumb */
+                border: 2px solid #2D3748; /* Viền thumb để tạo khoảng cách */
+                transition: background-color 0.2s ease; /* Hiệu ứng chuyển màu mượt mà */
+            }
+
+                .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+                    background-color: #4FD1C5; /* Màu thumb khi hover */
+                }
+
+        /* Ẩn thanh cuộn trên mobile */
+        @@media (max-width: 767px) {
+            .sidebar-scroll {
+                scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+            }
+
+                .sidebar-scroll::-webkit-scrollbar {
+                    display: none; /* Ẩn thanh cuộn trên Chrome/Safari */
+                }
+        }
+
+        /* Tùy chỉnh sidebar */
+        #sidebar {
+            width: 280px; /* Tăng chiều rộng để chứa toàn bộ văn bản */
+            background-color: #1A202C; /* Màu nền sidebar */
+            color: #ffffff; /* Màu chữ trắng */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Hiệu ứng chuyển động mượt mà */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Bóng nhẹ cho sidebar */
+            min-height: 100vh; /* Đảm bảo sidebar dài bằng chiều cao màn hình */
+            margin: 0; /* Xóa margin */
+            padding: 16px; /* Padding bên trong sidebar */
+        }
+
+            /* Tùy chỉnh tiêu đề sidebar */
+            #sidebar > div:first-child span {
+                white-space: nowrap; /* Ngăn tiêu đề xuống dòng */
+                overflow: hidden; /* Ẩn phần vượt quá nếu có */
+                text-overflow: ellipsis; /* Thêm dấu ... nếu văn bản quá dài */
+                font-size: 1.5rem; /* Giảm font-size để tránh xuống dòng */
+            }
+
+            /* Tùy chỉnh các mục trong sidebar */
+            #sidebar nav ul li a {
+                transition: all 0.2s ease-in-out; /* Hiệu ứng chuyển đổi mượt mà */
+                transform: scale(1); /* Tỷ lệ ban đầu */
+                color: #ffffff; /* Đảm bảo màu chữ trắng */
+                display: flex; /* Sử dụng flex để căn chỉnh */
+                align-items: center; /* Căn giữa theo chiều dọc */
+            }
+
+                #sidebar nav ul li a:hover {
+                    background-color: #4A5568; /* Màu nền khi hover */
+                    color: #FFFFFF; /* Màu chữ khi hover */
+                    transform: scale(1.02); /* Phóng to nhẹ khi hover */
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bóng nhẹ khi hover */
+                }
+
+                /* Hiệu ứng khi nút được chọn */
+                #sidebar nav ul li a.selected {
+                    background-color: #63B3ED; /* Màu nền khi được chọn */
+                    color: #FFFFFF; /* Màu chữ khi được chọn */
+                    transform: scale(1); /* Giữ nguyên tỷ lệ khi được chọn */
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
+                }
+
+                    #sidebar nav ul li a.selected:hover {
+                        background-color: #63B3ED; /* Giữ màu nền khi hover nếu đang được chọn */
+                        transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+                    }
+
+                /* Hiệu ứng active khi nhấn */
+                #sidebar nav ul li a:active {
+                    background-color: #63B3ED; /* Màu nền khi active */
+                    color: #FFFFFF; /* Màu chữ khi active */
+                    transform: scale(0.98); /* Thu nhỏ nhẹ khi nhấn */
+                }
+
+                /* Ngăn chữ xuống dòng và xử lý văn bản dài */
+                #sidebar nav ul li a span {
+                    white-space: nowrap; /* Ngăn văn bản xuống dòng */
+                    overflow: hidden; /* Ẩn phần vượt quá nếu có */
+                    text-overflow: ellipsis; /* Thêm dấu ... nếu văn bản quá dài */
+                    font-size: 1rem; /* Đảm bảo kích thước font phù hợp */
+                }
+
+                /* Tùy chỉnh nút đăng xuất */
+                #sidebar nav ul li a[href*="Logout"] {
+                    transition: all 0.2s ease-in-out; /* Hiệu ứng chuyển đổi */
+                }
+
+                    #sidebar nav ul li a[href*="Logout"]:hover {
+                        background-color: #EF4444; /* Màu nền đỏ khi hover nút đăng xuất */
+                        color: #FFFFFF; /* Màu chữ trắng */
+                        transform: scale(1.02); /* Phóng to nhẹ */
+                    }
+
+                    #sidebar nav ul li a[href*="Logout"].selected {
+                        background-color: #EF4444; /* Màu nền đỏ khi được chọn */
+                        color: #FFFFFF; /* Màu chữ trắng */
+                    }
+
+                        #sidebar nav ul li a[href*="Logout"].selected:hover {
+                            background-color: #EF4444; /* Giữ màu nền đỏ khi hover nếu được chọn */
+                            transform: scale(1.02); /* Hiệu ứng phóng to nhẹ */
+                        }
+
+                    #sidebar nav ul li a[href*="Logout"]:active {
+                        background-color: #DC2626; /* Màu nền đỏ đậm khi active */
+                        transform: scale(0.98); /* Thu nhỏ nhẹ */
+                    }
+
+        /* Tùy chỉnh main content */
+        main {
+            flex: 1; /* Chiếm toàn bộ không gian còn lại */
+            background-color: #ffffff; /* Nền trắng cho render body */
+            margin: 0; /* Xóa margin để không có khoảng trống */
+            min-height: 100vh; /* Đảm bảo main dài bằng chiều cao màn hình */
+            width: 100%; /* Đảm bảo main chiếm toàn bộ chiều rộng còn lại */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside id="sidebar" class="flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-50 md:z-auto">
+            <div class="flex items-center justify-center h-16 border-b border-darksecondary mb-6">
+                <span class="text-2xl font-bold text-darkaccent">ADMIN DASHBOARD</span>
+            </div>
+
+            <nav class="flex-grow sidebar-scroll overflow-y-auto">
+                <ul class="space-y-3">
+                    <li>
+                        @* Thêm thuộc tính href để liên kết có thể điều hướng. Sử dụng Url.Action để tạo URL đúng. *@
+                        <a href="@Url.Action("TrangChu_QuanTriVien", "QuanTriVien")" class="flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-darkhover hover:text-white focus:outline-none focus:ring-2 focus:ring-darkaccent focus:ring-opacity-50 @IsActive("QuanTriVien", "Index_QuanTriVien")">
+                            <i class="fas fa-home w-6 h-6 mr-3 text-darkaccent"></i>
+                            <span class="text-lg font-medium">Trang chủ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("QuanLySanPham_QuanTriVien", "QuanTriVien")" class="flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-darkhover hover:text-white focus:outline-none focus:ring-2 focus:ring-darkaccent focus:ring-opacity-50 @IsActive("QuanTriVien", "QuanLySanPham_QuanTriVien")">
+                            <i class="fas fa-box w-6 h-6 mr-3 text-darkaccent"></i>
+                            <span class="text-lg font-medium">Quản lý sản phẩm</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "QTV_QLND")" class="flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-darkhover hover:text-white focus:outline-none focus:ring-2 focus:ring-darkaccent focus:ring-opacity-50 @IsActive("QuanTriVien", "QuanLyNguoiDung_QuanTriVien")">
+                            <i class="fas fa-users w-6 h-6 mr-3 text-darkaccent"></i>
+                            <span class="text-lg font-medium">Quản lý người dùng</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "QTV_QLDH")" class="flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-darkhover hover:text-white focus:outline-none focus:ring-2 focus:ring-darkaccent focus:ring-opacity-50 @IsActive("QuanTriVien", "QuanLyDonHang_QuanTriVien")">
+                            <i class="fas fa-shopping-cart w-6 h-6 mr-3 text-darkaccent"></i>
+                            <span class="text-lg font-medium">Quản lý đơn hàng</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        @* Đối với nút đăng xuất, màu sắc hover và active đã được định nghĩa trong CSS, không cần class IsActive *@
+                        <a href="@Url.Action("Index_Home", "Home")" class="flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                            <i class="fas fa-sign-out-alt w-6 h-6 mr-3 text-red-500 group-hover:text-white"></i> @* Thêm group-hover để icon chuyển màu *@
+                            <span class="text-lg font-medium">Về trang người dùng</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main>
+            @RenderBody()
+        </main>
+        @RenderSection("scripts", required: false)
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        // Không cần mainContent nếu chỉ dùng để điều khiển sidebar
+
+        // Hàm để đóng/mở sidebar trên mobile
+        function toggleSidebarMobile() {
+            if (window.innerWidth < 768) { // Chỉ hoạt động trên mobile (màn hình nhỏ hơn md)
+                sidebar.classList.toggle('-translate-x-full');
+            }
+        }
+
+        // Đóng sidebar khi click bên ngoài trên mobile
+        document.addEventListener('click', (event) => {
+            // Kiểm tra nếu click không phải vào sidebar và sidebar đang mở
+            if (window.innerWidth < 768 && !sidebar.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full'); // Đóng sidebar
+            }
+        });
+
+        // Điều chỉnh hiển thị sidebar khi resize cửa sổ
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full'); // Luôn hiện sidebar trên desktop
+            } else {
+                sidebar.classList.add('-translate-x-full'); // Luôn ẩn sidebar trên mobile khi resize
+            }
+        });
+
+        // Kiểm tra ban đầu khi tải trang
+        window.addEventListener('load', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Bạn có thể thêm một nút menu (hamburger icon) để mở/đóng sidebar trên mobile
+        // Ví dụ:
+        // <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-darksecondary text-darktext">
+        //     <i class="fas fa-bars"></i>
+        // </button>
+        //
+        // document.getElementById('sidebarToggle').addEventListener('click', toggleSidebarMobile);
+
+    </script>
+</body>
+</html>
