@@ -1,7 +1,17 @@
+using HKDN_GroupUTE_BookStore.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<CsharpBookShopContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("BookShopDB"),
+        ServerVersion.Parse("10.4.32-mariadb")
+    )
+);
 
 var app = builder.Build();
 
@@ -22,6 +32,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index_Home}/{id?}");
 
 app.Run();
