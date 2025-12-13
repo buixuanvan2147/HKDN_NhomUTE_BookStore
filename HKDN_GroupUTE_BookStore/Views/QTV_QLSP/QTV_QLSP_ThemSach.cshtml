@@ -1,0 +1,99 @@
+﻿@model HKDN_GroupUTE_BookStore.Models.Sach
+@{
+    ViewBag.Title = "Thêm Sách Mới";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<div class="min-h-screen bg-gray-900 py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl p-10">
+            <h2 class="text-3xl font-bold text-teal-400 text-center mb-8 uppercase tracking-wider">Thêm Sách Mới</h2>
+
+            @using (Html.BeginForm("QTV_QLSP_ThemSach", "QTV_QLSP", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    @Html.ValidationSummary(true, "", new { @class = "col-span-2 bg-red-900 text-red-200 p-4 rounded-lg text-center" })
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Tên Sách</label>
+                            @Html.TextBoxFor(m => m.TenSach, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-teal-400", placeholder = "Nhập tên sách" })
+                            @Html.ValidationMessageFor(m => m.TenSach, "", new { @class = "text-red-400 text-sm mt-1" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Tác Giả</label>
+                            @Html.TextBoxFor(m => m.TacGia, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", placeholder = "Nhập tên tác giả" })
+                            @Html.ValidationMessageFor(m => m.TacGia, "", new { @class = "text-red-400 text-sm mt-1" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Nhà Xuất Bản</label>
+                            @Html.TextBoxFor(m => m.NhaXuatBan, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", placeholder = "Nhập nhà xuất bản" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Năm Xuất Bản</label>
+                            @Html.TextBoxFor(m => m.NamXuatBan, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", type = "number" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Giá Bán (VNĐ)</label>
+                            @Html.TextBoxFor(m => m.Gia, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", type = "number", step = "1000" })
+                            @Html.ValidationMessageFor(m => m.Gia, "", new { @class = "text-red-400 text-sm mt-1" })
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Thể Loại</label>
+                            @Html.DropDownListFor(m => m.MaTheLoai, ViewBag.TheLoaiList as SelectList, "— Chọn thể loại —", new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white" })
+                            @Html.ValidationMessageFor(m => m.MaTheLoai, "", new { @class = "text-red-400 text-sm mt-1" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Số Lượng Tồn Kho</label>
+                            @Html.TextBoxFor(m => m.SoLuongTon, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", type = "number", min = "0" })
+                            @Html.ValidationMessageFor(m => m.SoLuongTon, "", new { @class = "text-red-400 text-sm mt-1" })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Mô Tả</label>
+                            @Html.TextAreaFor(m => m.MoTa, new { @class = "w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white", rows = "5", placeholder = "Mô tả chi tiết về sách..." })
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-2">Ảnh Bìa</label>
+                            <input type="file" name="imageFile" id="imageFile" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-teal-500 file:text-white hover:file:bg-teal-600" onchange="previewImage(event)" />
+                            <img id="preview" src="" class="mt-4 max-w-xs rounded-lg border border-gray-600 hidden" alt="Preview ảnh bìa" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-10 space-x-6">
+                    <button type="submit" class="px-10 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-gray-900 font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                        Thêm Sách
+                    </button>
+                    @Html.ActionLink("Quay Lại", "QuanLySanPham_QuanTriVien", "QuanTriVien", null, new { @class = "px-10 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all inline-block" })
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

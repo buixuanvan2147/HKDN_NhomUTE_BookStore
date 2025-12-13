@@ -1,0 +1,391 @@
+﻿@model HKDN_GroupUTE_BookStore.ViewModel.QTV_QuanLySanPham_LoadDuLieu_VM
+@{
+    ViewBag.Title = "QuanLySanPham_QuanTriVien";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* ... (Giữ nguyên toàn bộ CSS của bạn, không thay đổi) ... */
+    body {
+        background-color: #2D3748;
+        color: #ffffff;
+    }
+
+    .content-wrapper {
+        background-color: #1A202C;
+        min-height: calc(100vh - 56px);
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .container-fluid {
+        padding: 1.5rem 1rem;
+    }
+
+    .search-filter-section { /* Renamed to control-buttons-section as it no longer handles search/filter */
+        background-color: #2D3748;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start; /* Align buttons to the start */
+        gap: 1rem; /* Space between buttons */
+    }
+
+    /* Styles for the buttons - New/Modified */
+    .control-button {
+        background-color: #4CAF50; /* A pleasant green */
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px; /* Slightly more rounded */
+        font-weight: 600;
+        font-size: 1rem; /* Slightly larger text */
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex; /* Allows icon and text to sit nicely */
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for hover effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    }
+
+        .control-button i {
+            margin-right: 0.5rem; /* Space between icon and text */
+        }
+
+        .control-button:hover {
+            background-color: #45a049; /* Darker green on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            color: white; /* Ensure text color remains white on hover */
+            text-decoration: none; /* Remove underline on hover for links */
+        }
+
+    /* Specific style for "Quản Lý Thể Loại" if you want a different color */
+    #btnQuanLyTheLoai {
+        background-color: #007bff; /* A nice blue */
+    }
+
+        #btnQuanLyTheLoai:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+
+    .table-container {
+        background-color: #2D3748;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        overflow-x: auto;
+    }
+
+    .table {
+        margin-bottom: 0;
+        color: #ffffff;
+        width: 100%;
+        table-layout: fixed;
+        min-width: 950px;
+    }
+
+        .table thead th {
+            background-color: #1A202C;
+            color: #A0AEC0;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 0.4rem;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .table tbody td {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 0.4rem;
+            vertical-align: middle;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+            .table tbody td:nth-child(3),
+            .table tbody td:nth-child(4),
+            .table tbody td:nth-child(5) {
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+            .table tbody td:nth-child(6),
+            .table tbody td:nth-child(7),
+            .table tbody td:nth-child(8),
+            .table tbody td:nth-child(9) {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        .table tbody tr:hover {
+            background-color: #3D4A5E;
+        }
+
+    .table-bordered {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+    .table th:nth-child(1),
+    .table td:nth-child(1) {
+        width: 5%;
+    }
+
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        width: 9%;
+    }
+
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        width: 25%;
+        text-align: left;
+    }
+
+    .table th:nth-child(4),
+    .table td:nth-child(4) {
+        width: 10%;
+    }
+
+    .table th:nth-child(5),
+    .table td:nth-child(5) {
+        width: 17%;
+        text-align: left;
+    }
+
+    .table th:nth-child(6),
+    .table td:nth-child(6) {
+        width: 9%;
+    }
+
+    .table th:nth-child(7),
+    .table td:nth-child(7) {
+        width: 8%;
+    }
+
+    .table th:nth-child(8),
+    .table td:nth-child(8) {
+        width: 8%;
+    }
+
+    .table th:nth-child(9),
+    .table td:nth-child(9) {
+        width: 9%;
+    }
+
+    .book-cover {
+        width: 35px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .action-buttons {
+        white-space: nowrap;
+    }
+
+        .action-buttons .btn {
+            margin-right: 0.05rem;
+            padding: 0.2rem 0.3rem;
+            font-size: 0.65rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+            .action-buttons .btn:last-child {
+                margin-right: 0;
+            }
+
+        .action-buttons .btn-info {
+            background-color: #60A5FA;
+            border-color: #60A5FA;
+            color: #ffffff;
+        }
+
+            .action-buttons .btn-info:hover {
+                background-color: #3B82F6;
+                border-color: #3B82F6;
+            }
+
+        .action-buttons .btn-warning {
+            background-color: #FCD34D;
+            border-color: #FCD34D;
+            color: #1A202C;
+        }
+
+            .action-buttons .btn-warning:hover {
+                background-color: #FBBF24;
+                border-color: #FBBF24;
+            }
+
+        .action-buttons .btn-danger {
+            background-color: #EF4444;
+            border-color: #EF4444;
+            color: #ffffff;
+        }
+
+            .action-buttons .btn-danger:hover {
+                background-color: #DC2626;
+                border-color: #DC2626;
+            }
+
+    .alert {
+        margin-bottom: 1rem;
+    }
+
+    @@media (min-width: 992px) {
+        /* No specific changes needed here after removing search/filter inputs */
+    }
+
+    @@media (max-width: 991.98px) {
+        .search-filter-section { /* Renamed to control-buttons-section */
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        .control-button { /* Apply full width to buttons on smaller screens */
+            width: 100%;
+        }
+
+        .table thead th,
+        .table tbody td {
+            padding: 0.4rem 0.2rem;
+            font-size: 0.7rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.15rem 0.25rem;
+            font-size: 0.6rem;
+        }
+
+        .book-cover {
+            width: 30px;
+            height: 45px;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .table {
+            table-layout: fixed;
+            min-width: 650px;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="search-filter-section">
+        <a href="@Url.Action("QTV_QLSP_ThemSach", "QTV_QLSP")" class="control-button" id="btnThemSachMoi">
+            <i class="fas fa-plus-circle me-2"></i> Thêm Sách Mới
+        </a>
+        <a href="@Url.Action("Index", "QTV_QLSP_TheLoai")" class="control-button" id="btnQuanLyTheLoai">
+            <i class="fas fa-tags me-2"></i> Quản Lý Thể Loại
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-bordered table-hover align-middle" id="booksTable">
+            @* Thêm ID cho bảng *@
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">ẢNH BÌA</th>
+                    <th scope="col">TÊN SÁCH</th>
+                    <th scope="col">THỂ LOẠI</th>
+                    <th scope="col">TÁC GIẢ</th>
+                    <th scope="col">GIÁ</th>
+                    <th scope="col" title="Số lượng đã bán">ĐÃ BÁN</th>
+                    <th scope="col" title="Số lượng tồn kho">TỒN KHO</th>
+                    <th scope="col">HÀNH ĐỘNG</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.Books != null)
+                {
+                    int stt = 1;
+                    foreach (var sach in ViewBag.Books)
+                    {
+                        <tr>
+                            <td>@stt</td>
+                            <td><img src="~/images/@sach.AnhBia" alt="Ảnh bìa" class="book-cover" onerror="this.src='~/images/sach_default.jpg';"></td>
+                            <td>@sach.TenSach</td>
+                            <td class="book-category-cell" data-category-id="@sach.MaTheLoai">@sach.TheLoai</td> @* Đảm bảo MaTheLoai được truyền vào data-attribute *@
+                            <td>@sach.TacGia</td>
+                            <td>@sach.Gia.ToString("N0") VNĐ</td>
+                            <td>@sach.DaBan</td>
+                            <td>@sach.TonKho</td>
+                            <td class="action-buttons">
+                                <a href="@Url.Action("QTV_QLSP_ChiTietSach", "QTV_QLSP", new { id = sach.MaSach })" class="btn btn-info btn-sm" title="Xem chi tiết"><i class="fas fa-eye"></i></a>
+                                <a href="@Url.Action("QTV_QLSP_SuaSach", "QTV_QLSP", new { id = sach.MaSach })" class="btn btn-warning btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>
+                                <a href="@Url.Action("QTV_QLSP_XoaSach", "QTV_QLSP", new { id = sach.MaSach })"
+                                   onclick="return confirm('Xác nhận xóa sách?');"
+                                   class="btn btn-danger btn-sm" style="background-color: #F29F05" title="Xóa">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                }
+                else
+                {
+                    <tr class="no-data-row" style="display: none;">
+                        <td colspan="9" class="text-center">Không có dữ liệu</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            const $tableBody = $('#booksTable tbody'); // Sử dụng ID của bảng
+            const $noDataRow = $tableBody.find('.no-data-row');
+
+            // Hàm cập nhật STT và trạng thái hàng trống
+            function updateSerialNumbers() {
+                let stt = 1;
+                let hasVisibleRows = false;
+
+                $tableBody.find('tr').not($noDataRow).each(function () {
+                    if ($(this).is(':visible')) {
+                        $(this).find('td:first-child').text(stt++);
+                        hasVisibleRows = true;
+                    }
+                });
+
+                $noDataRow.toggle(!hasVisibleRows);
+            }
+
+            // Initial call to update STT and hide no-data-row if there are books
+            updateSerialNumbers();
+        });
+    </script>
+}

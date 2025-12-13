@@ -1,0 +1,190 @@
+﻿@model HKDN_GroupUTE_BookStore.Controllers.KhachHangController.UserViewModel
+@{
+    ViewBag.Title = "Thông tin người dùng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- Single Page Header Start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Thông tin người dùng</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")">Trang chủ</a></li>
+        <li class="breadcrumb-item active text-white">Thông tin người dùng</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+<!-- User Info Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <h2 class="mb-4">Thông tin cá nhân</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="hoTen" class="form-label">Họ tên</label>
+                    <input type="text" class="form-control" id="hoTen" value="@Model.HoTen" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" value="@Model.Email" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                    <input type="text" class="form-control" id="soDienThoai" value="@Model.SoDienThoai">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="diaChi" class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" id="diaChi" value="@Model.DiaChi">
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary rounded-pill px-4 py-3 btn-save-info" type="button">Lưu thông tin</button>
+            </div>
+        </div>
+
+        <h2 class="mt-5 mb-4">Lịch sử đơn hàng</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Sản phẩm</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Thời gian đặt</th>
+                        <th scope="col">Tổng tiền</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DonHangs != null && Model.DonHangs.Any())
+                    {
+                        foreach (var donHang in Model.DonHangs)
+                        {
+                            foreach (var chiTiet in donHang.ChiTiets)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/images/@chiTiet.URLAnhBia" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="Ảnh sản phẩm">
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <p class="mb-0 mt-4">@chiTiet.TenSach</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@((int)chiTiet.GiaBan)đ</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@chiTiet.SoLuong</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@donHang.NgayTao.ToString("dd/MM/yyyy HH:mm")</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@donHang.TongTien.ToString("N0") đ</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@donHang.TrangThaiDonHang</p>
+                                    </td>
+                                    <td>
+                                        @if (donHang.TrangThaiDonHang == "DangXuLy")
+                                        {
+                                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-cancel-order" data-madonhang="@donHang.MaDonHang">
+                                                <i class="fa fa-times text-danger"></i>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">Bạn chưa có đơn hàng nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- User Info End -->
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="infoModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Xử lý lưu thông tin
+            $(".btn-save-info").click(function () {
+                var hoTen = $("#hoTen").val();
+                var email = $("#email").val();
+                var soDienThoai = $("#soDienThoai").val();
+                var diaChi = $("#diaChi").val();
+
+                if (!hoTen || !email) {
+                    $("#infoModalBody").text("Họ tên và email không được để trống.");
+                    $("#infoModal").modal('show');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("CapNhatThongTin", "KhachHang")',
+                    type: 'POST',
+                    data: { hoTen: hoTen, email: email, soDienThoai: soDienThoai, diaChi: diaChi },
+                    success: function (response) {
+                        $("#infoModalBody").text(response.message);
+                        $("#infoModal").modal('show');
+                        if (response.success) {
+                            setTimeout(function () { location.reload(); }, 1500);
+                        }
+                    },
+                    error: function () {
+                        $("#infoModalBody").text("Đã có lỗi xảy ra khi cập nhật thông tin.");
+                        $("#infoModal").modal('show');
+                    }
+                });
+            });
+
+            // Xử lý hủy đơn hàng
+            $(".btn-cancel-order").click(function () {
+                var maDonHang = $(this).data("madonhang");
+                if (confirm("Bạn có chắc muốn hủy đơn hàng này?")) {
+                    $.ajax({
+                        url: '@Url.Action("HuyDonHang", "KhachHang")',
+                        type: 'POST',
+                        data: { maDonHang: maDonHang },
+                        success: function (response) {
+                            $("#infoModalBody").text(response.message);
+                            $("#infoModal").modal('show');
+                            if (response.success) {
+                                setTimeout(function () { location.reload(); }, 1500);
+                            }
+                        },
+                        error: function () {
+                            $("#infoModalBody").text("Đã có lỗi xảy ra khi hủy đơn hàng.");
+                            $("#infoModal").modal('show');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

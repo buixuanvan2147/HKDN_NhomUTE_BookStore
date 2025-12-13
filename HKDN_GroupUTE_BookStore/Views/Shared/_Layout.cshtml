@@ -1,49 +1,225 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HKDN_GroupUTE_BookStore</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HKDN_GroupUTE_BookStore.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <title>BookShop</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content name="keywords">
+    <meta content name="description">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link rel="stylesheet" href="~/lib/lightbox/css/lightbox.min.css" asp-append-version="true" />
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="~/css/style.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .renderbody {
+            flex: 1;
+        }
+
+        .footer {
+            flex-shrink: 0;
+        }
+    </style>
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HKDN_GroupUTE_BookStore</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <!-- Navbar Start -->
+    <div class="container-fluid fixed-top">
+        <div class="container px-0">
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a href="@Url.Action("Index_Home", "Home")" class="navbar-brand">
+                    <h1 class="text-primary display-6">BookShop_TMĐT</h1>
+                </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <div class="navbar-nav mx-auto">
+                            <a href="@Url.Action("Index_Home", "Home")" class="nav-item nav-link active">Trang Chủ</a>
+
+
+                            <a href="@Url.Action("GioHang_Home", "Home")" class="nav-item nav-link">
+                                @{
+                                    // Lấy User ID từ Session
+                                    string userId = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung");
+                                    string sessionKey = userId != null ? $"GioHang_{userId}" : "GioHang_Temp";
+
+                                    // Lấy giỏ hàng bằng SessionExtensions bạn đã tạo
+                                    var gioHang = HttpContextAccessor.HttpContext.Session
+                                    .GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
+                                    ?? new List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>();
+
+                                    int soLuongSanPham = gioHang.Sum(x => x.SoLuong);
+                                }
+                                Giỏ hàng (@soLuongSanPham)
+                            </a>
+
+                            <a href="@Url.Action("LienHe_Home", "Home")" class="nav-item nav-link">Liên hệ</a>
+                            <!-- Trong phần navbar, thay đổi dòng sau -->
+                            <a href="@Url.Action("User", "KhachHang")" class="nav-item nav-link">Thông tin người dùng</a>
+                        </div>
+                        <div class="d-flex m-3 me-0">
+                            @{
+                                var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+                            }
+
+                            @if (!string.IsNullOrEmpty(userName))
+                            {
+                                <span class="text-primary me-2">Xin chào, @userName!</span>
+                                <form action="@Url.Action("DangXuat", "Home")" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-primary">Đăng xuất</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form action="@Url.Action("DangNhap", "Home")" method="get" class="d-inline-block me-2">
+                                    <button type="submit" class="btn btn-outline-primary">Đăng nhập</button>
+                                </form>
+                                <form action="@Url.Action("DangKy", "Home")" method="get" class="d-inline-block">
+                                    <button type="submit" class="btn btn-outline-primary">Đăng ký</button>
+                                </form>
+                            }
+
+                        </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </nav>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - HKDN_GroupUTE_BookStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="renderbody">
+        @RenderBody()
+    </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <a href="#">
+                            <h1 class="text-primary mb-0">Shop CSharpAbook</h1>
+                            <p class="text-secondary mb-0">Khơi nguồn tri thức – Chạm đến tương lai.</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="position-relative mx-auto">
+                            <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Email của bạn">
+                            <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">
+                                Đăng ký ngay
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="d-flex justify-content-end pt-3">
+                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-light mb-3">Tại sao mọi người tin dùng?</h4>
+                        <p class="mb-4">Chúng tôi cam kết cung cấp sách chất lượng, nội dung chính xác, không phải bản in lậu</p>
+                        <a href="#" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Đọc thêm...</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="d-flex flex-column text-start footer-item">
+                        <h4 class="text-light mb-3">Thông tin cửa hàng</h4>
+                        <a class="btn-link" href="#">Về chúng tôi</a>
+                        <a class="btn-link" href="#">Liên hệ chúng tôi</a>
+                        <a class="btn-link" href="#">Chính sách bảo mật</a>
+                        <a class="btn-link" href="#">Điều khoản và điều kiện</a>
+                        <a class="btn-link" href="#">Chính sách hoàn trả</a>
+                        <a class="btn-link" href="#">Trợ giúp</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="d-flex flex-column text-start footer-item">
+                        <h4 class="text-light mb-3">Tài khoản</h4>
+                        <a class="btn-link" href="#">Tài khoản của tôi</a>
+                        <a class="btn-link" href="#">Chi tiết cửa hàng</a>
+                        <a class="btn-link" href="#">Giỏ hàng</a>
+                        <a class="btn-link" href="#">Danh sách yêu thích</a>
+                        <a class="btn-link" href="#">Đơn hàng đã mua</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-light mb-3">Liên hệ</h4>
+                        <p>Địa chỉ: 48 Cao Thắng, Hải Châu, Đà Nẵng</p>
+                        <p>Email: buiv6493@gmail.com - Bùi Xuân Văn</p>
+                        <p>Điện thoại: +0899318713</p>
+                        <p>Thanh toán thành công</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </div>
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top">
+        <i class="fa fa-arrow-up"></i>
+    </a>
+
+    @RenderSection("naviheader", required: false)
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/lightbox/js/lightbox.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/scripts/jquery-3.7.0.min.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="~/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            $("#searchButton").click(function () {
+                let url = `/Shop/Search?query=` + $("#searchText").val();
+                window.location.href = url;
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,140 @@
+﻿@model HKDN_GroupUTE_BookStore.ViewModel.LoginVM
+@{
+    ViewData["Title"] = "Đăng Nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        border: 1px solid #e2e6ea;
+        background: #fff;
+    }
+
+        .form-container h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            font-size: 16px;
+            color: #555;
+            font-weight: 500;
+            display: block;
+        }
+
+    .short-textbox {
+        width: 100%;
+        max-width: 400px;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        background-color: #f9f9f9;
+        margin-top: 8px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        background-color: #fff;
+        outline: none;
+    }
+
+    .btn {
+        padding: 14px;
+        font-size: 18px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+    .alert {
+        font-size: 16px;
+        padding: 15px;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        border-radius: 5px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+</style>
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Đăng Nhập</h1>
+</div>
+<!-- Single Page Header End -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+{
+    <div class="alert alert-danger">@error.ErrorMessage</div>
+}
+
+@using (Html.BeginForm("DangNhap", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-container">
+        <div class="form-group">
+            @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại")
+            @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control short-textbox" })
+            @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.MatKhau, "Mật khẩu")
+            @Html.PasswordFor(m => m.MatKhau, new { @class = "form-control short-textbox" })
+            @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger" })
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Đăng Nhập</button>
+        <div class="text-center mt-3">
+            <span>Bạn chưa có tài khoản?</span>
+            <a href="@Url.Action("DangKy", "Home")" class="text-primary">Đăng ký ngay</a>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/scripts/jquery.validate-vsdoc.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.js"></script>
+}

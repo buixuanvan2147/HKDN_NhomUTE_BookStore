@@ -21,5 +21,10 @@ namespace HKDN_GroupUTE_BookStore.ViewModel
         public int TongSachTonKho { get; set; }
         public int TongSachDaBan { get; set; }
         public int TongTheLoai {  get; set; } // tổng số thể loại sách
+
+        public List<string> Thang { get; set; }
+        public List<int> DonDangXuLy { get; set; }
+        public List<int> DonDaGiao { get; set; }
+        public List<int> DonDaHuy { get; set; }
     }
 }

@@ -1,0 +1,245 @@
+﻿@{
+    ViewBag.Title = "Giỏ Hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Single Page Header Start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Giỏ Hàng</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")">Trang chủ</a></li>
+        <li class="breadcrumb-item active text-white">Giỏ hàng</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Sản phẩm</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Tổng</th>
+                        <th scope="col">Xử lý</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        string sessionKey = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null ? "GioHang_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung").ToString() : "GioHang_Temp";
+                        var gioHang = HttpContextAccessor.HttpContext.Session
+                        .GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
+                        ?? new List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>();
+                        decimal tongTien = 0;
+                        if (gioHang != null && gioHang.Any())
+                        {
+                            foreach (var item in gioHang)
+                            {
+                                var thanhTien = item.Gia * item.SoLuong;
+                                tongTien += thanhTien;
+                                <tr>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center">
+                                            <img src="/images/@item.URLAnhBia" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="Ảnh sản phẩm">
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <p class="mb-0 mt-4">@item.TenSach</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@item.Gia.ToString("N0") đ</p>
+                                    </td>
+                                    <td>
+                                        <div class="input-group quantity mt-4" style="width: 100px;">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-minus rounded-circle bg-warning border" data-masach="@item.MaSach">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm text-center border-0" value="@item.SoLuong" readonly>
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-sm btn-plus rounded-circle bg-warning border" data-masach="@item.MaSach">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4">@((int)thanhTien)đ</p>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-md rounded-circle bg-light border mt-4 btn-remove" data-masach="@item.MaSach">
+                                            <i class="fa fa-times text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center">Giỏ hàng trống.</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-5">
+            <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" id="diaChiGiao" placeholder="Nhập địa chỉ giao hàng">
+            <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Mã giảm giá</button>
+        </div>
+        <div class="row g-4 justify-content-end">
+            <div class="col-8"></div>
+            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                <div class="bg-light rounded">
+                    <div class="p-4">
+                        <h1 class="display-6 mb-4">Giỏ hàng <span class="fw-normal">Tổng tiền</span></h1>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h5 class="mb-0 me-4">Tổng phụ:</h5>
+                            <p class="mb-0">@((int)tongTien)đ</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="mb-0 me-4">Đang vận chuyển</h5>
+                            <div>
+                                <p class="mb-0">Giá cố định: 30.000đ</p>
+                            </div>
+                        </div>
+                        <p class="mb-0 text-end">Vận chuyển đến Đà Nẵng</p>
+                    </div>
+                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h5 class="mb-0 ps-4 me-4">Tổng tiền</h5>
+                        <p class="mb-0 pe-4">@((int)(tongTien + 30000))đ</p>
+                    </div>
+                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4 btn-dat-hang" type="button">Đặt hàng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart Page End -->
+<!-- Thêm Bootstrap Modal -->
+<div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-labelledby="orderSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderSuccessModalLabel">Thông báo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Đặt hàng thành công!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="orderOkButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Xử lý tăng số lượng
+            $(".btn-plus").click(function () {
+                var maSach = $(this).data("masach");
+                $.ajax({
+                    url: '@Url.Action("ThemVaoGioHang", "KhachHang")',
+                    type: 'POST',
+                    data: { maSach: maSach },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Đã có lỗi xảy ra khi cập nhật giỏ hàng.");
+                    }
+                });
+            });
+
+            // Xử lý giảm số lượng
+            $(".btn-minus").click(function () {
+                var maSach = $(this).data("masach");
+                var sessionKey = '@(HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null ? "GioHang_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung").ToString() : "GioHang_Temp")';
+                var gioHang = @Html.Raw(ViewBag.GioHangJson ?? "[]");
+                var item = gioHang.find(x => x.MaSach === maSach);
+                if (item && item.SoLuong > 1) {
+                    item.SoLuong--;
+                    $.ajax({
+                        url: '@Url.Action("ThemVaoGioHang", "KhachHang")',
+                        type: 'POST',
+                        data: { maSach: maSach, giamSoLuong: true },
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            alert("Đã có lỗi xảy ra khi cập nhật giỏ hàng.");
+                        }
+                    });
+                }
+            });
+
+            // Xử lý xóa sản phẩm
+            $(".btn-remove").click(function () {
+                var maSach = $(this).data("masach");
+                var sessionKey = '@(HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null ? "GioHang_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung").ToString() : "GioHang_Temp")';
+                var gioHang = @Html.Raw(ViewBag.GioHangJson ?? "[]");
+                gioHang = gioHang.filter(x => x.MaSach !== maSach);
+                $.ajax({
+                    url: '@Url.Action("ThemVaoGioHang", "KhachHang")',
+                    type: 'POST',
+                    data: { maSach: maSach, xoaSanPham: true },
+                    success: function (response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Đã có lỗi xảy ra khi xóa sản phẩm.");
+                    }
+                });
+            });
+
+            // Xử lý đặt hàng
+            $(".btn-dat-hang").click(function () {
+                var diaChiGiao = $("#diaChiGiao").val();
+                if (!diaChiGiao) {
+                    alert("Vui lòng nhập địa chỉ giao hàng.");
+                    return;
+                }
+                $.ajax({
+                    url: '@Url.Action("DatHang", "KhachHang")',
+                    type: 'POST',
+                    data: { diaChiGiao: diaChiGiao },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#orderSuccessModal").modal('show');
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Đã có lỗi xảy ra khi đặt hàng.");
+                    }
+                });
+            });
+
+            // Xử lý nút OK trong modal
+            $("#orderOkButton").click(function () {
+                window.location.href = '@Url.Action("Index_Home", "Home")';
+            });
+        });
+    </script>
+}
