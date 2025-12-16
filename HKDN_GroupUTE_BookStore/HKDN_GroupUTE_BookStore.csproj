@@ -7,6 +7,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\scripts\bootstrap.bundle.js" />
+    <None Include="wwwroot\scripts\bootstrap.bundle.js.map" />
+    <None Include="wwwroot\scripts\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\scripts\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\scripts\bootstrap.esm.js" />
+    <None Include="wwwroot\scripts\bootstrap.esm.js.map" />
+    <None Include="wwwroot\scripts\bootstrap.esm.min.js" />
+    <None Include="wwwroot\scripts\bootstrap.esm.min.js.map" />
+    <None Include="wwwroot\scripts\bootstrap.js" />
+    <None Include="wwwroot\scripts\bootstrap.js.map" />
+    <None Include="wwwroot\scripts\bootstrap.min.js" />
+    <None Include="wwwroot\scripts\bootstrap.min.js.map" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.intellisense.js" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.js" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.min.js" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.min.map" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.slim.js" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.slim.min.js" />
+    <None Include="wwwroot\scripts\jquery-3.7.0.slim.min.map" />
+    <None Include="wwwroot\scripts\jquery.validate-vsdoc.js" />
+    <None Include="wwwroot\scripts\jquery.validate.js" />
+    <None Include="wwwroot\scripts\jquery.validate.min.js" />
+    <None Include="wwwroot\scripts\jquery.validate.unobtrusive.js" />
+    <None Include="wwwroot\scripts\jquery.validate.unobtrusive.min.js" />
+    <None Include="wwwroot\scripts\modernizr-2.8.3.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>

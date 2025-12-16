@@ -1,0 +1,212 @@
+﻿@model HKDN_GroupUTE_BookStore.ViewModel.RegisterVM
+@{
+    ViewData["Title"] = "Đăng Ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* --- BIẾN MÀU SẮC & STYLE CHUNG --- */
+    :root {
+        --primary-color: #0F9D58;
+        --primary-hover: #0B8043;
+    }
+
+    /* --- WRAPPER CHÍNH: NỀN SÓNG ĐA LỚP --- */
+    .register-page-wrapper {
+        min-height: 90vh; /* Tăng nhẹ chiều cao vì form đăng ký dài hơn */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        /* SVG Background đa lớp sóng */
+        background-color: #f0fdf4;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%230F9D58' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3Cpath fill='%230F9D58' fill-opacity='0.2' d='M0,96L48,128C96,160,192,224,288,240C384,256,480,224,576,192C672,160,768,128,864,128C960,128,1056,160,1152,186.7C1248,213,1344,235,1392,245.3L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3Cpath fill='%230F9D58' fill-opacity='0.3' d='M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,213.3C672,224,768,192,864,170.7C960,149,1056,139,1152,133.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center bottom;
+    }
+
+    /* --- HEADER COMPACT --- */
+    .register-header-compact {
+        text-align: center;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    }
+
+        .register-header-compact h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .register-header-compact p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 600;
+            color: #444;
+        }
+
+    /* --- FORM CARD COMPACT --- */
+    .form-card-compact {
+        background: rgba(255, 255, 255, 0.95);
+        width: 100%;
+        max-width: 450px; /* Rộng hơn login một chút */
+        padding: 25px 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(15, 157, 88, 0.2);
+        border: 1px solid rgba(255,255,255,0.5);
+        backdrop-filter: blur(5px);
+    }
+
+        .form-card-compact h2 {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    /* Input Style */
+    .custom-input {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: all 0.3s;
+    }
+
+        .custom-input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.15);
+        }
+
+    .form-group {
+        margin-bottom: 12px; /* Khoảng cách hẹp hơn để tiết kiệm chỗ */
+    }
+
+    /* Button Style */
+    .btn-register {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.2);
+    }
+
+        .btn-register:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(15, 157, 88, 0.3);
+        }
+
+    /* Links & Alerts */
+    .login-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .alert {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    /* Grid layout cho form nếu cần thiết trên màn hình lớn */
+    @@media(min - width: 500px)
+
+    {
+        .form-row
+
+    {
+        display: flex;
+        gap: 15px;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+    }
+</style>
+
+<div class="register-page-wrapper">
+
+    <div class="register-header-compact animate__animated animate__fadeInDown">
+        <h1>Đăng Ký Tài Khoản</h1>
+        <p>Trở thành thành viên của nhà sách UTE</p>
+    </div>
+
+    <div class="form-card-compact animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+        <h2>Thông tin đăng ký</h2>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div class="alert alert-danger">@error.ErrorMessage</div>
+        }
+
+        @using (Html.BeginForm("DangKy", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.HoTen, "Họ và tên", new { @class = "fw-bold small mb-1" })
+                @Html.TextBoxFor(m => m.HoTen, new { @class = "custom-input", placeholder = "Nhập họ tên đầy đủ" })
+                @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại", new { @class = "fw-bold small mb-1" })
+                @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "custom-input", placeholder = "Nhập số điện thoại" })
+                @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, "Email", new { @class = "fw-bold small mb-1" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "custom-input", placeholder = "Nhập địa chỉ email" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.MatKhau, "Mật khẩu", new { @class = "fw-bold small mb-1" })
+                @Html.PasswordFor(m => m.MatKhau, new { @class = "custom-input", placeholder = "Nhập mật khẩu" })
+                @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <button type="submit" class="btn-register">
+                Đăng Ký Ngay
+            </button>
+
+            <div class="text-center mt-3 small">
+                <span class="text-muted">Bạn đã có tài khoản?</span>
+                <a href="@Url.Action("DangNhap", "Home")" class="login-link ms-1">Đăng nhập ngay</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.js"></script>
+}

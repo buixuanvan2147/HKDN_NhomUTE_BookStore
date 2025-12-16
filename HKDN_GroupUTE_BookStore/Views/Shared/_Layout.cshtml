@@ -1,49 +1,305 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HKDN_GroupUTE_BookStore</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/HKDN_GroupUTE_BookStore.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <title>NHÀ SÁCH UTE</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="keywords" content="nhà sách, sách ute, sách kỹ thuật, sách công nghệ">
+    <meta name="description" content="Nhà sách UTE - Khơi nguồn tri thức, chạm đến tương lai">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/lib/lightbox/css/lightbox.min.css" asp-append-version="true" />
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+
+    <style>
+        /* --- CẤU HÌNH MÀU SẮC & FONT --- */
+        :root {
+            --primary-color: rgba(13, 148, 136, 1);
+            --primary-light: rgba(204, 251, 241, 1);
+            --primary-hover: rgba(15, 118, 110, 1);
+            --accent-color: rgba(255, 111, 97, 1);
+            --accent-hover: rgba(229, 80, 57, 1);
+            --text-dark: rgba(30, 41, 59, 1);
+            --text-light: rgba(100, 116, 139, 1);
+            --bg-body: rgba(240, 253, 250, 1);
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .renderbody {
+            flex: 1;
+            /* ĐIỀU CHỈNH: Giảm từ 100px xuống 75px vì Header đã nhỏ lại */
+            padding-top: 75px;
+        }
+
+        /* --- HEADER & NAVBAR --- */
+        .container-fluid.fixed-top {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.1); /* Giảm bóng đổ 1 chút */
+            transition: all 0.3s;
+        }
+
+        .navbar-brand h1 {
+            color: var(--primary-color);
+            font-weight: 800;
+            /* ĐIỀU CHỈNH: Giảm size logo cho gọn */
+            font-size: 1.7rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            color: var(--text-dark) !important;
+            font-weight: 600;
+            font-size: 0.95rem; /* Giảm nhẹ cỡ chữ menu */
+            /* ĐIỀU CHỈNH: Giảm padding để nút menu thấp hơn */
+            padding: 8px 15px !important;
+            margin: 0 2px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+            .nav-link:hover {
+                color: var(--primary-color) !important;
+                background-color: var(--primary-light);
+            }
+
+            .nav-link.active {
+                color: #fff !important;
+                background-color: var(--primary-color);
+                box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+            }
+
+        /* --- BUTTONS --- */
+        .btn-primary-custom {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+            /* ĐIỀU CHỈNH: Nút bấm nhỏ gọn hơn */
+            padding: 6px 18px;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(255, 111, 97, 0.3);
+        }
+
+            .btn-primary-custom:hover {
+                background-color: var(--accent-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(255, 111, 97, 0.4);
+                color: white;
+            }
+
+        .btn-outline-custom {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            /* ĐIỀU CHỈNH: Nút bấm nhỏ gọn hơn */
+            padding: 4px 18px;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .btn-outline-custom:hover {
+                background-color: var(--primary-color);
+                color: white;
+                box-shadow: 0 3px 8px rgba(13, 148, 136, 0.2);
+            }
+
+        /* --- FOOTER --- */
+        .footer {
+            background-color: #111827;
+            color: #9ca3af;
+            margin-top: auto;
+            border-top: 4px solid var(--primary-color);
+        }
+
+            .footer h1 {
+                color: var(--primary-color);
+            }
+
+            .footer .text-light {
+                color: #f3f4f6 !important;
+            }
+
+            .footer .btn-link {
+                color: #9ca3af;
+                text-decoration: none;
+                transition: 0.3s;
+            }
+
+                .footer .btn-link:hover {
+                    color: var(--primary-color);
+                    padding-left: 5px;
+                }
+
+        /* Back to top */
+        .back-to-top {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+            .back-to-top:hover {
+                background-color: var(--accent-color);
+            }
+
+        /* User Greeting */
+        .user-greeting {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HKDN_GroupUTE_BookStore</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    @{
+        string currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        string currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+        string IsActive(string controller, string action)
+        {
+            if (string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase))
+            {
+                return "active";
+            }
+            return "";
+        }
+    }
+
+    <div class="container-fluid fixed-top">
+        <div class="container px-0">
+            <nav class="navbar navbar-expand-xl py-2">
+                <a href="@Url.Action("Index_Home", "Home")" class="navbar-brand d-flex align-items-center">
+                    <h1 class="m-0"><i class="fas fa-book-open me-2"></i>NHÀ SÁCH UTE</h1>
+                </a>
+                <button class="navbar-toggler py-1 px-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="@Url.Action("Index_Home", "Home")" class="nav-item nav-link @IsActive("Home", "Index_Home")">Trang Chủ</a>
+
+                        <a href="@Url.Action("GioHang_Home", "Home")" class="nav-item nav-link @IsActive("Home", "GioHang_Home")">
+                            @{
+                                string userId = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung");
+                                string sessionKey = userId != null ? $"GioHang_{userId}" : "GioHang_Temp";
+                                var gioHang = HttpContextAccessor.HttpContext.Session
+                                .GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
+                                ?? new List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>();
+                                int soLuongSanPham = gioHang.Sum(x => x.SoLuong);
+                            }
+                            <i class="fas fa-shopping-cart me-1"></i>Giỏ hàng <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">@soLuongSanPham</span>
+                        </a>
+
+                        <a href="@Url.Action("LienHe_Home", "Home")" class="nav-item nav-link @IsActive("Home", "LienHe_Home")">Liên hệ</a>
+                        <a href="@Url.Action("User", "KhachHang")" class="nav-item nav-link @IsActive("KhachHang", "User")">Tài khoản</a>
+                    </div>
+
+                    <div class="d-flex align-items-center ms-3">
+                        @{
+                            var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+                        }
+                        @if (!string.IsNullOrEmpty(userName))
+                        {
+                            <span class="me-3 user-greeting">Hi, @userName!</span>
+                            <form action="@Url.Action("DangXuat", "Home")" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary-custom">Đăng xuất</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form action="@Url.Action("DangNhap", "Home")" method="get" class="me-2">
+                                <button type="submit" class="btn btn-outline-custom">Đăng nhập</button>
+                            </form>
+                            <form action="@Url.Action("DangKy", "Home")" method="get">
+                                <button type="submit" class="btn btn-primary-custom">Đăng ký</button>
+                            </form>
+                        }
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </nav>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - HKDN_GroupUTE_BookStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="renderbody">
+        @RenderBody()
+    </div>
+
+    <div class="container-fluid footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-3">Về Chúng Tôi</h4>
+                    <p class="text-secondary small">Nhà sách UTE cam kết mang đến nguồn tài liệu học tập và nghiên cứu chất lượng nhất cho sinh viên và giảng viên.</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-3">Thông tin</h4>
+                    <a class="btn-link" href="#">Chính sách bảo mật</a><br>
+                    <a class="btn-link" href="#">Điều khoản sử dụng</a><br>
+                    <a class="btn-link" href="#">Vận chuyển & Giao hàng</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-3">Cá nhân</h4>
+                    <a class="btn-link" href="#">Tài khoản</a><br>
+                    <a class="btn-link" href="#">Giỏ hàng</a><br>
+                    <a class="btn-link" href="#">Theo dõi đơn hàng</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="text-light mb-3">Liên hệ</h4>
+                    <p class="small"><i class="fa fa-map-marker-alt me-3 text-primary"></i>48 Cao Thắng, Đà Nẵng</p>
+                    <p class="small"><i class="fa fa-phone-alt me-3 text-primary"></i>+089 931 8713</p>
+                    <p class="small"><i class="fa fa-envelope me-3 text-primary"></i>buiv6493@gmail.com</p>
+                </div>
+            </div>
+            <div class="text-center mt-5 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                <p class="mb-0 text-secondary" style="font-size: 0.8rem;">&copy; 2025 NHÀ SÁCH UTE. Design by UTE Team.</p>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </div>
+
+    <a href="#" class="btn btn-lg back-to-top text-white rounded-circle shadow">
+        <i class="fa fa-arrow-up"></i>
+    </a>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/lightbox/js/lightbox.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/js/main.js"></script>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

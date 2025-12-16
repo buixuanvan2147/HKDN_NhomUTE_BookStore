@@ -1,0 +1,326 @@
+﻿@model IEnumerable<HKDN_GroupUTE_BookStore.ViewModel.QTV_QLSP_TheLoai_List>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+<style>
+    /* --- Các style cơ bản (giữ nguyên từ trang trước) --- */
+    body {
+        background-color: #2D3748;
+        color: #ffffff;
+    }
+
+    .content-wrapper {
+        background-color: #1A202C;
+        min-height: calc(100vh - 56px);
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .container-fluid {
+        padding: 1.5rem 1rem;
+    }
+
+    /* --- Style cho tiêu đề trang --- */
+    h2 {
+        color: #A0AEC0;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        padding-top: 1rem;
+    }
+
+    /* --- Style cho các nút điều khiển (Thêm Mới, Quay Lại) --- */
+    .control-button-container {
+        display: flex;
+        justify-content: flex-start; /* Canh lề trái */
+        gap: 1rem; /* Khoảng cách giữa các nút */
+        margin-bottom: 1.5rem;
+    }
+
+    .control-button {
+        background-color: #4CAF50; /* Một màu xanh lá dễ chịu */
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .control-button i {
+            margin-right: 0.5rem;
+        }
+
+        .control-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Style riêng cho nút Quay Lại */
+        .control-button.btn-back {
+            background-color: #007bff; /* Màu xanh dương */
+        }
+
+            .control-button.btn-back:hover {
+                background-color: #0056b3; /* Xanh dương đậm hơn khi hover */
+            }
+
+    /* --- Style cho bảng --- */
+    .table-container {
+        background-color: #2D3748;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    }
+
+    .table {
+        margin-bottom: 0;
+        color: #ffffff;
+        width: 100%;
+        table-layout: fixed; /* Giúp kiểm soát độ rộng cột tốt hơn */
+        min-width: 700px; /* Tăng min-width để chứa 5 cột */
+    }
+
+        .table thead th {
+            background-color: #1A202C;
+            color: #A0AEC0;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 0.4rem;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .table tbody td {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.5rem 0.4rem;
+            vertical-align: middle;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+            .table tbody td:nth-child(2) { /* Tên thể loại */
+                text-align: left; /* Căn trái cho tên thể loại */
+            }
+
+        .table tbody tr:hover {
+            background-color: #3D4A5E;
+        }
+
+    .table-bordered {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+    /* Định nghĩa độ rộng cột cho bảng thể loại (5 cột) */
+    .table th:nth-child(1), /* STT */
+    .table td:nth-child(1) {
+        width: 8%;
+    }
+
+    .table th:nth-child(2), /* TÊN THỂ LOẠI */
+    .table td:nth-child(2) {
+        width: 35%;
+    }
+
+    .table th:nth-child(3), /* SỐ SÁCH KHÁC NHAU */
+    .table td:nth-child(3) {
+        width: 17%;
+    }
+
+    .table th:nth-child(4), /* TỔNG SÁCH TỒN KHO */
+    .table td:nth-child(4) {
+        width: 17%;
+    }
+
+    .table th:nth-child(5), /* HÀNH ĐỘNG */
+    .table td:nth-child(5) {
+        width: 23%; /* Đảm bảo đủ chỗ cho 3 nút */
+    }
+
+
+    /* --- Style cho các nút hành động trong bảng (Edit, Details, Delete) --- */
+    .action-buttons {
+        white-space: nowrap; /* Ngăn các nút xuống dòng */
+    }
+
+        .action-buttons .btn {
+            margin-right: 0.05rem; /* Giảm khoảng cách giữa các nút */
+            padding: 0.2rem 0.3rem; /* Điều chỉnh padding cho nút nhỏ hơn */
+            font-size: 0.65rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+            .action-buttons .btn:last-child {
+                margin-right: 0;
+            }
+
+        .action-buttons .btn-info {
+            background-color: #60A5FA;
+            border-color: #60A5FA;
+            color: #ffffff;
+        }
+
+            .action-buttons .btn-info:hover {
+                background-color: #3B82F6;
+                border-color: #3B82F6;
+            }
+
+        .action-buttons .btn-warning {
+            background-color: #FCD34D;
+            border-color: #FCD34D;
+            color: #1A202C; /* Màu chữ đen cho nền vàng */
+        }
+
+            .action-buttons .btn-warning:hover {
+                background-color: #FBBF24;
+                border-color: #FBBF24;
+            }
+
+        .action-buttons .btn-danger {
+            background-color: #F29F05; /* Màu cam đậm hơn */
+            border-color: #F29F05;
+            color: #ffffff;
+        }
+
+            .action-buttons .btn-danger:hover {
+                background-color: #DB8A00; /* Cam tối hơn khi hover */
+                border-color: #DB8A00;
+            }
+
+    /* --- Media Queries --- */
+    @@media (max-width: 991.98px) {
+        .control-button-container {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        .control-button {
+            width: 100%;
+        }
+
+        .table thead th,
+        .table tbody td {
+            padding: 0.4rem 0.2rem;
+            font-size: 0.7rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.15rem 0.25rem;
+            font-size: 0.6rem;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .table {
+            min-width: 600px; /* Giảm min-width cho màn hình nhỏ hơn nhưng vẫn đảm bảo hiển thị */
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <h2>Quản Lý Thể Loại Sách</h2>
+
+    <div class="control-button-container">
+        <a href="@Url.Action("QuanLySanPham_QuanTriVien", "QuanTriVien")" class="control-button btn-back">
+            <i class="fas fa-arrow-alt-circle-left me-2"></i> Quay Lại
+        </a>
+        <a href="@Url.Action("Create", "QTV_QLSP_TheLoai")" class="control-button">
+            <i class="fas fa-plus-circle me-2"></i> Thêm Thể Loại Mới
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table class="table table-bordered table-hover align-middle" id="categoriesTable">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">TÊN THỂ LOẠI</th>
+                    <th scope="col">SỐ SÁCH KHÁC NHAU</th>
+                    <th scope="col">TỔNG SÁCH TỒN KHO</th>
+                    <th scope="col">HÀNH ĐỘNG</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null) // Added .Any() to check if model has data
+                {
+                    int stt = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@stt</td>
+                            <td>@item.TenTheLoai</td>
+                            <td>@item.SoLoaiSach.ToString("N0")</td>
+                            <td>@item.TongSachTheoTheLoai.ToString("N0")</td>
+                            <td class="action-buttons">
+                                <a href="@Url.Action("Edit", "QTV_QLSP_TheLoai", new { id=item.MaTheLoai })" class="btn btn-warning btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>
+                                <a href="@Url.Action("Details", "QTV_QLSP_TheLoai", new { id=item.MaTheLoai })" class="btn btn-info btn-sm" title="Chi tiết"><i class="fas fa-eye"></i></a>
+                                <a href="@Url.Action("Delete", "QTV_QLSP_TheLoai", new { id=item.MaTheLoai })"
+                                   onclick="return confirm('Xác nhận xóa thể loại này?');"
+                                   class="btn btn-danger btn-sm" title="Xóa">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        stt++;
+                    }
+                }
+                else
+                {
+                    <tr class="no-data-row">
+                        <td colspan="5" class="text-center">Không có dữ liệu thể loại.</td> @* Updated colspan to 5 *@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Hàm cập nhật STT và hiển thị/ẩn hàng "Không có dữ liệu"
+            function updateTableStatus() {
+                const $tableBody = $('#categoriesTable tbody');
+                const $rows = $tableBody.find('tr').not('.no-data-row');
+                const $noDataRow = $tableBody.find('.no-data-row');
+
+                if ($rows.length === 0) {
+                    $noDataRow.show(); // Hiển thị hàng "Không có dữ liệu" nếu không có dòng nào khác
+                } else {
+                    $noDataRow.hide(); // Ẩn nếu có dữ liệu
+                    // Cập nhật STT cho các dòng hiện có
+                    let stt = 1;
+                    $rows.each(function () {
+                        $(this).find('td:first-child').text(stt++);
+                    });
+                }
+            }
+
+            // Gọi hàm khi trang tải xong
+            updateTableStatus();
+        });
+    </script>
+}

@@ -1,0 +1,186 @@
+﻿@model HKDN_GroupUTE_BookStore.Models.Donhang
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* Container chính cho toàn bộ nội dung */
+    .delete-order-container-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 20px;
+        min-height: calc(100vh - 56px);
+        color: #E2E8F0;
+        margin-top: 30px;
+    }
+
+    /* Card chứa thông tin chi tiết */
+    .details-card {
+        background-color: #2D3748;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        width: 100%;
+        max-width: 800px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .details-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Tiêu đề trang */
+    .details-card h2 {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #EF4444; /* Màu đỏ để nhấn mạnh hành động xóa */
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .details-card h3 {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #E2E8F0;
+        margin-bottom: 20px;
+    }
+
+    .details-card hr {
+        border-color: #4A5568;
+        margin-bottom: 30px;
+    }
+
+    /* Danh sách chi tiết */
+    .details-list {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        gap: 15px 30px;
+        margin-bottom: 30px;
+    }
+
+    .details-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #A0AEC0;
+        text-align: left;
+    }
+
+    .details-value {
+        font-size: 1rem;
+        color: #E2E8F0;
+        font-weight: 500;
+    }
+
+    /* Nhóm nút hành động */
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    .action-button i {
+        margin-right: 8px;
+    }
+
+    .action-button.delete {
+        background-color: #EF4444;
+    }
+
+    .action-button.delete:hover {
+        background-color: #DC2626;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(239, 68, 68, 0.25);
+    }
+
+    .back-link {
+        padding: 10px 20px;
+        background: linear-gradient(45deg, #63B3ED, #4299E1);
+        border: none;
+        color: #FFFFFF;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(99, 179, 237, 0.15);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .back-link:hover {
+        background: linear-gradient(45deg, #4299E1, #63B3ED);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(99, 179, 237, 0.25);
+    }
+
+</style>
+
+<div class="delete-order-container-wrapper">
+    <div class="details-card">
+        <h2>XÓA ĐƠN HÀNG</h2>
+        <h3>Bạn có chắc chắn muốn xóa đơn hàng này?</h3>
+        <hr />
+        <dl class="details-list">
+            <dt class="details-label">Mã Đơn Hàng</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.MaDonHang)</dd>
+
+            <dt class="details-label">Mã Người Dùng</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.MaNguoiDung)</dd>
+
+            <dt class="details-label">Họ Tên Người Dùng</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.MaNguoiDungNavigation.HoTen)</dd>
+
+            <dt class="details-label">Tổng Tiền</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.TongTien)</dd>
+
+            <dt class="details-label">Trạng Thái Đơn Hàng</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.TrangThaiDonHang)</dd>
+
+            <dt class="details-label">Địa Chỉ Giao</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.DiaChiGiao)</dd>
+
+            <dt class="details-label">Ngày Tạo</dt>
+            <dd class="details-value">@Html.DisplayFor(model => model.NgayTao)</dd>
+
+            
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions">
+                <button type="submit" class="action-button delete" title="Xóa">
+                    <i class="fas fa-trash-alt"></i> Xóa
+                </button>
+                <a href="@Url.Action("Index")" class="back-link" title="Quay lại danh sách">
+                    <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                </a>
+            </div>
+        }
+    </div>
+</div>

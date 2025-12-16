@@ -1,0 +1,387 @@
+﻿@model HKDN_GroupUTE_BookStore.ViewModel.QTV_TrangChu_LoadDuLieu_VM
+@{
+    ViewBag.Title = "TrangChu_QuanTriVien";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* Wrapper class để scope CSS cho view này */
+    .view-trangchu {
+        max-width: none;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        background-color: #1A202C; /* Màu nền chủ đạo */
+        min-height: calc(100vh - 4rem);
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+        .view-trangchu main {
+            background-color: #1A202C !important; /* Đảm bảo đồng bộ với theme */
+        }
+
+        .view-trangchu .dashboard-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .view-trangchu .dashboard-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .view-trangchu .dashboard-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .view-trangchu .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: space-between;
+        }
+
+        .view-trangchu .stat-card {
+            background: #2D3748;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            flex: 1;
+            min-width: 300px;
+            max-width: 32%;
+        }
+
+            .view-trangchu .stat-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+                background: linear-gradient(135deg, #2D3748, #3b4a66);
+            }
+
+        .view-trangchu .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .view-trangchu .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+            .view-trangchu .stat-icon svg {
+                width: 1.25rem;
+                height: 1.25rem;
+                color: white;
+            }
+
+        .view-trangchu .stat-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-trangchu .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .view-trangchu .stat-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+
+        .view-trangchu .icon-primary {
+            background-color: #4FD1C5;
+        }
+
+        .view-trangchu .icon-success {
+            background-color: #28a745;
+        }
+
+        .view-trangchu .icon-warning {
+            background-color: #f1c40f;
+        }
+
+        .view-trangchu .icon-danger {
+            background-color: #dc3545;
+        }
+
+        .view-trangchu .orders-section {
+            background: #2D3748;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-trangchu .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .view-trangchu .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .view-trangchu .status-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            justify-content: space-between;
+        }
+
+        .view-trangchu .status-card {
+            background: #2D3748;
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            max-width: 32%;
+            position: relative;
+        }
+
+            .view-trangchu .status-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+                border-color: #4FD1C5;
+                background: linear-gradient(135deg, #2D3748, #3b4a66);
+            }
+
+        .view-trangchu .status-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .view-trangchu .status-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .view-trangchu .chart-container {
+            margin-top: 2.5rem;
+            height: 300px;
+            position: relative;
+        }
+
+        .view-trangchu .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+    @@media (max-width: 768px) {
+        .view-trangchu {
+            padding: 1rem;
+        }
+
+            .view-trangchu .dashboard-title {
+                font-size: 1.75rem;
+            }
+
+            .view-trangchu .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .view-trangchu .section-title {
+                font-size: 1.25rem;
+            }
+
+            .view-trangchu .status-value {
+                font-size: 1.25rem;
+            }
+
+            .view-trangchu .chart-container {
+                height: 250px;
+            }
+
+            .view-trangchu .stat-card, .view-trangchu .status-card {
+                max-width: 100%;
+            }
+    }
+</style>
+
+<div class="view-trangchu">
+    <header class="dashboard-header">
+        <h1 class="dashboard-title">Tổng quan hệ thống</h1>
+        <p class="dashboard-subtitle">Cập nhật lúc @DateTime.Now.ToString("hh:mm tt zz, dddd, dd/MM/yyyy")</p>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon icon-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-title">Tổng người dùng</div>
+                </div>
+            </div>
+            <div class="stat-value">@Model.TongSoNguoiDung người dùng</div>
+            <div class="stat-description">
+                Khách hàng: @Model.TongSoKhachHang | Quản trị viên: @Model.TongSoQuanTriVien
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon icon-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-title">Tổng đơn hàng</div>
+                </div>
+            </div>
+            <div class="stat-value">@Model.TongDonHang đơn hàng</div>
+            <div class="stat-description">
+                Đã hoàn thành: @Model.DaHoanThanh | Chưa hoàn thành: @Model.ChuaHoanThanh
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-icon icon-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-title">Tổng sách trong hệ thống</div>
+                </div>
+            </div>
+            <div class="stat-value">@Model.TongSach quyển - @Model.TongTheLoai loại</div>
+            <div class="stat-description">Tồn kho: @Model.TongSachTonKho | Đã bán: @Model.TongSachDaBan</div>
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <h2 class="section-title">Thống kê đơn hàng</h2>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-value">@Model.ChuaHoanThanh</div>
+                <div class="status-label">Đang xử lý</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value">@Model.DaGiao</div>
+                <div class="status-label">Đã giao</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value">@Model.DaHuy</div>
+                <div class="status-label">Đã hủy</div>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="barChart" style="width: 100%; height: 100%;"></canvas>
+        </div>
+        <h3 style="margin-top:12px;" class="card-title">Biểu đồ thể hiện doanh thu theo từng tháng</h3>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var labels = @Html.Raw(Json.Serialize(Model.Thang));
+        var dangXuLy = @Html.Raw(Json.Serialize(Model.DonDangXuLy));
+        var daGiao = @Html.Raw(Json.Serialize(Model.DonDaGiao));
+        var daHuy = @Html.Raw(Json.Serialize(Model.DonDaHuy));
+
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Đang xử lý',
+                        data: dangXuLy,
+                        backgroundColor: 'rgba(40,167,69,0.7)'
+                    },
+                    {
+                        label: 'Đã giao',
+                        data: daGiao,
+                        backgroundColor: 'rgba(241,196,15,0.7)'
+                    },
+                    {
+                        label: 'Đã hủy',
+                        data: daHuy,
+                        backgroundColor: 'rgba(220,53,69,0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff', // Màu chữ chú thích
+                            font: {
+                                size: 14 // Kích thước chữ
+                            }
+                        }
+                    }
+                },
+                //Chỉnh màu chữ cho trục X và Y (Tháng 1, 2... và số lượng) cho dễ đọc trên nền tối
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục ngang
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục dọc
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+}
