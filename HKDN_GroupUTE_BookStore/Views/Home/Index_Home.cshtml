@@ -1,475 +1,584 @@
 ﻿@model HKDN_GroupUTE_BookStore.ViewModel.Index_Home_ListSach
 @{
-    ViewBag.Title = "Index_Home";
+    ViewBag.Title = "Trang Chủ - Nhà Sách UTE";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
+    /* --- 0. BIẾN MÀU SẮC CHUNG --- */
+    :root {
+        --primary-color: #0F9D58; /* Xanh chủ đạo */
+        --primary-hover: #0B8043; /* Xanh đậm khi hover */
+        --bg-soft-mint: #f2fbf7; /* Nền xanh rất nhạt cho sự liền mạch */
+        --text-dark: #333;
+        --text-grey: #666;
+    }
+
+    /* --- 1. HERO SECTION & TÌM KIẾM --- */
+    .hero-search-section {
+        /* Gradient xanh mát mắt */
+        background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
+        position: relative;
+        padding: 60px 0 150px 0; /* Padding dưới lớn để chứa wave */
+        overflow: hidden;
+    }
+
+    /* Form tìm kiếm */
+    .search-box-modern {
+        background: #fff;
+        border-radius: 50px;
+        padding: 5px 5px 5px 25px;
+        box-shadow: 0 10px 30px rgba(15, 157, 88, 0.15);
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.8);
+        transition: all 0.3s ease;
+    }
+
+        .search-box-modern:focus-within {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(15, 157, 88, 0.2);
+            border-color: var(--primary-color);
+        }
+
+    .search-input-modern {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 1rem;
+        color: #555;
+        flex-grow: 1;
+        height: 45px;
+    }
+
+    .search-btn-modern {
+        white-space: nowrap;
+        border-radius: 40px;
+        padding: 0 35px;
+        height: 45px;
+        font-weight: 600;
+        background: var(--primary-color); /* Dùng màu chủ đạo */
+        border: none;
+        color: white;
+        box-shadow: 0 4px 15px rgba(15, 157, 88, 0.3);
+        transition: all 0.3s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .search-btn-modern:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(15, 157, 88, 0.4);
+        }
+
+    /* Wave nối Hero và Book Section */
+    .wave-hero-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+        .wave-hero-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(130% + 1.3px);
+            height: 100px;
+        }
+        /* QUAN TRỌNG: Fill màu trùng với nền của section Kệ sách bên dưới */
+        .wave-hero-bottom .shape-fill {
+            fill: var(--bg-soft-mint);
+        }
+
+    /* --- 2. BOOK SECTION (KỆ SÁCH) --- */
+    .book-section-wrapper {
+        background-color: var(--bg-soft-mint); /* Nền xanh nhạt nối tiếp */
+        padding-top: 20px;
+        padding-bottom: 100px; /* Chừa chỗ cho wave dưới */
+        position: relative;
+    }
+
     .book-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        height: 450px;
+        border: none;
+        border-radius: 15px !important;
+        background: #fff;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        border: 1px solid #dee2e6;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        border-radius: 0.375rem !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
         .book-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(15, 157, 88, 0.15);
         }
 
-        .book-card .book-img {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            overflow: hidden;
-        }
-
-            .book-card .book-img img {
-                max-height: 100%;
-                width: auto;
-                object-fit: contain;
-                border-radius: 0.375rem 0.375rem 0 0;
-                cursor: pointer;
-            }
-
-        .book-card .book-info {
-            height: 150px;
-            background-color: #fff;
-            padding: 1rem;
-            border-top: none !important;
-            border-radius: 0 0 0.375rem 0.375rem;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-    .book-title {
-        font-size: 1.1rem;
-        color: #333;
-        font-weight: 600;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+    .book-img {
+        height: 240px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        background: #fff;
+        position: relative;
     }
 
-    .carousel-item {
-        height: 300px;
-    }
-
-        .carousel-item img {
+        .book-img img {
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
+            transition: transform 0.3s;
+            cursor: pointer;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+        }
+
+    .book-card:hover .book-img img {
+        transform: scale(1.08);
+    }
+
+    /* Badge Kho (Đã thêm lại) */
+    .badge-stock {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(51, 51, 51, 0.8);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 5;
+        backdrop-filter: blur(2px);
+    }
+
+    .badge-hot {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff4757;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        z-index: 5;
+        box-shadow: 0 2px 5px rgba(255, 71, 87, 0.3);
+    }
+
+    .book-info {
+        padding: 15px 20px 20px 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: #fff;
+    }
+
+    .book-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--text-dark);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.5em;
+        line-height: 1.25;
+    }
+
+    /* Nút thêm giỏ hàng (Đã chỉnh màu) */
+    .btn-add-cart {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 8px 15px;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.2);
+    }
+
+        .btn-add-cart:hover {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(15, 157, 88, 0.3);
+        }
+
+    /* Tab navigation style */
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        background-color: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3);
+    }
+
+    .nav-pills .nav-link {
+        color: var(--text-dark);
+        background: #fff;
+        margin: 0 5px;
+        transition: all 0.3s;
+    }
+
+    /* Wave cuối Book Section */
+    .wave-book-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        transform: rotate(180deg); /* Lật ngược để tạo hiệu ứng kết thúc */
+    }
+
+        .wave-book-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(130% + 1.3px);
+            height: 80px;
+        }
+
+        .wave-book-bottom .shape-fill {
+            fill: #FFFFFF; /* Chuyển về màu trắng cho section thống kê */
+        }
+
+    /* --- 3. STATS & TESTIMONIALS --- */
+    .stats-section {
+        background: #fff;
+        padding: 60px 0;
+    }
+
+    .stat-item {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .stat-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(15, 157, 88, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        color: var(--primary-color);
+        font-size: 2rem;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #333;
+    }
+
+    .testimonial-section {
+        background-color: var(--bg-soft-mint);
+        padding: 80px 0;
+        position: relative;
+    }
+
+    .testimonial-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        height: 100%;
+        transition: transform 0.3s;
+    }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(15, 157, 88, 0.1);
         }
 </style>
 
-<!-- Hero Start -->
-<div class="container-fluid py-5 mb-5 hero-header">
-    <div class="container py-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-md-12 col-lg-7">
-                <h4 class="mb-3 text-secondary">Mua Sách Thả Ga</h4>
-                <h1 class="mb-5 display-3 text-primary">
-                    Giá kịch
-                    sàn
+<div class="hero-search-section">
+    <div style="position: absolute; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; top: -100px; left: -50px;"></div>
+    <div style="position: absolute; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; bottom: 50px; right: 10%;"></div>
+
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h4 class="text-primary fw-bold text-uppercase mb-2" style="letter-spacing: 2px; font-size: 0.9rem;">Thư viện tri thức</h4>
+                <h1 class="display-5 fw-bold text-dark mb-4">
+                    Tìm cuốn sách <span class="text-primary position-relative">yêu thích</span> của bạn
                 </h1>
-                <div class="position-relative mx-auto">
-                    <!-- Form tìm kiếm -->
-                    <form action="@Url.Action("TimKiem", "Home")" method="get" class="d-flex">
-                        <input class="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill"
-                               type="text" name="tuKhoa" placeholder="Nhập từ khóa" value="@ViewBag.TuKhoa">
-                        <button type="submit"
-                                class="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
-                                style="top: 0; right: 25%;">
-                            Tìm kiếm
-                        </button>
+
+                <div class="position-relative mx-auto mt-5" style="max-width: 650px;">
+                    <form action="@Url.Action("TimKiem", "Home")" method="get" class="w-100">
+                        <div class="search-box-modern">
+                            <i class="fas fa-search text-secondary fs-5 me-2"></i>
+                            <input class="search-input-modern"
+                                   type="text" name="tuKhoa" placeholder="Nhập tên sách, tác giả..." value="@ViewBag.TuKhoa">
+
+                            <button type="submit" class="search-btn-modern">
+                                Tìm kiếm
+                            </button>
+                        </div>
                     </form>
                 </div>
-                <!-- Hiển thị thông báo tìm kiếm -->
+
                 @if (!string.IsNullOrEmpty(ViewBag.TuKhoa))
                 {
-                    <p class="mt-3 text-success">Kết quả tìm kiếm cho: "<strong>@ViewBag.TuKhoa</strong>"</p>
+                    <div class="mt-4 animate__animated animate__fadeInUp">
+                        <div class="d-inline-block bg-white px-4 py-2 rounded-pill shadow-sm border border-light">
+                            <span class="text-secondary me-2">Kết quả cho:</span>
+                            <span class="text-primary fw-bold fs-5">"@ViewBag.TuKhoa"</span>
+                            <a href="@Url.Action("Index_Home", "Home")" class="ms-3 text-danger text-decoration-none small">
+                                <i class="fas fa-times-circle"></i> Xóa
+                            </a>
+                        </div>
+                    </div>
                 }
             </div>
-            <div class="col-md-12 col-lg-5">
-                <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
-                    <div class="carousel-inner" role="listbox">
-                        <div class="carousel-item active rounded">
-                            <img src="~/images/nhaGiaKim.jpg" class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Tiểu Thuyết</a>
-                        </div>
-                        <div class="carousel-item rounded">
-                            <img src="~/images/luocSuThoiGian.jpg" class="img-fluid w-100 h-100 bg-secondary rounded" alt="Second slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Khoa Học</a>
-                        </div>
-                        <div class="carousel-item rounded">
-                            <img src="~/images/dacNhanTam.jpg" class="img-fluid w-100 h-100 bg-secondary rounded" alt="Third slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded text-center">
-                                Tâm Lý<br />Kỹ Năng Sống
-                            </a>
-                        </div>
-                        <div class="carousel-item rounded">
-                            <img src="~/images/lichSuVietNam.jpg" class="img-fluid w-100 h-100 bg-light rounded" alt="Fifth slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Lịch Sử</a>
-                        </div>
-                        <div class="carousel-item rounded">
-                            <img src="~/images/thienDuongMuaHe.jpg" class="img-fluid w-100 h-100 bg-light rounded" alt="Sixth slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Tiểu Thuyết</a>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
-</div>
-<!-- Hero End -->
 
-<!-- Featurs Section Start -->
-<div class="container-fluid featurs py-5">
-    <div class="container py-5">
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="featurs-item text-center rounded bg-light p-4">
-                    <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
-                        <i class="fas fa-car-side fa-3x text-white"></i>
-                    </div>
-                    <div class="featurs-content text-center">
-                        <h5>Miễn phí vận chuyển</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="featurs-item text-center rounded bg-light p-4">
-                    <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
-                        <i class="fas fa-user-shield fa-3x text-white"></i>
-                    </div>
-                    <div class="featurs-content text-center">
-                        <h5>Thanh toán an toàn</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="featurs-item text-center rounded bg-light p-4">
-                    <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
-                        <i class="fas fa-exchange-alt fa-3x text-white"></i>
-                    </div>
-                    <div class="featurs-content text-center">
-                        <h5>30 ngày trả hàng</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="featurs-item text-center rounded bg-light p-4">
-                    <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
-                        <i class="fa fa-phone-alt fa-3x text-white"></i>
-                    </div>
-                    <div class="featurs-content text-center">
-                        <h5>Hỗ trợ 24/7</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="wave-hero-bottom">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
     </div>
 </div>
-<!-- Featurs Section End -->
 
-<!-- Fruits Shop Start -->
-<div class="container-fluid fruite py-5" style="background-color: #ffffff;">
-    <div class="container py-5">
+<div class="book-section-wrapper">
+    <div class="container">
         <div class="tab-class text-center">
-            <div class="row g-4">
+            <div class="row g-4 align-items-center mb-5">
                 <div class="col-lg-4 text-start">
-                    <h1>Xu hướng mua sắm</h1>
+                    <h2 class="text-dark fw-bold mb-0">Kệ sách Online</h2>
                 </div>
                 <div class="col-lg-8 text-end">
-                    <ul class="nav nav-pills d-inline-flex text-center mb-5">
+                    <ul class="nav nav-pills d-inline-flex text-center">
                         <li class="nav-item">
-                            <a class="d-flex m-2 py-2 bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-1">
-                                <span class="text-dark" style="width: 130px;">Tất cả sản phẩm</span>
+                            <a class="d-flex m-2 py-2 px-4 rounded-pill active" data-bs-toggle="pill" href="#tab-1">
+                                <span class="fw-bold">Tất cả</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="d-flex py-2 m-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-2">
-                                <span class="text-dark" style="width: 170px;">Sách Hot</span>
+                            <a class="d-flex py-2 px-4 m-2 rounded-pill" data-bs-toggle="pill" href="#tab-2">
+                                <span class="fw-bold">Sách Hot</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="d-flex py-2 m-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-3">
-                                <span class="text-dark" style="width: 150px;">Xu hướng</span>
+                            <a class="d-flex py-2 px-4 m-2 rounded-pill" data-bs-toggle="pill" href="#tab-3">
+                                <span class="fw-bold">Xu hướng</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
+
             <div class="tab-content">
-                <!-- Tab Tất cả sản phẩm -->
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        <div class="col-lg-12">
-                            <div class="row g-4">
-                                @if (Model.TatCaSach != null && Model.TatCaSach.Any())
-                                {
-                                    foreach (var item1 in Model.TatCaSach) // Loại bỏ @
-                                    {
-                                        <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="book-card position-relative">
-                                                <div class="book-img">
-                                                    <img src="~/images/@item1.UrlanhBia" class="img-fluid w-100 rounded-top book-image" data-masach="@item1.MaSach" alt="@item1.TenSach" />
+                        @if (Model.TatCaSach != null && Model.TatCaSach.Any())
+                        {
+                            foreach (var item in Model.TatCaSach)
+                            {
+                                <div class="col-6 col-md-4 col-lg-3">
+                                    <div class="book-card">
+                                        <div class="book-img">
+                                            <img src="~/images/@item.UrlanhBia" class="book-image" data-masach="@item.MaSach" alt="@item.TenSach" />
+                                            <div class="badge-stock">Kho: @item.SoLuongTon</div>
+                                            @if (item.SoLuongTon > 0 && item.SoLuongTon < 10)
+                                            {
+                                                <div class="badge-hot" style="background:#f39c12; right:auto; left:10px; top:35px;">Sắp hết</div>
+                                            }
+                                        </div>
+                                        <div class="book-info">
+                                            <h4 class="book-title" title="@item.TenSach">@item.TenSach</h4>
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <span class="text-primary fs-5 fw-bold">Giá bán: @item.Gia.ToString("N0") đ</span>
                                                 </div>
-                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px; z-index: 10; font-weight: bold;">
-                                                    Tồn kho: @item1.SoLuongTon
-                                                </div>
-                                                <div class="book-info border border-secondary border-top-0">
-                                                    <h4 class="book-title">@item1.TenSach</h4>
-                                                    <div class="d-flex justify-content-between flex-wrap align-items-end mt-2">
-                                                        <p class="text-dark fs-5 fw-bold mb-0">@item1.Gia.ToString("N0") đồng</p>
-                                                        <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-masach="@item1.MaSach" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
-                                                            <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                            Add to cart
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <button class="btn-add-cart add-to-cart" data-masach="@item.MaSach">
+                                                    <i class="fa fa-shopping-bag me-2"></i> Thêm vào giỏ hàng
+                                                </button>
                                             </div>
                                         </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="col-12 text-center">
-                                        <p class="text-danger">Không tìm thấy sản phẩm nào phù hợp với từ khóa "@ViewBag.TuKhoa".</p>
                                     </div>
-                                }
-                            </div>
-                        </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+
+                            <div class="col-12 py-5 text-muted">Không có sách nào.</div>
+                        }
                     </div>
                 </div>
-                <!-- Tab Sách Hot -->
+
                 <div id="tab-2" class="tab-pane fade show p-0">
                     <div class="row g-4">
-                        <div class="col-lg-12">
-                            <div class="row g-4">
-                                @if (Model.SachHot != null && Model.SachHot.Any())
-                                {
-                                    foreach (var item2 in Model.SachHot) // Loại bỏ @
-                                    {
-                                        <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="book-card position-relative">
-                                                <div class="book-img">
-                                                    <img src="~/images/@item2.UrlanhBia" class="img-fluid w-100 rounded-top book-image" data-masach="@item2.MaSach" alt="@item2.TenSach" />
+                        @if (Model.SachHot != null && Model.SachHot.Any())
+                        {
+                            foreach (var item in Model.SachHot)
+                            {
+                                <div class="col-6 col-md-4 col-lg-3">
+                                    <div class="book-card">
+                                        <div class="book-img">
+                                            <img src="~/images/@item.UrlanhBia" class="book-image" data-masach="@item.MaSach" alt="@item.TenSach" />
+                                            <div class="badge-stock">Kho: @item.SoLuongTon</div>
+                                            <div class="badge-hot">HOT</div>
+                                        </div>
+                                        <div class="book-info">
+                                            <h4 class="book-title" title="@item.TenSach">@item.TenSach</h4>
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <span class="text-primary fs-5 fw-bold">Giá bán: @item.Gia.ToString("N0") đ</span>
                                                 </div>
-                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px; z-index: 10; font-weight: bold;">
-                                                    Sách Hot
-                                                </div>
-                                                <div class="book-info border border-secondary border-top-0">
-                                                    <h4 class="book-title">@item2.TenSach</h4>
-                                                    <div class="d-flex justify-content-between flex-wrap align-items-end mt-2">
-                                                        <p class="text-dark fs-5 fw-bold mb-0">@item2.Gia.ToString("N0") đồng</p>
-                                                        <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-masach="@item2.MaSach" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
-                                                            <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                            Add to cart
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <button class="btn-add-cart add-to-cart" data-masach="@item.MaSach">
+                                                    <i class="fa fa-shopping-bag me-2"></i> Thêm vào giỏ hàng
+                                                </button>
                                             </div>
                                         </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="col-12 text-center">
-                                        <p class="text-danger">Không tìm thấy sách hot nào phù hợp với từ khóa "@ViewBag.TuKhoa".</p>
                                     </div>
-                                }
-                            </div>
-                        </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
-                <!-- Tab Xu hướng -->
+
                 <div id="tab-3" class="tab-pane fade show p-0">
                     <div class="row g-4">
-                        <div class="col-lg-12">
-                            <div class="row g-4">
-                                @if (Model.SachXuHuong != null && Model.SachXuHuong.Any())
-                                {
-                                    foreach (var item3 in Model.SachXuHuong) // Loại bỏ @
-                                    {
-                                        <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="book-card position-relative">
-                                                <div class="book-img">
-                                                    <img src="~/images/@item3.UrlanhBia" class="img-fluid w-100 rounded-top book-image" data-masach="@item3.MaSach" alt="@item3.TenSach" />
+                        @if (Model.SachXuHuong != null && Model.SachXuHuong.Any())
+                        {
+                            foreach (var item in Model.SachXuHuong)
+                            {
+                                <div class="col-6 col-md-4 col-lg-3">
+                                    <div class="book-card">
+                                        <div class="book-img">
+                                            <img src="~/images/@item.UrlanhBia" class="book-image" data-masach="@item.MaSach" alt="@item.TenSach" />
+                                            <div class="badge-stock">Kho: @item.SoLuongTon</div>
+                                            <div class="badge-hot" style="background: #0984e3;">Xu hướng</div>
+                                        </div>
+                                        <div class="book-info">
+                                            <h4 class="book-title" title="@item.TenSach">@item.TenSach</h4>
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <span class="text-primary fs-5 fw-bold">Giá bán: @item.Gia.ToString("N0") đ</span>
                                                 </div>
-                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px; z-index: 10; font-weight: bold;">
-                                                    Xu hướng
-                                                </div>
-                                                <div class="book-info border border-secondary border-top-0">
-                                                    <h4 class="book-title">@item3.TenSach</h4>
-                                                    <div class="d-flex justify-content-between flex-wrap align-items-end mt-2">
-                                                        <p class="text-dark fs-5 fw-bold mb-0">@item3.Gia.ToString("N0") đồng</p>
-                                                        <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" data-masach="@item3.MaSach" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
-                                                            <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                            Add to cart
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                <button class="btn-add-cart add-to-cart" data-masach="@item.MaSach">
+                                                    <i class="fa fa-shopping-bag me-2"></i> Thêm vào giỏ hàng
+                                                </button>
                                             </div>
                                         </div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="col-12 text-center">
-                                        <p class="text-danger">Không tìm thấy sách xu hướng nào phù hợp với từ khóa "@ViewBag.TuKhoa".</p>
                                     </div>
-                                }
-                            </div>
-                        </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="wave-book-bottom">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
 </div>
-<!-- Books Shop End -->
-<!-- Fact Start -->
-<div class="container-fluid py-5">
+
+<div class="stats-section">
     <div class="container">
-        <div class="bg-light p-5 rounded">
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Khách hàng hài lòng</h4>
-                        <h1>1963</h1>
-                    </div>
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <span class="stat-number">1,963</span>
+                    <span class="stat-label">Khách hàng</span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Chất lượng dịch vụ</h4>
-                        <h1>99%</h1>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-smile"></i></div>
+                    <span class="stat-number">99%</span>
+                    <span class="stat-label">Hài lòng</span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Giấy chứng nhận</h4>
-                        <h1>33</h1>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-certificate"></i></div>
+                    <span class="stat-number">33</span>
+                    <span class="stat-label">Chứng nhận</span>
                 </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="counter bg-white rounded p-5">
-                        <i class="fa fa-users text-secondary"></i>
-                        <h4>Top sách được săn đón nhất</h4>
-                        <h1>789</h1>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                    <span class="stat-number">789</span>
+                    <span class="stat-label">Sách bán chạy</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Fact End -->
-<!-- Tastimonial Start -->
-<div class="container-fluid testimonial py-5">
-    <div class="container py-5">
-        <div class="testimonial-header text-center">
-            <h4 class="text-primary">Lời chứng thực của chúng tôi</h4>
-            <h1 class="display-5 mb-5 text-dark">
-                Khách hàng của chúng
-                tôi nói gì!
-            </h1>
+
+<div class="testimonial-section">
+    <div class="custom-shape-divider-top" style="position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0;">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" style="position: relative; display: block; width: calc(130% + 1.3px); height: 50px;">
+            <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" fill="#FFFFFF"></path>
+        </svg>
+    </div>
+
+    <div class="container position-relative z-2">
+        <div class="text-center mb-5">
+            <h4 class="text-primary fw-bold text-uppercase">Đánh giá</h4>
+            <h1 class="display-6 fw-bold text-dark">Khách hàng nói gì về chúng tôi!</h1>
         </div>
-        <div class="owl-carousel testimonial-carousel">
-            <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                <div class="position-relative">
-                    <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                    <div class="mb-4 pb-4 border-bottom border-secondary">
-                        <p class="mb-0">
-                            "Sách được đóng gói rất cẩn thận, giao đến tay vẫn như mới. Rất hài lòng!"
-                        </p>
-                    </div>
-                    <div class="d-flex align-items-center flex-nowrap">
-                        <div class="bg-secondary rounded">
-                            <img src="~/images/index_Home_defaultUser1.jpg" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="User">
-                        </div>
-                        <div class="ms-4 d-block">
-                            <h4 class="text-dark">Tên khách hàng</h4>
-                            <p class="m-0 pb-3">Nguyễn Văn Khánh</p>
-                            <div class="d-flex pe-5">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div style="font-size: 4rem; color: rgba(15, 157, 88, 0.1); position: absolute; top: 20px; left: 20px; font-family: serif; line-height: 1;">“</div>
+                    <p class="mb-4 mt-4" style="position:relative; z-index:2; font-style:italic; color:#555;">Sách được đóng gói rất cẩn thận, giao đến tay vẫn như mới. Rất hài lòng về cách phục vụ!</p>
+                    <div style="display: flex; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                        <img src="~/images/index_Home_defaultUser1.jpg" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" alt="User">
+                        <div>
+                            <h6 class="m-0 fw-bold">Bùi Xuân Văn</h6>
+                            <small class="text-muted">Sinh viên</small>
+                            <div class="text-warning small"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                <div class="position-relative">
-                    <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                    <div class="mb-4 pb-4 border-bottom border-secondary">
-                        <p class="mb-0">
-                            Nhân viên hỗ trợ rất nhiệt tình, giúp mình chọn được sách đúng nhu cầu.
-                        </p>
-                    </div>
-                    <div class="d-flex align-items-center flex-nowrap">
-                        <div class="bg-secondary rounded">
-                            <img src="~/images/index_Home_defaultUser3.png" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="User">
-                        </div>
-                        <div class="ms-4 d-block">
-                            <h4 class="text-dark">Tên Khách Hàng</h4>
-                            <p class="m-0 pb-3">Nguyễn Trọng abc</p>
-                            <div class="d-flex pe-5">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div style="font-size: 4rem; color: rgba(15, 157, 88, 0.1); position: absolute; top: 20px; left: 20px; font-family: serif; line-height: 1;">“</div>
+                    <p class="mb-4 mt-4" style="position:relative; z-index:2; font-style:italic; color:#555;">Giá cả hợp lý, hay có khuyến mãi. Sẽ tiếp tục ủng hộ nhà sách dài dài.</p>
+                    <div style="display: flex; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                        <img src="~/images/index_Home_defaultUser2.jpg" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" alt="User">
+                        <div>
+                            <h6 class="m-0 fw-bold">Nguyễn Văn Viên</h6>
+                            <small class="text-muted">Kỹ sư</small>
+                            <div class="text-warning small"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                <div class="position-relative">
-                    <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                    <div class="mb-4 pb-4 border-bottom border-secondary">
-                        <p class="mb-0">
-                            Giá cả hợp lý, hay có khuyến mãi. Sẽ tiếp tục ủng hộ.
-                        </p>
-                    </div>
-                    <div class="d-flex align-items-center flex-nowrap">
-                        <div class="bg-secondary rounded">
-                            <img src="~/images/index_Home_defaultUser2.jpg" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="User">
-                        </div>
-                        <div class="ms-4 d-block">
-                            <h4 class="text-dark">Tên Khách Hàng</h4>
-                            <p class="m-0 pb-3">Bùi Xuân Văn</p>
-                            <div class="d-flex pe-5">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div style="font-size: 4rem; color: rgba(15, 157, 88, 0.1); position: absolute; top: 20px; left: 20px; font-family: serif; line-height: 1;">“</div>
+                    <p class="mb-4 mt-4" style="position:relative; z-index:2; font-style:italic; color:#555;">Nhân viên tư vấn nhiệt tình, giao hàng siêu tốc. 10 điểm cho chất lượng!</p>
+                    <div style="display: flex; align-items: center; border-top: 1px solid #eee; padding-top: 15px;">
+                        <img src="~/images/index_Home_defaultUser3.png" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" alt="User">
+                        <div>
+                            <h6 class="m-0 fw-bold">Nguyễn Công Trung</h6>
+                            <small class="text-muted">Giảng viên</small>
+                            <div class="text-warning small"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
                         </div>
                     </div>
                 </div>
@@ -477,20 +586,19 @@
         </div>
     </div>
 </div>
-<!-- Tastimonial End -->
-<!-- Thêm Bootstrap Modal -->
-<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cartModalLabel">Thông báo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Thành công</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                Thêm thành công vào giỏ hàng!
+            <div class="modal-body text-center py-4">
+                <h5 class="text-dark">Đã thêm sản phẩm vào giỏ hàng!</h5>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="okButton">OK</button>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4 rounded-pill" data-bs-dismiss="modal" id="okButton">Tiếp tục mua sắm</button>
             </div>
         </div>
     </div>
@@ -499,15 +607,21 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Xử lý sự kiện click vào ảnh sách
+            // Click ảnh vào chi tiết
             $(".book-image").click(function () {
                 var maSach = $(this).data("masach");
                 window.location.href = '@Url.Action("ChiTietSach", "Home")' + '?maSach=' + maSach;
             });
 
-            // Xử lý sự kiện click vào nút "Add to cart"
+            // Logic thêm giỏ hàng
             $(".add-to-cart").click(function () {
                 var maSach = $(this).data("masach");
+                var btn = $(this);
+                var originalHtml = btn.html(); // Lưu nội dung cũ để restore
+
+                // Hiệu ứng loading
+                btn.html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
                 $.ajax({
                     url: '@Url.Action("KiemTraDangNhap", "KhachHang")',
                     type: 'POST',
@@ -523,9 +637,12 @@
                                     } else {
                                         alert(response.message);
                                     }
+                                    // Reset nút
+                                    btn.html(originalHtml).prop('disabled', false);
                                 },
                                 error: function () {
-                                    alert("Đã có lỗi xảy ra khi thêm vào giỏ hàng.");
+                                    alert("Lỗi thêm giỏ hàng.");
+                                    btn.html(originalHtml).prop('disabled', false);
                                 }
                             });
                         } else {
@@ -533,14 +650,10 @@
                         }
                     },
                     error: function () {
-                        alert("Đã có lỗi xảy ra khi kiểm tra đăng nhập.");
+                        alert("Lỗi kiểm tra đăng nhập.");
+                        btn.html(originalHtml).prop('disabled', false);
                     }
                 });
-            });
-
-            // Xử lý nút OK trong modal
-            $("#okButton").click(function () {
-                window.location.href = '@Url.Action("Index_Home", "Home")';
             });
         });
     </script>

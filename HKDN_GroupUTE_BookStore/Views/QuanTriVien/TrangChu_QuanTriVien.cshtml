@@ -350,7 +350,36 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff', // Màu chữ chú thích
+                            font: {
+                                size: 14 // Kích thước chữ
+                            }
+                        }
+                    }
+                },
+                //Chỉnh màu chữ cho trục X và Y (Tháng 1, 2... và số lượng) cho dễ đọc trên nền tối
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục ngang
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục dọc
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    }
+                }
             }
         });
     </script>

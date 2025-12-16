@@ -1,165 +1,281 @@
-﻿
-@{
-    ViewBag.Title = "LienHe_Home";
+﻿@{
+    ViewBag.Title = "Liên Hệ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
-    .contact-section {
-        background-color: #f8f9fa; /* Nền nhẹ nhàng cho toàn bộ phần liên hệ */
-        padding: 6rem 0; /* Tăng padding trên và dưới */
+    /* --- BIẾN MÀU SẮC & STYLE CHUNG --- */
+    :root {
+        --primary-color: #0F9D58;
+        --primary-hover: #0B8043;
+        --bg-soft-mint: #f2fbf7;
+        --text-dark: #333;
     }
 
-    .contact-section .display-4 {
-        color: #007bff; /* Màu primary của Bootstrap cho tiêu đề chính */
+    body {
+        background-color: var(--bg-soft-mint);
     }
 
-    .contact-info-block,
-    .contact-form-container {
-        border: 1px solid #e9ecef; /* Viền nhẹ */
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ nhàng */
-        height: 100%; /* Quan trọng để hai cột có chiều cao bằng nhau nếu nội dung chênh lệch */
-        display: flex;
-        flex-direction: column; /* Sử dụng flexbox để đẩy map xuống cuối */
+    /* --- HEADER VỚI WAVE --- */
+    .page-header-wave {
+        background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
+        padding: 60px 0 100px 0;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
     }
 
-    .contact-info-block h3,
-    .contact-form-container h3 {
-        color: #343a40; /* Màu tối hơn cho tiêu đề trong các khối */
-        font-weight: 600;
-    }
-
-    .contact-info-block .d-flex {
-        align-items: flex-start; /* Căn chỉnh biểu tượng và văn bản ở đầu */
-    }
-
-    .contact-info-block .fa-2x {
-        font-size: 1.8rem; /* Kích thước biểu tượng */
-        color: #007bff; /* Màu primary cho biểu tượng */
-    }
-
-    .contact-info-block p {
-        font-size: 0.95rem; /* Kích thước font cho thông tin */
-        color: #6c757d; /* Màu xám cho văn bản */
-    }
-
-    .map-container {
-        border-radius: 0.5rem; /* Bo tròn góc cho bản đồ */
-        overflow: hidden; /* Đảm bảo nội dung iframe không tràn */
+    .custom-shape-divider-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
         width: 100%;
-        flex-grow: 1; /* Cho phép map container giãn nở */
-        display: flex; /* Để iframe được căn giữa */
-        align-items: flex-end; /* Căn bản đồ xuống cuối nếu có khoảng trống */
+        overflow: hidden;
+        line-height: 0;
     }
 
-    .map-container iframe {
-        width: 100%;
-        height: 100%; /* Quan trọng để iframe lấp đầy container */
-        min-height: 250px; /* Chiều cao tối thiểu cho bản đồ trên di động */
-    }
-
-    .contact-form-container .form-control {
-        border-radius: 0.375rem; /* Bo tròn nhẹ input */
-        padding: 0.8rem 1rem; /* Tăng padding cho input */
-        border-color: #ced4da; /* Màu viền input */
-    }
-
-    .contact-form-container .form-control:focus {
-        border-color: #80bdff; /* Màu viền khi focus */
-        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Hiệu ứng shadow khi focus */
-    }
-
-    .contact-form-container .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        font-weight: bold;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.375rem;
-        transition: background-color 0.3s ease;
-    }
-
-    .contact-form-container .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-    }
-
-    /* Responsive adjustments */
-    @@media (max-width: 991.98px) { /* Cho tablet và di động */
-        .contact-info-block {
-            margin-bottom: 2.5rem; /* Khoảng cách giữa 2 cột trên màn hình nhỏ */
+        .custom-shape-divider-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(130% + 1.3px);
+            height: 70px;
         }
+
+        .custom-shape-divider-bottom .shape-fill {
+            fill: var(--bg-soft-mint);
+        }
+
+    /* --- CONTACT SECTION --- */
+    .contact-container {
+        position: relative;
+        z-index: 2;
+        margin-top: -50px;
     }
+
+    .contact-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(15, 157, 88, 0.1);
+        padding: 40px;
+        height: 100%;
+        border: none;
+    }
+
+    .section-title {
+        color: var(--text-dark);
+        font-weight: 700;
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+    /* Info Block Styles */
+    .info-item {
+        display: flex;
+        margin-bottom: 30px;
+    }
+
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        background: rgba(15, 157, 88, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        flex-shrink: 0;
+    }
+
+        .icon-box i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+    .info-content h5 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text-dark);
+    }
+
+    .info-content p {
+        color: #666;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Map */
+    .map-wrapper {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        height: 250px;
+        margin-top: auto; /* Đẩy xuống đáy nếu container dài */
+    }
+
+    /* Form Styles */
+    .custom-input {
+        background: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+        .custom-input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.1);
+        }
+
+    .btn-send {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        padding: 12px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(15, 157, 88, 0.3);
+        width: 100%;
+    }
+
+        .btn-send:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(15, 157, 88, 0.4);
+            color: #fff;
+        }
 </style>
-<div class="container-fluid py-5 contact-section">
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h1 class="display-4 fw-bold text-primary">Liên Hệ Với Chúng Tôi</h1>
-            <p class="lead text-muted">Chúng tôi luôn sẵn lòng lắng nghe và hỗ trợ bạn.</p>
-        </div>
 
-        <div class="row g-5 align-items-stretch">
-            <div class="col-lg-5">
-                <div class="bg-light p-4 rounded h-100 d-flex flex-column contact-info-block">
-                    <h3 class="mb-4 text-dark">Thông Tin Liên Lạc</h3>
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fa fa-map-marker-alt fa-2x text-primary me-3"></i>
-                        <div>
-                            <h5 class="mb-0 text-dark">Địa Chỉ</h5>
-                            <p class="mb-0 text-muted">48 Cao Thắng, Phường Thanh Bình, Quận Hải Châu, TP Đà Nẵng, Việt Nam</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fa fa-envelope fa-2x text-primary me-3"></i>
-                        <div>
-                            <h5 class="mb-0 text-dark">Email</h5>
-                            <p class="mb-0 text-muted">info@bookshop.com</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="fa fa-phone-alt fa-2x text-primary me-3"></i>
-                        <div>
-                            <h5 class="mb-0 text-dark">Điện Thoại</h5>
-                            <p class="mb-0 text-muted">+012 345 67890</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-clock fa-2x text-primary me-3"></i>
-                        <div>
-                            <h5 class="mb-0 text-dark">Giờ Làm Việc</h5>
-                            <p class="mb-0 text-muted">Thứ 2 - Thứ 7: 8:00 AM - 6:00 PM</p>
-                        </div>
-                    </div>
-                    <div class="mt-auto pt-4">
-                        <h3 class="mb-3 text-dark">Vị trí của chúng tôi</h3>
-                        <div class="map-container rounded overflow-hidden">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.779647079502!2d108.21102737490429!3d16.076920484603715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421847f125d0a9%3A0x936779884318eeca!2zNDggQ2FvIFRo4bqvbmcsIFRoYW5oIELDrG5oLCBI4bqjaSBDaMOidSwgxJDDoCBO4bq1bmcgNTUwMDAwLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1747874534031!5m2!1svi!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-   
-            <div class="col-lg-7">
-                <div class="bg-light p-4 rounded h-100 contact-form-container">
-                    <h3 class="mb-4 text-dark">Gửi Tin Nhắn Cho Chúng Tôi</h3>
-                    <form action="#" method="post">
-             
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Tên của bạn" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email của bạn" required>
-                        </div>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="subject" name="subject" placeholder="Tiêu đề" required>
-                        </div>
-                        <div class="mb-4">
-                            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Nội dung tin nhắn" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Gửi Tin Nhắn</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="page-header-wave">
+    <div class="container">
+        <h1 class="display-5 fw-bold text-dark mb-3">Liên Hệ Với Chúng Tôi</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Liên hệ</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="custom-shape-divider-bottom">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
     </div>
 </div>
 
+<div class="container pb-5 contact-container">
+    <div class="row g-5">
+
+        <div class="col-lg-5">
+            <div class="contact-card animate__animated animate__fadeInLeft">
+                <h3 class="section-title">Thông Tin Liên Lạc</h3>
+
+                <div class="d-flex flex-column h-100">
+                    <div class="info-item">
+                        <div class="icon-box">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Địa Chỉ</h5>
+                            <p>48 Cao Thắng, Phường Thanh Bình,<br>Quận Hải Châu, TP Đà Nẵng</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="icon-box">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Email</h5>
+                            <p>info@bookshop.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="icon-box">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Điện Thoại</h5>
+                            <p>+012 345 67890</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="icon-box">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Giờ Làm Việc</h5>
+                            <p>Thứ 2 - Thứ 7: 8:00 - 18:00</p>
+                        </div>
+                    </div>
+
+                    <div class="map-wrapper mt-4">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.824248740684!2d108.2203704148586!3d16.074593488877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314218307d81c91d%3A0xbc7c14ff5a92c871!2zNDggQ2FvIFRo4bqvbmcsIFRoYW5oIELDrG5oLCBI4bqjaSBDaMOidSwgxJDDoCBO4bq1bmcgNTUwMDAwLCBWaWV0bmFt!5e0!3m2!1sen!2s!4v1645500000000!5m2!1sen!2s"
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="contact-card animate__animated animate__fadeInRight" style="animation-delay: 0.1s;">
+                <h3 class="section-title">Gửi Tin Nhắn</h3>
+                <p class="text-muted mb-4">Nếu bạn có thắc mắc hoặc cần hỗ trợ, vui lòng điền vào biểu mẫu dưới đây. Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+
+                <form action="#" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="fw-bold small text-muted mb-1">Tên của bạn</label>
+                                <input type="text" class="custom-input" id="name" name="name" placeholder="Nhập họ tên" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="fw-bold small text-muted mb-1">Email</label>
+                                <input type="email" class="custom-input" id="email" name="email" placeholder="Nhập email" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="fw-bold small text-muted mb-1">Tiêu đề</label>
+                                <input type="text" class="custom-input" id="subject" name="subject" placeholder="Tiêu đề tin nhắn" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="fw-bold small text-muted mb-1">Nội dung</label>
+                                <textarea class="custom-input" id="message" name="message" rows="6" placeholder="Nội dung cần hỗ trợ..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn-send">
+                                <i class="fas fa-paper-plane me-2"></i> Gửi Tin Nhắn
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,7 +1,8 @@
-using System.Diagnostics;
-using HKDN_GroupUTE_BookStore.ViewModel;
 using HKDN_GroupUTE_BookStore.Models;
+using HKDN_GroupUTE_BookStore.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace HKDN_GroupUTE_BookStore.Controllers
 {
@@ -35,20 +36,51 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             if (string.IsNullOrEmpty(maSach))
                 return NotFound();
 
-            var sach = _shopContext.Saches.FirstOrDefault(s => s.MaSach == maSach);
+            // 1. SỬA TRUY VẤN: Thêm .Include để lấy dữ liệu bảng TheLoai
+            var sach = _shopContext.Saches
+                .Include(s => s.MaTheLoaiNavigation) // Join sang bảng thể loại
+                .FirstOrDefault(s => s.MaSach == maSach);
+
             if (sach == null)
                 return NotFound();
 
+            // 2. MAP DỮ LIỆU: Bổ sung SoLuongTon và sửa lỗi Decimal
             var viewModel = new ChiTietSachVM
             {
                 MaSach = sach.MaSach,
                 TenSach = sach.TenSach,
                 TacGia = sach.TacGia,
-                TenTheLoai = sach.MaTheLoaiNavigation?.TenTheLoai ?? "Không xác định",
+                // Lấy tên thể loại an toàn
+                TenTheLoai = sach.MaTheLoaiNavigation?.TenTheLoai ?? "Khác",
+
+                // --- SỬA LỖI Ở ĐÂY ---
+                // Thêm 'm' vào sau số 0 để ép kiểu thành decimal (0m)
                 DonGia = sach.Gia,
+
                 MoTa = sach.MoTa,
-                Hinh = sach.UrlanhBia
+                Hinh = sach.UrlanhBia,
+
+                // QUAN TRỌNG: Dòng này sửa lỗi luôn báo hết hàng
+                SoLuongTon = sach.SoLuongTon ?? 0
             };
+
+            // 3. LẤY SÁCH TƯƠNG TỰ (Cùng thể loại, trừ cuốn hiện tại)
+            var sachTuongTu = _shopContext.Saches
+                .Where(s => s.MaTheLoai == sach.MaTheLoai && s.MaSach != maSach)
+                .OrderByDescending(s => s.SoLuongTon) // Ưu tiên sách còn hàng
+                .Take(4) // Chỉ lấy 4 cuốn
+                .Select(s => new ChiTietSachVM
+                {
+                    MaSach = s.MaSach,
+                    TenSach = s.TenSach,
+                    Hinh = s.UrlanhBia,
+
+                    // --- SỬA LỖI TƯƠNG TỰ Ở ĐÂY ---
+                    DonGia = s.Gia
+                }).ToList();
+
+            // Truyền dữ liệu sách tương tự qua ViewBag
+            ViewBag.SachTuongTu = sachTuongTu;
 
             return View(viewModel);
         }

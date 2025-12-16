@@ -3,58 +3,217 @@
     ViewBag.Title = "Thông tin người dùng";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!-- Single Page Header Start -->
-<div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Thông tin người dùng</h1>
-    <ol class="breadcrumb justify-content-center mb-0">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")">Trang chủ</a></li>
-        <li class="breadcrumb-item active text-white">Thông tin người dùng</li>
-    </ol>
+
+<style>
+    /* --- BIẾN MÀU SẮC & STYLE CHUNG --- */
+    :root {
+        --primary-color: #0F9D58;
+        --primary-hover: #0B8043;
+        --bg-soft-mint: #f2fbf7;
+        --text-dark: #333;
+    }
+
+    body {
+        background-color: var(--bg-soft-mint);
+    }
+
+    /* --- HEADER VỚI WAVE --- */
+    .page-header-wave {
+        background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
+        padding: 60px 0 100px 0;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .custom-shape-divider-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+        .custom-shape-divider-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(130% + 1.3px);
+            height: 70px;
+        }
+
+        .custom-shape-divider-bottom .shape-fill {
+            fill: var(--bg-soft-mint);
+        }
+
+    /* --- USER CARD --- */
+    .user-container {
+        position: relative;
+        z-index: 2;
+        margin-top: -50px;
+    }
+
+    .info-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(15, 157, 88, 0.1);
+        border: none;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+        .info-card h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+    /* Form Styles */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .custom-input {
+        background: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+
+        .custom-input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.1);
+        }
+
+    .btn-save-info {
+        background: var(--primary-color);
+        border: none;
+        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3);
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+        .btn-save-info:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+    /* Table Styles */
+    .table thead th {
+        border-bottom: 2px solid #eee;
+        color: var(--text-dark);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        background-color: #f8f9fa;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        padding: 15px;
+        color: #555;
+        font-size: 0.9rem;
+    }
+
+    .table img {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Status Badge */
+    .badge-status {
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-processing {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-completed {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+
+<div class="page-header-wave">
+    <div class="container">
+        <h1 class="display-5 fw-bold text-dark mb-3">Hồ Sơ Của Bạn</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Thông tin cá nhân</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="custom-shape-divider-bottom">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
 </div>
-<!-- Single Page Header End -->
-<!-- User Info Start -->
-<div class="container-fluid py-5">
-    <div class="container py-5">
-        <h2 class="mb-4">Thông tin cá nhân</h2>
+
+<div class="container pb-5 user-container">
+
+    <div class="info-card animate__animated animate__fadeInUp">
+        <h2><i class="fas fa-user-edit me-2"></i>Thông tin cá nhân</h2>
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label for="hoTen" class="form-label">Họ tên</label>
-                    <input type="text" class="form-control" id="hoTen" value="@Model.HoTen" required>
+                    <input type="text" class="form-control custom-input" id="hoTen" value="@Model.HoTen" required placeholder="Nhập họ tên của bạn">
                 </div>
                 <div class="form-group mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" value="@Model.Email" required>
+                    <input type="email" class="form-control custom-input" id="email" value="@Model.Email" required placeholder="Nhập địa chỉ email">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label for="soDienThoai" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" id="soDienThoai" value="@Model.SoDienThoai">
+                    <input type="text" class="form-control custom-input" id="soDienThoai" value="@Model.SoDienThoai" placeholder="Nhập số điện thoại">
                 </div>
                 <div class="form-group mb-3">
                     <label for="diaChi" class="form-label">Địa chỉ</label>
-                    <input type="text" class="form-control" id="diaChi" value="@Model.DiaChi">
+                    <input type="text" class="form-control custom-input" id="diaChi" value="@Model.DiaChi" placeholder="Nhập địa chỉ giao hàng">
                 </div>
             </div>
-            <div class="col-12">
-                <button class="btn btn-primary rounded-pill px-4 py-3 btn-save-info" type="button">Lưu thông tin</button>
+            <div class="col-12 text-end">
+                <button class="btn btn-primary rounded-pill px-4 py-2 btn-save-info" type="button">
+                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+                </button>
             </div>
         </div>
+    </div>
 
-        <h2 class="mt-5 mb-4">Lịch sử đơn hàng</h2>
+    <div class="info-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+        <h2><i class="fas fa-history me-2"></i>Lịch sử đơn hàng</h2>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-hover align-middle">
                 <thead>
                     <tr>
-                        <th scope="col">Sản phẩm</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Giá</th>
-                        <th scope="col">Số lượng</th>
-                        <th scope="col">Thời gian đặt</th>
-                        <th scope="col">Tổng tiền</th>
-                        <th scope="col">Trạng thái</th>
-                        <th scope="col">Hành động</th>
+                        <th scope="col" style="min-width: 250px;">Sản phẩm</th>
+                        <th scope="col">Đơn giá</th>
+                        <th scope="col" class="text-center">SL</th>
+                        <th scope="col" style="min-width: 120px;">Ngày đặt</th>
+                        <th scope="col">Tổng đơn</th>
+                        <th scope="col" class="text-center">Trạng thái</th>
+                        <th scope="col" class="text-center">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,34 +224,37 @@
                             foreach (var chiTiet in donHang.ChiTiets)
                             {
                                 <tr>
-                                    <th scope="row">
+                                    <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="~/images/@chiTiet.URLAnhBia" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="Ảnh sản phẩm">
+                                            <img src="~/images/@chiTiet.URLAnhBia" class="rounded-3 me-3" style="width: 50px; height: 70px; object-fit: cover;" alt="Ảnh sản phẩm">
+                                            <div>
+                                                <p class="mb-0 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@chiTiet.TenSach">@chiTiet.TenSach</p>
+                                            </div>
                                         </div>
-                                    </th>
-                                    <td>
-                                        <p class="mb-0 mt-4">@chiTiet.TenSach</p>
                                     </td>
-                                    <td>
-                                        <p class="mb-0 mt-4">@((int)chiTiet.GiaBan)đ</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4">@chiTiet.SoLuong</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4">@donHang.NgayTao.ToString("dd/MM/yyyy HH:mm")</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4">@donHang.TongTien.ToString("N0") đ</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4">@donHang.TrangThaiDonHang</p>
-                                    </td>
-                                    <td>
+                                    <td>@((int)chiTiet.GiaBan)đ</td>
+                                    <td class="text-center">@chiTiet.SoLuong</td>
+                                    <td><small class="text-muted">@donHang.NgayTao.ToString("dd/MM/yyyy")</small></td>
+                                    <td class="fw-bold text-primary">@donHang.TongTien.ToString("N0") đ</td>
+                                    <td class="text-center">
                                         @if (donHang.TrangThaiDonHang == "DangXuLy")
                                         {
-                                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-cancel-order" data-madonhang="@donHang.MaDonHang">
-                                                <i class="fa fa-times text-danger"></i>
+                                            <span class="badge badge-status status-processing">Đang xử lý</span>
+                                        }
+                                        else if (donHang.TrangThaiDonHang == "DaHuy")
+                                        {
+                                            <span class="badge badge-status status-cancelled">Đã hủy</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-status status-completed">Hoàn thành</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (donHang.TrangThaiDonHang == "DangXuLy")
+                                        {
+                                            <button class="btn btn-sm btn-outline-danger rounded-pill btn-cancel-order" title="Hủy đơn hàng" data-madonhang="@donHang.MaDonHang">
+                                                <i class="fas fa-times"></i> Hủy
                                             </button>
                                         }
                                     </td>
@@ -103,7 +265,13 @@
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center">Bạn chưa có đơn hàng nào.</td>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-box-open fa-3x mb-3 text-secondary"></i>
+                                    <p>Bạn chưa có đơn hàng nào.</p>
+                                    <a href="@Url.Action("Index_Home", "Home")" class="btn btn-sm btn-outline-primary rounded-pill">Mua sắm ngay</a>
+                                </div>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -111,19 +279,18 @@
         </div>
     </div>
 </div>
-<!-- User Info End -->
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Thông báo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header bg-primary text-white border-0 rounded-top-4">
+                <h5 class="modal-title"><i class="fas fa-bell me-2"></i>Thông báo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="infoModalBody">
+            <div class="modal-body text-center py-4 fs-5" id="infoModalBody">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
@@ -132,7 +299,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Xử lý lưu thông tin
+            // Xử lý lưu thông tin (LOGIC CŨ)
             $(".btn-save-info").click(function () {
                 var hoTen = $("#hoTen").val();
                 var email = $("#email").val();
@@ -145,6 +312,11 @@
                     return;
                 }
 
+                // Hiệu ứng loading nút
+                var btn = $(this);
+                var originalHtml = btn.html();
+                btn.html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...').prop('disabled', true);
+
                 $.ajax({
                     url: '@Url.Action("CapNhatThongTin", "KhachHang")',
                     type: 'POST',
@@ -155,15 +327,17 @@
                         if (response.success) {
                             setTimeout(function () { location.reload(); }, 1500);
                         }
+                        btn.html(originalHtml).prop('disabled', false);
                     },
                     error: function () {
                         $("#infoModalBody").text("Đã có lỗi xảy ra khi cập nhật thông tin.");
                         $("#infoModal").modal('show');
+                        btn.html(originalHtml).prop('disabled', false);
                     }
                 });
             });
 
-            // Xử lý hủy đơn hàng
+            // Xử lý hủy đơn hàng (LOGIC CŨ)
             $(".btn-cancel-order").click(function () {
                 var maDonHang = $(this).data("madonhang");
                 if (confirm("Bạn có chắc muốn hủy đơn hàng này?")) {

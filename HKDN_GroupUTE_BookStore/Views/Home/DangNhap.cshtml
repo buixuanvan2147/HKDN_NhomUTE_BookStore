@@ -5,136 +5,185 @@
 }
 
 <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f6f9;
-        margin: 0;
-        padding: 0;
+    /* --- BIẾN MÀU SẮC --- */
+    :root {
+        --primary-color: #0F9D58;
+        --primary-hover: #0B8043;
+        /* Các tông màu xanh cho sóng */
+        --wave-c1: rgba(15, 157, 88, 0.1); /* Nhạt nhất */
+        --wave-c2: rgba(15, 157, 88, 0.2);
+        --wave-c3: rgba(15, 157, 88, 0.3);
+        --wave-c4: rgba(15, 157, 88, 0.5); /* Đậm nhất */
     }
 
-    .form-container {
-        max-width: 500px;
-        margin: 50px auto;
-        padding: 40px;
-        background-color: #ffffff;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        border: 1px solid #e2e6ea;
-        background: #fff;
+    /* --- WRAPPER CHÍNH TẠO NỀN SÓNG ĐA LỚP --- */
+    .login-page-wrapper {
+        /* Đảm bảo chiều cao tối thiểu để căn giữa và thấy hết nền */
+        min-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Căn giữa dọc */
+        align-items: center; /* Căn giữa ngang */
+        padding: 20px;
+        position: relative;
+        /* SVG Background đa lớp sóng */
+        background-color: #f0fdf4;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%230F9D58' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3Cpath fill='%230F9D58' fill-opacity='0.2' d='M0,96L48,128C96,160,192,224,288,240C384,256,480,224,576,192C672,160,768,128,864,128C960,128,1056,160,1152,186.7C1248,213,1344,235,1392,245.3L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3Cpath fill='%230F9D58' fill-opacity='0.3' d='M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,213.3C672,224,768,192,864,170.7C960,149,1056,139,1152,133.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center bottom;
     }
 
-        .form-container h2 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 30px;
+    /* --- HEADER COMPACT (Giữ lại nhưng thu nhỏ) --- */
+    .login-header-compact {
+        text-align: center;
+        margin-bottom: 20px; /* Khoảng cách với form rất nhỏ */
+        color: var(--primary-color);
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* Giúp chữ nổi trên nền sóng */
+    }
+
+        .login-header-compact h1 {
+            font-weight: 800;
+            font-size: 2rem; /* Giảm kích thước */
+            margin-bottom: 5px;
+        }
+
+        .login-header-compact p {
+            font-size: 1rem;
+            opacity: 0.9;
             font-weight: 600;
+            color: #444;
+        }
+
+    /* --- FORM CARD COMPACT --- */
+    .form-card-compact {
+        background: rgba(255, 255, 255, 0.95); /* Nền trắng hơi trong suốt để thấy sóng mờ */
+        width: 100%;
+        max-width: 400px; /* Độ rộng vừa phải */
+        padding: 25px 30px; /* Padding nhỏ gọn */
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(15, 157, 88, 0.2);
+        border: 1px solid rgba(255,255,255,0.5);
+        backdrop-filter: blur(5px); /* Hiệu ứng mờ kính nhẹ */
+    }
+
+        .form-card-compact h2 {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.5rem; /* Tiêu đề form nhỏ lại */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    /* Input gọn gàng */
+    .custom-input {
+        width: 100%;
+        padding: 10px 15px; /* Padding nhỏ */
+        font-size: 0.95rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: all 0.3s;
+    }
+
+        .custom-input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.15);
         }
 
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px; /* Giảm khoảng cách giữa các ô input */
     }
 
-        .form-group label {
-            font-size: 16px;
-            color: #555;
-            font-weight: 500;
-            display: block;
-        }
-
-    .short-textbox {
+    /* Nút bấm gọn */
+    .btn-login {
         width: 100%;
-        max-width: 400px;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
-        background-color: #f9f9f9;
-        margin-top: 8px;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        background-color: #fff;
-        outline: none;
-    }
-
-    .btn {
-        padding: 14px;
-        font-size: 18px;
-        background-color: #007bff;
+        padding: 10px; /* Nút mỏng hơn */
+        font-size: 1rem;
+        font-weight: 600;
+        background-color: var(--primary-color);
         color: #fff;
         border: none;
-        border-radius: 5px;
+        border-radius: 50px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.3s;
+        margin-top: 5px;
+        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.2);
     }
 
-        .btn:hover {
-            background-color: #0056b3;
+        .btn-login:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(15, 157, 88, 0.3);
         }
 
+    /* Link và Alert nhỏ */
+    .register-link {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
     .alert {
-        font-size: 16px;
-        padding: 15px;
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        border-radius: 5px;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    .btn-block {
-        width: 100%;
+        padding: 8px 15px;
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+        border-radius: 8px;
     }
 </style>
 
-<!-- Single Page Header start -->
-<div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Đăng Nhập</h1>
-</div>
-<!-- Single Page Header End -->
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+<div class="login-page-wrapper">
 
-@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-{
-    <div class="alert alert-danger">@error.ErrorMessage</div>
-}
-
-@using (Html.BeginForm("DangNhap", "Home", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
-    <div class="form-container">
-        <div class="form-group">
-            @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại")
-            @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control short-textbox" })
-            @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.MatKhau, "Mật khẩu")
-            @Html.PasswordFor(m => m.MatKhau, new { @class = "form-control short-textbox" })
-            @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger" })
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Đăng Nhập</button>
-        <div class="text-center mt-3">
-            <span>Bạn chưa có tài khoản?</span>
-            <a href="@Url.Action("DangKy", "Home")" class="text-primary">Đăng ký ngay</a>
-        </div>
+    <div class="login-header-compact animate__animated animate__fadeInDown">
+        <h1>Chào mừng bạn đến với nhà sách UTE!</h1>
+        <p>Vui lòng đăng nhập để tiếp tục mua sách</p>
     </div>
-}
+
+    <div class="form-card-compact animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+        <h2>Đăng Nhập</h2>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div class="alert alert-danger">@error.ErrorMessage</div>
+        }
+
+        @using (Html.BeginForm("DangNhap", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại", new { @class = "fw-bold small mb-1" })
+                @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "custom-input", placeholder = "Nhập SĐT của bạn" })
+                @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.MatKhau, "Mật khẩu", new { @class = "fw-bold small mb-1" })
+                @Html.PasswordFor(m => m.MatKhau, new { @class = "custom-input", placeholder = "Nhập mật khẩu" })
+                @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
+            </div>
+
+            <button type="submit" class="btn-login">
+                Đăng Nhập Ngay
+            </button>
+
+            <div class="text-center mt-3 small">
+                <span class="text-muted">Chưa có tài khoản?</span>
+                <a href="@Url.Action("DangKy", "Home")" class="register-link ms-1">Đăng ký tại đây</a>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
-    <script src="~/scripts/jquery.validate-vsdoc.js"></script>
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.js"></script>
 }

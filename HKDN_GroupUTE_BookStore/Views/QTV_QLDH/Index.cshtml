@@ -354,12 +354,12 @@
                                 @Html.DisplayFor(modelItem => item.TrangThaiDonHang)
                             </td>
                             <td class="action-column">
-                                <div class="action-buttons-group">
-                                    <a href="@Url.Action("Edit", new { id=item.MaDonHang })" class="action-button edit" title="Sửa">
-                                        <i class="fas fa-edit"></i> Sửa
-                                    </a>
+                                <div class="action-buttons-group">                                   
                                     <a href="@Url.Action("Details", new { id=item.MaDonHang })" class="action-button details" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i> Xem
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = item.MaDonHang })" class="action-button edit" title="Sửa">
+                                        <i class="fas fa-edit"></i> Cập nhật
                                     </a>
                                     <a href="@Url.Action("Delete", new { id=item.MaDonHang })" class="action-button delete" title="Xóa">
                                         <i class="fas fa-trash-alt"></i> Xóa
