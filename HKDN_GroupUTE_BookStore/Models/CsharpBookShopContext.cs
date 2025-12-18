@@ -16,6 +16,8 @@ public partial class CsharpBookShopContext : DbContext
     {
     }
 
+    public virtual DbSet<LienHe> LienHe { get; set; }
+
     public virtual DbSet<Apdunggiamgium> Apdunggiamgia { get; set; }
 
     public virtual DbSet<Chitietdonhang> Chitietdonhangs { get; set; }
@@ -47,6 +49,24 @@ public partial class CsharpBookShopContext : DbContext
         modelBuilder
             .UseCollation("utf8mb4_general_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<LienHe>(entity =>
+        {
+            entity.HasKey(e => e.MaLienHe);
+
+            entity.Property(e => e.TrangThai)
+                  .HasMaxLength(20)
+                  .HasDefaultValue("ChuaXuLy");
+
+            entity.Property(e => e.NgayGui)
+                  .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(e => e.NguoiDung)
+                  .WithMany()
+                  .HasForeignKey(e => e.MaNguoiDung)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
 
         modelBuilder.Entity<Apdunggiamgium>(entity =>
         {

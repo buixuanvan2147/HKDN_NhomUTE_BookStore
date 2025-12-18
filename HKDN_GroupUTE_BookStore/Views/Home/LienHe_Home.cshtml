@@ -1,4 +1,9 @@
-﻿@{
+﻿@model HKDN_GroupUTE_BookStore.Models.LienHe
+@{
+    bool daDangNhap = Context.Session.GetString("UserMaNguoiDung") != null;
+}
+
+@{
     ViewBag.Title = "Liên Hệ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -16,10 +21,10 @@
         background-color: var(--bg-soft-mint);
     }
 
-    /* --- HEADER VỚI WAVE --- */
+    /* --- HEADER (Đã thu nhỏ chiều cao) --- */
     .page-header-wave {
         background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
-        padding: 60px 0 100px 0;
+        padding: 40px 0 80px 0; /* Giảm padding trên dưới */
         position: relative;
         text-align: center;
         overflow: hidden;
@@ -38,7 +43,7 @@
             position: relative;
             display: block;
             width: calc(130% + 1.3px);
-            height: 70px;
+            height: 50px; /* Giảm chiều cao sóng */
         }
 
         .custom-shape-divider-bottom .shape-fill {
@@ -49,14 +54,14 @@
     .contact-container {
         position: relative;
         z-index: 2;
-        margin-top: -50px;
+        margin-top: -40px; /* Đẩy lên ít hơn một chút để cân đối */
     }
 
     .contact-card {
         background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(15, 157, 88, 0.1);
-        padding: 40px;
+        border-radius: 15px; /* Bo góc nhỏ hơn xíu cho gọn */
+        box-shadow: 0 10px 25px rgba(15, 157, 88, 0.1);
+        padding: 30px; /* Giảm padding trong card */
         height: 100%;
         border: none;
     }
@@ -64,7 +69,8 @@
     .section-title {
         color: var(--text-dark);
         font-weight: 700;
-        margin-bottom: 30px;
+        font-size: 1.5rem; /* Giảm cỡ chữ tiêu đề */
+        margin-bottom: 20px;
         position: relative;
         padding-bottom: 10px;
     }
@@ -74,7 +80,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 50px;
+            width: 40px;
             height: 3px;
             background: var(--primary-color);
             border-radius: 3px;
@@ -83,81 +89,96 @@
     /* Info Block Styles */
     .info-item {
         display: flex;
-        margin-bottom: 30px;
+        margin-bottom: 20px; /* Giảm khoảng cách giữa các dòng info */
+        align-items: center; /* Căn giữa icon và text */
     }
 
     .icon-box {
-        width: 50px;
-        height: 50px;
+        width: 40px; /* Thu nhỏ icon */
+        height: 40px;
         background: rgba(15, 157, 88, 0.1);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 20px;
+        margin-right: 15px;
         flex-shrink: 0;
     }
 
         .icon-box i {
             color: var(--primary-color);
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
     .info-content h5 {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
-        margin-bottom: 5px;
+        margin-bottom: 2px;
         color: var(--text-dark);
     }
 
     .info-content p {
         color: #666;
         margin-bottom: 0;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
     }
 
     /* Map */
     .map-wrapper {
-        border-radius: 15px;
+        border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        height: 250px;
-        margin-top: auto; /* Đẩy xuống đáy nếu container dài */
+        height: 200px; /* Giảm chiều cao bản đồ */
+        margin-top: auto;
     }
 
-    /* Form Styles */
+    /* --- FORM STYLES (QUAN TRỌNG) --- */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
     .custom-input {
         background: #f9f9f9;
         border: 1px solid #eee;
-        border-radius: 10px;
-        padding: 12px 15px;
+        border-radius: 8px;
+        padding: 10px 15px;
         transition: all 0.3s;
         width: 100%;
+        font-size: 0.95rem;
     }
 
-        .custom-input:focus {
-            border-color: var(--primary-color);
-            background: #fff;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.1);
-        }
+    /* CSS RIÊNG CHO TEXTAREA ĐỂ CỐ ĐỊNH CHIỀU CAO & CUỘN */
+    textarea.custom-input {
+        height: 200px !important; /* Cố định chiều cao */
+        resize: none; /* Không cho người dùng kéo giãn */
+        overflow-y: auto; /* Hiện thanh cuộn nếu nội dung dài */
+    }
+
+    .custom-input:focus {
+        border-color: var(--primary-color);
+        background: #fff;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.1);
+    }
 
     .btn-send {
         background-color: var(--primary-color);
         color: #fff;
         border: none;
-        padding: 12px 40px;
-        font-size: 1.1rem;
+        padding: 10px 30px;
+        font-size: 1rem;
         font-weight: 600;
         border-radius: 50px;
         transition: all 0.3s;
         box-shadow: 0 5px 15px rgba(15, 157, 88, 0.3);
         width: 100%;
+        margin-top: 10px;
     }
 
         .btn-send:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(15, 157, 88, 0.4);
             color: #fff;
         }
@@ -165,9 +186,9 @@
 
 <div class="page-header-wave">
     <div class="container">
-        <h1 class="display-5 fw-bold text-dark mb-3">Liên Hệ Với Chúng Tôi</h1>
+        <h1 class="display-6 fw-bold text-dark mb-2">Liên Hệ Với Chúng Tôi</h1>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb justify-content-center mb-0">
+            <ol class="breadcrumb justify-content-center mb-0 small">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")" class="text-decoration-none text-muted">Trang chủ</a></li>
                 <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Liên hệ</li>
             </ol>
@@ -180,12 +201,12 @@
     </div>
 </div>
 
-<div class="container pb-5 contact-container">
-    <div class="row g-5">
+<div class="container pb-4 contact-container">
+    <div class="row g-4 justify-content-center">
 
         <div class="col-lg-5">
             <div class="contact-card animate__animated animate__fadeInLeft">
-                <h3 class="section-title">Thông Tin Liên Lạc</h3>
+                <h3 class="section-title">Thông Tin</h3>
 
                 <div class="d-flex flex-column h-100">
                     <div class="info-item">
@@ -228,7 +249,7 @@
                         </div>
                     </div>
 
-                    <div class="map-wrapper mt-4">
+                    <div class="map-wrapper mt-3">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3833.824248740684!2d108.2203704148586!3d16.074593488877547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314218307d81c91d%3A0xbc7c14ff5a92c871!2zNDggQ2FvIFRo4bqvbmcsIFRoYW5oIELDrG5oLCBI4bqjaSBDaMOidSwgxJDDoCBO4bq1bmcgNTUwMDAwLCBWaWV0bmFt!5e0!3m2!1sen!2s!4v1645500000000!5m2!1sen!2s"
                                 width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                     </div>
@@ -236,46 +257,74 @@
             </div>
         </div>
 
-        <div class="col-lg-7">
+        <div class="col-lg-6">
             <div class="contact-card animate__animated animate__fadeInRight" style="animation-delay: 0.1s;">
                 <h3 class="section-title">Gửi Tin Nhắn</h3>
-                <p class="text-muted mb-4">Nếu bạn có thắc mắc hoặc cần hỗ trợ, vui lòng điền vào biểu mẫu dưới đây. Chúng tôi sẽ phản hồi sớm nhất có thể.</p>
+                <p class="text-muted mb-3 small">Vui lòng điền vào biểu mẫu dưới đây. Chúng tôi sẽ phản hồi sớm nhất.</p>
 
-                <form action="#" method="post">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="fw-bold small text-muted mb-1">Tên của bạn</label>
-                                <input type="text" class="custom-input" id="name" name="name" placeholder="Nhập họ tên" required>
-                            </div>
+                <form asp-action="LienHe_Home" asp-controller="Home" method="post">
+                    @Html.AntiForgeryToken()
+
+                    @if (!daDangNhap)
+                    {
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <input asp-for="HoTen" class="custom-input" required />
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="fw-bold small text-muted mb-1">Email</label>
-                                <input type="email" class="custom-input" id="email" name="email" placeholder="Nhập email" required>
-                            </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input asp-for="Email" type="email" class="custom-input" required />
                         </div>
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="fw-bold small text-muted mb-1">Tiêu đề</label>
-                                <input type="text" class="custom-input" id="subject" name="subject" placeholder="Tiêu đề tin nhắn" required>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="fw-bold small text-muted mb-1">Nội dung</label>
-                                <textarea class="custom-input" id="message" name="message" rows="6" placeholder="Nội dung cần hỗ trợ..." required></textarea>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn-send">
-                                <i class="fas fa-paper-plane me-2"></i> Gửi Tin Nhắn
-                            </button>
-                        </div>
+                    }
+
+                    <div class="form-group">
+                        <label>Tiêu đề</label>
+                        <input asp-for="TieuDe" class="custom-input" required />
                     </div>
+
+                    <div class="form-group">
+                        <label>Nội dung</label>
+                        <textarea asp-for="NoiDung" class="custom-input" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-send">
+                        <i class="fas fa-paper-plane me-2"></i> Gửi liên hệ
+                    </button>
                 </form>
+
+
             </div>
         </div>
 
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Dùng Html.Raw để C# không mã hóa các ký tự Tiếng Việt thành ký tự đặc biệt khi đưa vào JS
+        var successMsg = "@Html.Raw(TempData["Success"])";
+        var errorMsg = "@Html.Raw(TempData["Error"])";
+
+        if (successMsg && successMsg.trim() !== "") {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!', // Nếu chữ này vẫn lỗi, hãy lưu file Index.cshtml ở dạng UTF-8 with BOM
+                text: successMsg,
+                confirmButtonColor: '#0F9D58',
+                confirmButtonText: 'Đồng ý'
+            });
+        }
+
+        if (errorMsg && errorMsg.trim() !== "") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Thất bại!',
+                text: errorMsg,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Thử lại'
+            });
+        }
+    });
+</script>

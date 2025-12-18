@@ -73,7 +73,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
 
         // -------------------- THÊM / GIẢM / XOÁ GIỎ HÀNG --------------------
         [HttpPost]
-        public JsonResult ThemVaoGioHang(string maSach, bool giamSoLuong = false, bool xoaSanPham = false)
+        public JsonResult ThemVaoGioHang(string maSach, int soLuong = 1, bool giamSoLuong = false, bool xoaSanPham = false)
         {
             try
             {
@@ -91,8 +91,13 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 if (sach == null)
                     return Json(new { success = false, message = "Sách không tồn tại!" });
 
+                // Kiểm tra tồn kho trước khi thêm
+                if (sach.SoLuongTon < soLuong)
+                    return Json(new { success = false, message = "Số lượng tồn kho không đủ!" });
+
                 var item = gioHang.FirstOrDefault(x => x.MaSach == maSach);
 
+                // Logic giảm số lượng (Thường dùng ở trang giỏ hàng)
                 if (giamSoLuong && item != null)
                 {
                     if (item.SoLuong > 1) item.SoLuong--;
@@ -102,9 +107,10 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                     return Json(new { success = true, message = "Giảm số lượng!" });
                 }
 
+                // Logic thêm vào giỏ
                 if (item != null)
                 {
-                    item.SoLuong++;
+                    item.SoLuong += soLuong;
                 }
                 else
                 {
@@ -113,11 +119,11 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                         MaSach = sach.MaSach,
                         TenSach = sach.TenSach,
                         Gia = sach.Gia,
-                        SoLuong = 1,
+                        SoLuong = soLuong,
                         URLAnhBia = sach.UrlanhBia
                     });
                 }
-                
+
                 HttpContext.Session.SetObject(key, gioHang);
                 return Json(new { success = true, message = "Thêm giỏ hàng thành công!" });
             }
@@ -284,6 +290,25 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             _shopContext.SaveChanges();
 
             return Json(new { success = true, message = "Hủy đơn thành công!" });
+        }
+
+        public IActionResult ThongBao()
+        {
+            string uId = HttpContext.Session.GetString("UserMaNguoiDung");
+
+            // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+            if (string.IsNullOrEmpty(uId))
+            {
+                return RedirectToAction("DangNhap", "Home");
+            }
+
+            // Lấy toàn bộ danh sách, sắp xếp cái mới nhất lên trên
+            var danhSachThongBao = _shopContext.LienHe
+                .Where(lh => lh.MaNguoiDung == uId && lh.TrangThai == "DaXuLy")
+                .OrderByDescending(lh => lh.NgayPhanHoi)
+                .ToList();
+
+            return View(danhSachThongBao);
         }
     }
 }

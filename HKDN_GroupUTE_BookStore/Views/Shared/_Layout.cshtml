@@ -1,8 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@inject HKDN_GroupUTE_BookStore.Models.CsharpBookShopContext _shopContext
+
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8">
-    <title>NHÀ SÁCH UTE</title>
+    <title>@ViewBag.Title - NHÀ SÁCH UTE</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta name="keywords" content="nhà sách, sách ute, sách kỹ thuật, sách công nghệ">
     <meta name="description" content="Nhà sách UTE - Khơi nguồn tri thức, chạm đến tương lai">
@@ -54,7 +58,6 @@
 
         .renderbody {
             flex: 1;
-            /* ĐIỀU CHỈNH: Giảm từ 100px xuống 75px vì Header đã nhỏ lại */
             padding-top: 75px;
         }
 
@@ -62,14 +65,13 @@
         .container-fluid.fixed-top {
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.1); /* Giảm bóng đổ 1 chút */
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.1);
             transition: all 0.3s;
         }
 
         .navbar-brand h1 {
             color: var(--primary-color);
             font-weight: 800;
-            /* ĐIỀU CHỈNH: Giảm size logo cho gọn */
             font-size: 1.7rem;
             letter-spacing: -0.5px;
         }
@@ -77,8 +79,7 @@
         .nav-link {
             color: var(--text-dark) !important;
             font-weight: 600;
-            font-size: 0.95rem; /* Giảm nhẹ cỡ chữ menu */
-            /* ĐIỀU CHỈNH: Giảm padding để nút menu thấp hơn */
+            font-size: 0.95rem;
             padding: 8px 15px !important;
             margin: 0 2px;
             border-radius: 50px;
@@ -96,12 +97,46 @@
                 box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
             }
 
+            /* --- HIỆU ỨNG RUNG CHUÔNG --- */
+            .nav-link:hover .fa-bell {
+                animation: ring 0.5s ease-in-out;
+            }
+
+        @@keyframes ring {
+            0% {
+                transform: rotate(0);
+            }
+
+            15% {
+                transform: rotate(15deg);
+            }
+
+            30% {
+                transform: rotate(-15deg);
+            }
+
+            45% {
+                transform: rotate(10deg);
+            }
+
+            60% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(5deg);
+            }
+
+            100% {
+                transform: rotate(0);
+            }
+        }
+
         /* --- BUTTONS --- */
         .btn-primary-custom {
             background-color: var(--accent-color);
             border: none;
             color: white;
-            /* ĐIỀU CHỈNH: Nút bấm nhỏ gọn hơn */
             padding: 6px 18px;
             font-size: 0.9rem;
             border-radius: 50px;
@@ -121,12 +156,13 @@
             background-color: transparent;
             border: 2px solid var(--primary-color);
             color: var(--primary-color);
-            /* ĐIỀU CHỈNH: Nút bấm nhỏ gọn hơn */
             padding: 4px 18px;
             font-size: 0.9rem;
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
             .btn-outline-custom:hover {
@@ -155,6 +191,8 @@
                 color: #9ca3af;
                 text-decoration: none;
                 transition: 0.3s;
+                display: block;
+                margin-bottom: 5px;
             }
 
                 .footer .btn-link:hover {
@@ -162,7 +200,6 @@
                     padding-left: 5px;
                 }
 
-        /* Back to top */
         .back-to-top {
             background-color: var(--primary-color);
             border: none;
@@ -172,7 +209,6 @@
                 background-color: var(--accent-color);
             }
 
-        /* User Greeting */
         .user-greeting {
             color: var(--primary-color);
             font-weight: 700;
@@ -187,12 +223,8 @@
         string currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
         string IsActive(string controller, string action)
         {
-            if (string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase))
-            {
-                return "active";
-            }
-            return "";
+            return (string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)) ? "active" : "";
         }
     }
 
@@ -213,8 +245,7 @@
                             @{
                                 string userId = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung");
                                 string sessionKey = userId != null ? $"GioHang_{userId}" : "GioHang_Temp";
-                                var gioHang = HttpContextAccessor.HttpContext.Session
-                                .GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
+                                var gioHang = HttpContextAccessor.HttpContext.Session.GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
                                 ?? new List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>();
                                 int soLuongSanPham = gioHang.Sum(x => x.SoLuong);
                             }
@@ -222,15 +253,38 @@
                         </a>
 
                         <a href="@Url.Action("LienHe_Home", "Home")" class="nav-item nav-link @IsActive("Home", "LienHe_Home")">Liên hệ</a>
-                        <a href="@Url.Action("User", "KhachHang")" class="nav-item nav-link @IsActive("KhachHang", "User")">Tài khoản</a>
+
+                        @if (!string.IsNullOrEmpty(userId))
+                        {
+                            <a href="@Url.Action("User", "KhachHang")" class="nav-item nav-link @IsActive("KhachHang", "User")">Tài khoản</a>
+                        }
                     </div>
 
                     <div class="d-flex align-items-center ms-3">
                         @{
                             var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
                         }
+
                         @if (!string.IsNullOrEmpty(userName))
                         {
+                            <a href="@Url.Action("ThongBao", "KhachHang")" class="nav-item nav-link position-relative me-3">
+                                @{
+                                    int soThongBao = 0;
+                                    if (!string.IsNullOrEmpty(userId))
+                                    {
+                                        soThongBao = _shopContext.LienHe.Count(x => x.MaNguoiDung == userId && x.TrangThai == "DaXuLy");
+                                    }
+                                }
+                                <i class="fas fa-bell fs-5 text-primary"></i>
+                                @if (soThongBao > 0)
+                                {
+                                    <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"
+                                          style="font-size: 0.6rem; border: 2px solid white;">
+                                        @soThongBao
+                                    </span>
+                                }
+                            </a>
+
                             <span class="me-3 user-greeting">Hi, @userName!</span>
                             <form action="@Url.Action("DangXuat", "Home")" method="post" class="m-0">
                                 @Html.AntiForgeryToken()
@@ -239,12 +293,8 @@
                         }
                         else
                         {
-                            <form action="@Url.Action("DangNhap", "Home")" method="get" class="me-2">
-                                <button type="submit" class="btn btn-outline-custom">Đăng nhập</button>
-                            </form>
-                            <form action="@Url.Action("DangKy", "Home")" method="get">
-                                <button type="submit" class="btn btn-primary-custom">Đăng ký</button>
-                            </form>
+                            <a href="@Url.Action("DangNhap", "Home")" class="btn btn-outline-custom me-2">Đăng nhập</a>
+                            <a href="@Url.Action("DangKy", "Home")" class="btn btn-primary-custom text-decoration-none">Đăng ký</a>
                         }
                     </div>
                 </div>
@@ -256,7 +306,7 @@
         @RenderBody()
     </div>
 
-    <div class="container-fluid footer pt-5 mt-5">
+    <footer class="container-fluid footer pt-5 mt-5">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
@@ -265,28 +315,28 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-3">Thông tin</h4>
-                    <a class="btn-link" href="#">Chính sách bảo mật</a><br>
-                    <a class="btn-link" href="#">Điều khoản sử dụng</a><br>
+                    <a class="btn-link" href="#">Chính sách bảo mật</a>
+                    <a class="btn-link" href="#">Điều khoản sử dụng</a>
                     <a class="btn-link" href="#">Vận chuyển & Giao hàng</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-3">Cá nhân</h4>
-                    <a class="btn-link" href="#">Tài khoản</a><br>
-                    <a class="btn-link" href="#">Giỏ hàng</a><br>
+                    <a class="btn-link" href="#">Tài khoản</a>
+                    <a class="btn-link" href="#">Giỏ hàng</a>
                     <a class="btn-link" href="#">Theo dõi đơn hàng</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-3">Liên hệ</h4>
                     <p class="small"><i class="fa fa-map-marker-alt me-3 text-primary"></i>48 Cao Thắng, Đà Nẵng</p>
                     <p class="small"><i class="fa fa-phone-alt me-3 text-primary"></i>+089 931 8713</p>
-                    <p class="small"><i class="fa fa-envelope me-3 text-primary"></i>buiv6493@gmail.com</p>
+                    <p class="small"><i class="fa fa-envelope me-3 text-primary"></i>buiv6493@@gmail.com</p>
                 </div>
             </div>
             <div class="text-center mt-5 pt-4" style="border-top: 1px solid rgba(255,255,255,0.05);">
                 <p class="mb-0 text-secondary" style="font-size: 0.8rem;">&copy; 2025 NHÀ SÁCH UTE. Design by UTE Team.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
     <a href="#" class="btn btn-lg back-to-top text-white rounded-circle shadow">
         <i class="fa fa-arrow-up"></i>

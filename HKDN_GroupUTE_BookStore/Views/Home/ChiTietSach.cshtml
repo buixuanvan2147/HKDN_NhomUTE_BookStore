@@ -316,7 +316,7 @@
 
                     <hr class="my-4" style="opacity: 0.1;">
 
-                    @using (Html.BeginForm("ThemVaoGioHang", "GioHang", FormMethod.Post, new { id = "addToCartForm" }))
+                    @using (Html.BeginForm("ThemVaoGioHang", "KhachHang", FormMethod.Post, new { id = "addToCartForm" }))
                     {
                         @Html.AntiForgeryToken()
                         @Html.Hidden("maSach", Model.MaSach)
@@ -412,7 +412,7 @@
             </div>
             <div class="modal-footer border-0 justify-content-center">
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Ở lại trang</button>
-                <a href="@Url.Action("Index", "Home")" class="btn btn-success rounded-pill px-5">Về trang chủ</a>
+                <a href="@Url.Action("Index_Home", "Home")" class="btn btn-success rounded-pill px-5">Về trang chủ</a>
             </div>
         </div>
     </div>
