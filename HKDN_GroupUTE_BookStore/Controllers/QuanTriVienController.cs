@@ -18,81 +18,92 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         // GET: QuanTriVien/TrangChu_QuanTriVien
         public IActionResult TrangChu_QuanTriVien()
         {
-            // ====== THỐNG KÊ CHUNG ======
+            // ===== NGƯỜI DÙNG =====
             var soKhachHang = _shopContext.Nguoidungs.Count(x => x.VaiTro == "KhachHang");
             var soQuanTriVien = _shopContext.Nguoidungs.Count(x => x.VaiTro == "Admin");
 
+            // ===== ĐƠN HÀNG =====
             var tongDonHang = _shopContext.Donhangs.Count();
             var daGiao = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaGiao");
             var daHuy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaHuy");
-            var chuaHoanThanh = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DangXuLy");
+            var dangXuLy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DangXuLy");
 
-            var sachTonKho = _shopContext.Saches.Sum(x => (int?)x.SoLuongTon) ?? 0;
-            var sachDaBan = _shopContext.Saches.Sum(x => (int?)x.SoLuongDaBan) ?? 0;
+            // ===== SÁCH =====
+            var tongSachTonKho = _shopContext.Saches.Sum(x => (int?)x.SoLuongTon) ?? 0;
+            var tongSachDaBan = _shopContext.Saches.Sum(x => (int?)x.SoLuongDaBan) ?? 0;
             var tongTheLoai = _shopContext.Theloais.Count();
 
-            // ====== BIỂU ĐỒ THEO THÁNG (DÙNG NgayTao) ======
+            // ===== BIỂU ĐỒ THEO NĂM HIỆN TẠI =====
+            int namHienTai = DateTime.Now.Year;
+
             var dataTheoThang = _shopContext.Donhangs
+                .Where(x => x.NgayTao.HasValue && x.NgayTao.Value.Year == namHienTai)
                 .GroupBy(x => new
                 {
                     Thang = x.NgayTao.Value.Month,
-                    Nam = x.NgayTao.Value.Year,
                     x.TrangThaiDonHang
                 })
                 .Select(g => new
                 {
                     Thang = g.Key.Thang,
-                    Nam = g.Key.Nam,
                     TrangThai = g.Key.TrangThaiDonHang,
                     SoLuong = g.Count()
                 })
                 .ToList();
 
-            var thang = Enumerable.Range(1, 12).Select(t => "Tháng " + t).ToList();
+            var thang = Enumerable.Range(1, 12)
+                .Select(t => $"Tháng {t}")
+                .ToList();
 
-            var dangXuLy = new List<int>();
-            var daGiaoThang = new List<int>();
-            var daHuyThang = new List<int>();
+            var donDangXuLy = new List<int>();
+            var donDaGiao = new List<int>();
+            var donDaHuy = new List<int>();
 
             for (int i = 1; i <= 12; i++)
             {
-                dangXuLy.Add(dataTheoThang
+                donDangXuLy.Add(dataTheoThang
                     .Where(x => x.Thang == i && x.TrangThai == "DangXuLy")
                     .Sum(x => x.SoLuong));
 
-                daGiaoThang.Add(dataTheoThang
+                donDaGiao.Add(dataTheoThang
                     .Where(x => x.Thang == i && x.TrangThai == "DaGiao")
                     .Sum(x => x.SoLuong));
 
-                daHuyThang.Add(dataTheoThang
+                donDaHuy.Add(dataTheoThang
                     .Where(x => x.Thang == i && x.TrangThai == "DaHuy")
                     .Sum(x => x.SoLuong));
             }
 
             var model = new QTV_TrangChu_LoadDuLieu_VM
             {
+                // Người dùng
                 TongSoNguoiDung = soKhachHang + soQuanTriVien,
                 TongSoKhachHang = soKhachHang,
                 TongSoQuanTriVien = soQuanTriVien,
+
+                // Đơn hàng
                 TongDonHang = tongDonHang,
-                DaHoanThanh = daGiao + daHuy,
-                ChuaHoanThanh = chuaHoanThanh,
+                DaHoanThanh = daGiao, // CHỈ ĐÃ GIAO
+                ChuaHoanThanh = dangXuLy,
                 DaGiao = daGiao,
                 DaHuy = daHuy,
-                TongSach = sachDaBan + sachTonKho,
-                TongSachTonKho = sachTonKho,
-                TongSachDaBan = sachDaBan,
+
+                // Sách
+                TongSach = tongSachTonKho + tongSachDaBan,
+                TongSachTonKho = tongSachTonKho,
+                TongSachDaBan = tongSachDaBan,
                 TongTheLoai = tongTheLoai,
 
                 // Chart
                 Thang = thang,
-                DonDangXuLy = dangXuLy,
-                DonDaGiao = daGiaoThang,
-                DonDaHuy = daHuyThang
+                DonDangXuLy = donDangXuLy,
+                DonDaGiao = donDaGiao,
+                DonDaHuy = donDaHuy
             };
 
             return View(model);
         }
+
 
 
         // GET: QuanTriVien/QuanLySanPham_QuanTriVien

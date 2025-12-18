@@ -25,6 +25,13 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             public string URLAnhBia { get; set; }
         }
 
+        public class CouponSession
+        {
+            public string MaGiamGia { get; set; }   
+            public string MaVoucher { get; set; }   
+            public decimal PhanTramGiam { get; set; } 
+        }
+
         // -------------------- MODEL USER VIEW --------------------
         public class UserViewModel
         {
@@ -63,6 +70,15 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 : $"GioHang_{maNguoiDung}";
         }
 
+        private string GetCouponSessionKey()
+        {
+            var maNguoiDung = HttpContext.Session.GetString("UserMaNguoiDung");
+            return string.IsNullOrEmpty(maNguoiDung)
+                ? "Voucher_Temp"
+                : $"Voucher_{maNguoiDung}";
+        }
+
+
         // -------------------- CHECK LOGIN --------------------
         [HttpPost]
         public JsonResult KiemTraDangNhap()
@@ -73,7 +89,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
 
         // -------------------- THÊM / GIẢM / XOÁ GIỎ HÀNG --------------------
         [HttpPost]
-        public JsonResult ThemVaoGioHang(string maSach, bool giamSoLuong = false, bool xoaSanPham = false)
+        public JsonResult ThemVaoGioHang(string maSach, int soLuong = 1, bool giamSoLuong = false, bool xoaSanPham = false)
         {
             try
             {
@@ -91,8 +107,13 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 if (sach == null)
                     return Json(new { success = false, message = "Sách không tồn tại!" });
 
+                // Kiểm tra tồn kho trước khi thêm
+                if (sach.SoLuongTon < soLuong)
+                    return Json(new { success = false, message = "Số lượng tồn kho không đủ!" });
+
                 var item = gioHang.FirstOrDefault(x => x.MaSach == maSach);
 
+                // Logic giảm số lượng (Thường dùng ở trang giỏ hàng)
                 if (giamSoLuong && item != null)
                 {
                     if (item.SoLuong > 1) item.SoLuong--;
@@ -102,9 +123,10 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                     return Json(new { success = true, message = "Giảm số lượng!" });
                 }
 
+                // Logic thêm vào giỏ
                 if (item != null)
                 {
-                    item.SoLuong++;
+                    item.SoLuong += soLuong;
                 }
                 else
                 {
@@ -113,11 +135,11 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                         MaSach = sach.MaSach,
                         TenSach = sach.TenSach,
                         Gia = sach.Gia,
-                        SoLuong = 1,
+                        SoLuong = soLuong,
                         URLAnhBia = sach.UrlanhBia
                     });
                 }
-                
+
                 HttpContext.Session.SetObject(key, gioHang);
                 return Json(new { success = true, message = "Thêm giỏ hàng thành công!" });
             }
@@ -127,6 +149,61 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult ApDungMaGiamGia(string maVoucher)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(maVoucher))
+                    return Json(new { success = false, message = "Vui lòng nhập mã giảm giá." });
+
+                maVoucher = maVoucher.Trim();
+
+                var voucher = _shopContext.Magiamgia
+                    .FirstOrDefault(v => v.MaVoucher == maVoucher);
+
+                if (voucher == null)
+                    return Json(new { success = false, message = "Mã giảm giá không tồn tại." });
+
+                if (voucher.NgayHetHan < DateTime.Now)
+                    return Json(new { success = false, message = "Mã giảm giá đã hết hạn." });
+
+                if (voucher.PhanTramGiam == null || voucher.PhanTramGiam <= 0 || voucher.PhanTramGiam > 100)
+                    return Json(new { success = false, message = "Mã giảm giá không hợp lệ." });
+
+                // lấy giỏ để tính thử số tiền giảm
+                string cartKey = GetCartSessionKey();
+                var gioHang = HttpContext.Session.GetObject<List<CartItem>>(cartKey) ?? new List<CartItem>();
+                if (!gioHang.Any())
+                    return Json(new { success = false, message = "Giỏ hàng trống, không thể áp mã." });
+
+                decimal subTotal = gioHang.Sum(x => x.Gia * x.SoLuong);
+                decimal discount = Math.Round(subTotal * (voucher.PhanTramGiam.Value / 100m), 0);
+
+                // lưu vào session
+                string couponKey = GetCouponSessionKey();
+                HttpContext.Session.SetObject(couponKey, new CouponSession
+                {
+                    MaGiamGia = voucher.MaGiamGia,
+                    MaVoucher = voucher.MaVoucher,
+                    PhanTramGiam = voucher.PhanTramGiam.Value
+                });
+
+                return Json(new
+                {
+                    success = true,
+                    message = $"Áp dụng mã {voucher.MaVoucher} thành công (-{voucher.PhanTramGiam}% ).",
+                    subTotal,
+                    discount
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
         // -------------------- ĐẶT HÀNG --------------------
         [HttpPost]
         public JsonResult DatHang(string diaChiGiao)
@@ -134,32 +211,72 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             try
             {
                 var maNguoiDung = HttpContext.Session.GetString("UserMaNguoiDung");
-                if (maNguoiDung == null)
+                if (string.IsNullOrEmpty(maNguoiDung))
                     return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
 
-                string key = GetCartSessionKey();
-                var gioHang = HttpContext.Session.GetObject<List<CartItem>>(key);
+                if (string.IsNullOrWhiteSpace(diaChiGiao))
+                    return Json(new { success = false, message = "Vui lòng nhập địa chỉ giao hàng!" });
+
+                string cartKey = GetCartSessionKey();
+                var gioHang = HttpContext.Session.GetObject<List<CartItem>>(cartKey);
 
                 if (gioHang == null || !gioHang.Any())
                     return Json(new { success = false, message = "Giỏ hàng trống!" });
 
+                // 1) Tính tổng tiền trước giảm
+                decimal subTotal = gioHang.Sum(x => x.Gia * x.SoLuong);
+
+                // 2) Lấy voucher từ session (nếu có) và kiểm tra lại DB
+                string couponKey = GetCouponSessionKey();
+                var coupon = HttpContext.Session.GetObject<CouponSession>(couponKey);
+
+                decimal discount = 0;
+                string maGiamGiaHopLe = null;
+
+                if (coupon != null)
+                {
+                    var v = _shopContext.Magiamgia
+                        .FirstOrDefault(x => x.MaGiamGia == coupon.MaGiamGia);
+
+                    if (v != null && v.NgayHetHan >= DateTime.Now && v.PhanTramGiam.HasValue)
+                    {
+                        discount = Math.Round(subTotal * (v.PhanTramGiam.Value / 100m), 0);
+                        if (discount < 0) discount = 0;
+                        if (discount > subTotal) discount = subTotal;
+
+                        maGiamGiaHopLe = v.MaGiamGia;
+                    }
+                    else
+                    {
+                        // voucher hết hạn/không hợp lệ -> xoá khỏi session để tránh lỗi
+                        HttpContext.Session.Remove(couponKey);
+                    }
+                }
+
+                decimal tongSauGiam = subTotal - discount;
+                if (tongSauGiam < 0) tongSauGiam = 0;
+
+                // 3) Tạo mã đơn hàng
                 string maDon = "DH" + (_shopContext.Donhangs.Count() + 1).ToString("D3");
 
                 var donHang = new Donhang
                 {
                     MaDonHang = maDon,
                     MaNguoiDung = maNguoiDung,
-                    TongTien = gioHang.Sum(x => x.Gia * x.SoLuong),
+                    TongTien = tongSauGiam,              // ✅ đã trừ giảm giá
                     TrangThaiDonHang = "DangXuLy",
-                    DiaChiGiao = diaChiGiao,
+                    DiaChiGiao = diaChiGiao.Trim(),
                     NgayTao = DateTime.Now
                 };
 
                 _shopContext.Donhangs.Add(donHang);
 
+                // 4) Tạo chi tiết đơn + trừ tồn kho
                 foreach (var item in gioHang)
                 {
-                    var sach = _shopContext.Saches.First(s => s.MaSach == item.MaSach);
+                    var sach = _shopContext.Saches.FirstOrDefault(s => s.MaSach == item.MaSach);
+                    if (sach == null)
+                        return Json(new { success = false, message = $"Sách {item.MaSach} không tồn tại!" });
 
                     if (sach.SoLuongTon < item.SoLuong)
                         return Json(new { success = false, message = $"Không đủ hàng cho {item.TenSach}" });
@@ -176,16 +293,45 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                     });
                 }
 
-                _shopContext.SaveChanges();
-                HttpContext.Session.Remove(key);
+                // 5) Nếu voucher hợp lệ -> lưu bảng ApDungGiamGia
+                if (!string.IsNullOrEmpty(maGiamGiaHopLe))
+                {
+                    // chống trùng (phòng hờ)
+                    bool existed = _shopContext.Apdunggiamgia
+                        .Any(x => x.MaDonHang == maDon && x.MaGiamGia == maGiamGiaHopLe);
 
-                return Json(new { success = true, message = "Đặt hàng thành công!" });
+                    if (!existed)
+                    {
+                        _shopContext.Apdunggiamgia.Add(new Apdunggiamgium
+                        {
+                            MaDonHang = maDon,
+                            MaGiamGia = maGiamGiaHopLe
+                        });
+                    }
+                }
+
+                _shopContext.SaveChanges();
+
+                // 6) Clear session
+                HttpContext.Session.Remove(cartKey);
+                HttpContext.Session.Remove(couponKey);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Đặt hàng thành công!",
+                    maDonHang = maDon,
+                    subTotal,
+                    discount,
+                    tongTien = tongSauGiam
+                });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         // -------------------- TRANG THÔNG TIN USER --------------------
         public IActionResult User()
@@ -284,6 +430,25 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             _shopContext.SaveChanges();
 
             return Json(new { success = true, message = "Hủy đơn thành công!" });
+        }
+
+        public IActionResult ThongBao()
+        {
+            string uId = HttpContext.Session.GetString("UserMaNguoiDung");
+
+            // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+            if (string.IsNullOrEmpty(uId))
+            {
+                return RedirectToAction("DangNhap", "Home");
+            }
+
+            // Lấy toàn bộ danh sách, sắp xếp cái mới nhất lên trên
+            var danhSachThongBao = _shopContext.LienHe
+                .Where(lh => lh.MaNguoiDung == uId && lh.TrangThai == "DaXuLy")
+                .OrderByDescending(lh => lh.NgayPhanHoi)
+                .ToList();
+
+            return View(danhSachThongBao);
         }
     }
 }

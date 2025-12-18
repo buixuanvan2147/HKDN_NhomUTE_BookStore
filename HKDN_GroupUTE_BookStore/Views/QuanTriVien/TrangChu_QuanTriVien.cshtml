@@ -313,7 +313,7 @@
         <div class="chart-container">
             <canvas id="barChart" style="width: 100%; height: 100%;"></canvas>
         </div>
-        <h3 style="margin-top:12px;" class="card-title">Biểu đồ thể hiện doanh thu theo từng tháng</h3>
+        <h3 style="margin-top:12px;" class="card-title">Biểu đồ thống kê số lượng đơn hàng theo từng tháng</h3>
     </div>
 </div>
 
@@ -350,7 +350,36 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff', // Màu chữ chú thích
+                            font: {
+                                size: 14 // Kích thước chữ
+                            }
+                        }
+                    }
+                },
+                //Chỉnh màu chữ cho trục X và Y (Tháng 1, 2... và số lượng) cho dễ đọc trên nền tối
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục ngang
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#ffffff' // Màu chữ trục dọc
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
+                        }
+                    }
+                }
             }
         });
     </script>

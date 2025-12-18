@@ -102,6 +102,26 @@ CREATE TABLE ApDungGiamGia (
     FOREIGN KEY (MaGiamGia) REFERENCES MaGiamGia(MaGiamGia)
 );
 
+-- 10. LienHe
+CREATE TABLE LienHe (
+    MaLienHe INT PRIMARY KEY AUTO_INCREMENT,
+    MaNguoiDung VARCHAR(10) NULL,
+    HoTen VARCHAR(100) NOT NULL,
+    Email VARCHAR(150) NOT NULL,
+    TieuDe VARCHAR(200) NOT NULL,
+    NoiDung TEXT NOT NULL,
+    TrangThai VARCHAR(20) DEFAULT 'ChuaXuLy',
+    PhanHoiAdmin TEXT NULL,
+    NgayGui DATETIME DEFAULT CURRENT_TIMESTAMP,
+    NgayPhanHoi DATETIME NULL,
+
+    FOREIGN KEY (MaNguoiDung)
+        REFERENCES NguoiDung(MaNguoiDung)
+        ON DELETE SET NULL
+);
+
+SELECT * FROM LienHe;
+
 INSERT INTO NguoiDung (MaNguoiDung, HoTen, Email, MatKhau, SoDienThoai, DiaChi, VaiTro, NgayTao)
 VALUES 
 ('ND001', 'Nguyen Van A', 'a@gmail.com', 'password1', '0912345678', 'Ha Noi', 'KhachHang', NOW()),

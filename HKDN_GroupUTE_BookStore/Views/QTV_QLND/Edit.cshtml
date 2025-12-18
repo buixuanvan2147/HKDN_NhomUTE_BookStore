@@ -220,22 +220,26 @@
                     @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "text-danger" })
                 </div>
 
+                @* Email: Chỉ đọc *@
                 <div class="form-group">
-                    <label class="control-label">Email</label>
-                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập email", type = "email" } })
-                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    <label class="control-label">Email (Không thể sửa)</label>
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", style = "background-color: #1A202C; cursor: not-allowed;" } })
                 </div>
 
+                @* Mật khẩu: Có con mắt ẩn/hiện *@
                 <div class="form-group">
                     <label class="control-label">Mật Khẩu</label>
-                    @Html.EditorFor(model => model.MatKhau, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập mật khẩu", type = "password" } })
+                    <div style="position: relative;">
+                        @Html.EditorFor(model => model.MatKhau, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập mật khẩu", type = "password", id = "password-field" } })
+                        <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 12px; cursor: pointer; color: #4FD1C5;"></i>
+                    </div>
                     @Html.ValidationMessageFor(model => model.MatKhau, "", new { @class = "text-danger" })
                 </div>
 
+                @* Số điện thoại: Chỉ đọc *@
                 <div class="form-group">
-                    <label class="control-label">Số Điện Thoại</label>
-                    @Html.EditorFor(model => model.SoDienThoai, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập số điện thoại", type = "tel" } })
-                    @Html.ValidationMessageFor(model => model.SoDienThoai, "", new { @class = "text-danger" })
+                    <label class="control-label">Số Điện Thoại (Không thể sửa)</label>
+                    @Html.EditorFor(model => model.SoDienThoai, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", style = "background-color: #1A202C; cursor: not-allowed;" } })
                 </div>
 
                 <div class="form-group">
@@ -244,22 +248,27 @@
                     @Html.ValidationMessageFor(model => model.DiaChi, "", new { @class = "text-danger" })
                 </div>
 
+                @* Vai trò: Chọn KhachHang hoặc Admin *@
                 <div class="form-group">
                     <label class="control-label">Vai Trò</label>
-                    @Html.EditorFor(model => model.VaiTro, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập vai trò (ví dụ: Admin, User)" } })
-                    @Html.ValidationMessageFor(model => model.VaiTro, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label">Ngày Tạo</label>
-                    @Html.EditorFor(model => model.NgayTao, new { htmlAttributes = new { @class = "form-control", type = "date" } })
-                    @Html.ValidationMessageFor(model => model.NgayTao, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="form-group submit-group">
-                    <input type="submit" value="Lưu Thay Đổi" class="btn-submit" />
-                </div>
+                    @Html.DropDownListFor(model => model.VaiTro, new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "Khách Hàng", Value = "KhachHang" },
+                                new SelectListItem { Text = "Quản Trị Viên (Admin)", Value = "Admin" }
+                                }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.VaiTro, "", new { @class = "text-danger" })
             </div>
+
+            @* Ngày tạo: Chỉ đọc *@
+            <div class="form-group">
+                <label class="control-label">Ngày Tạo (Không thể sửa)</label>
+                @Html.EditorFor(model => model.NgayTao, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", style = "background-color: #1A202C; cursor: not-allowed;" } })
+            </div>
+
+            <div class="form-group submit-group">
+                <input type="submit" value="Lưu Thay Đổi" class="btn-submit" />
+            </div>
+        </div>
         }
 
         <div class="back-link-container">
@@ -267,4 +276,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password-field');
+
+    togglePassword.addEventListener('click', function (e) {
+        // Chuyển đổi kiểu input
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // Chuyển đổi icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
 

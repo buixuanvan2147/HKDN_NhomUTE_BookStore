@@ -14,19 +14,13 @@
 
     // Fixed Navbar
     $(window).scroll(function () {
-        if ($(window).width() < 992) {
-            if ($(this).scrollTop() > 55) {
-                $('.fixed-top').addClass('shadow');
-            } else {
-                $('.fixed-top').removeClass('shadow');
-            }
+        if ($(this).scrollTop() > 45) {
+            $('.fixed-top').addClass('bg-white shadow');
+            $('.fixed-top').css('top', 0);
         } else {
-            if ($(this).scrollTop() > 55) {
-                $('.fixed-top').addClass('shadow').css('top', -55);
-            } else {
-                $('.fixed-top').removeClass('shadow').css('top', 0);
-            }
-        } 
+            $('.fixed-top').removeClass('bg-white shadow');
+            $('.fixed-top').css('top', 0);
+        }
     });
     
     
@@ -39,7 +33,7 @@
     }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+        $('html, body').animate({ scrollTop: 0 }, 500);
         return false;
     });
 
@@ -81,7 +75,7 @@
     // vegetable carousel
     $(".vegetable-carousel").owlCarousel({
         autoplay: true,
-        smartSpeed: 1500,
+        smartSpeed: 1000,
         center: false,
         dots: true,
         loop: true,
