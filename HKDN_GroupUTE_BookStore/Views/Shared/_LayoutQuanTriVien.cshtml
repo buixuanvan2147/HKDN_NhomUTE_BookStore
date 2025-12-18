@@ -177,11 +177,20 @@
                         </a>
                     </li>
                     <li>
-                        <a href="@Url.Action("Index_Home", "Home")"
-                           class="menu-item menu-logout">
-                            <i class="fas fa-sign-out-alt text-red-500"></i>
-                            <span>Về trang người dùng</span>
+                        <a href="@Url.Action("DanhSachLienHe", "QTV_LienHe")"
+                           class="menu-item @IsActive("QTV_LienHe", "DanhSachLienHe")">
+                            <i class="fas fa-comment-alt"></i> 
+                            <span>Phản hồi liên hệ</span>
                         </a>
+                    </li>
+                    <li>
+                        <form action="@Url.Action("DangXuat", "Home")" method="post" id="logoutForm" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="menu-item menu-logout w-full text-left" style="background: none; border: none;">
+                                <i class="fas fa-sign-out-alt text-red-500"></i>
+                                <span>Đăng xuất</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </nav>

@@ -184,9 +184,57 @@ namespace HKDN_GroupUTE_BookStore.Controllers
 
             return $"ND{nextId + 1:D3}";
         }
-        public ActionResult LienHe_Home()
+        // GET: Liên Hệ
+        public IActionResult LienHe_Home()
         {
             return View();
+        }
+
+        // POST: Liên Hệ
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult LienHe_Home(LienHe model)
+        {
+            var maNguoiDung = HttpContext.Session.GetString("UserMaNguoiDung");
+
+            // KIỂM TRA ĐĂNG NHẬP ĐỂ TỰ ĐIỀN THÔNG TIN
+            if (!string.IsNullOrEmpty(maNguoiDung))
+            {
+                var user = _shopContext.Nguoidungs.FirstOrDefault(x => x.MaNguoiDung == maNguoiDung);
+                if (user != null)
+                {
+                    model.MaNguoiDung = user.MaNguoiDung;
+                    model.HoTen = user.HoTen;
+                    model.Email = user.Email;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(model.HoTen) || string.IsNullOrWhiteSpace(model.Email))
+                {
+                    TempData["Error"] = "Vui lòng nhập đầy đủ Họ tên và Email.";
+                    return View(model);
+                }
+            }
+
+            try
+            {
+                model.TrangThai = "ChuaXuLy";
+                model.NgayGui = DateTime.Now;
+
+                _shopContext.LienHe.Add(model);
+                _shopContext.SaveChanges();
+
+                // Gán thông báo thành công
+                TempData["Success"] = "Gửi liên hệ thành công! Chúng tôi sẽ phản hồi sớm.";
+
+                return RedirectToAction("LienHe_Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi hệ thống: " + ex.Message;
+                return View(model);
+            }
         }
 
         public ActionResult GioHang_Home()

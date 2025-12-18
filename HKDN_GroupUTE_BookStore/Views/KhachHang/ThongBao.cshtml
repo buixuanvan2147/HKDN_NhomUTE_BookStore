@@ -1,0 +1,136 @@
+﻿@model IEnumerable<HKDN_GroupUTE_BookStore.Models.LienHe>
+@{
+    ViewBag.Title = "Thông Báo Phản Hồi - Nhà Sách UTE";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-color: #0F9D58;
+        --bg-soft-mint: #f2fbf7;
+    }
+
+    /* Giảm chiều cao header cho thon gọn */
+    .notif-header-section {
+        background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
+        position: relative;
+        padding: 40px 0 70px 0;
+        text-align: center;
+    }
+
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        line-height: 0;
+    }
+
+        .wave-divider .shape-fill {
+            fill: var(--bg-soft-mint);
+        }
+
+    .notif-body-wrapper {
+        background-color: var(--bg-soft-mint);
+        padding: 20px 0 80px 0;
+        min-height: 60vh;
+    }
+
+    /* Thẻ thông báo thon gọn hơn */
+    .notif-card-modern {
+        background: #fff;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 15px; /* Giảm khoảng cách giữa các card */
+        border-left: 5px solid var(--primary-color);
+        transition: transform 0.2s;
+    }
+
+        .notif-card-modern:hover {
+            transform: scale(1.01);
+        }
+
+    /* Nội dung phản hồi sáng sủa */
+    .reply-content-box {
+        background: #f0fdf4; /* Xanh mint cực nhạt cho nền */
+        border-radius: 10px;
+        padding: 15px;
+        border: 1px solid rgba(15, 157, 88, 0.1);
+    }
+
+    .admin-text {
+        color: #166534; /* Chữ xanh đậm nổi bật trên nền nhạt */
+        font-size: 0.95rem;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    .user-query-text {
+        color: #64748b;
+        font-style: italic;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="notif-header-section">
+    <div class="container position-relative" style="z-index: 2;">
+        <h1 class="h3 fw-bold text-dark">Hộp thư thông báo</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Thông báo</li>
+            </ol>
+        </nav>
+        <p class="text-secondary small">Bạn có @(Model?.Count() ?? 0) phản hồi từ ban quản trị</p>
+    </div>
+    <div class="wave-divider">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path></svg>
+    </div>
+</div>
+
+<div class="notif-body-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="text-center py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3602/3602145.png" style="width:80px; opacity:0.4" alt="Empty">
+                        <h6 class="mt-3 text-muted">Hiện chưa có phản hồi nào mới</h6>
+                    </div>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <div class="card notif-card-modern">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span class="fw-bold text-dark small">Admin đã trả lời</span>
+                                    </div>
+                                    <span class="text-muted" style="font-size: 0.7rem;">Ngày phản hồi: @item.NgayPhanHoi?.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+
+                                <h6 class="fw-bold text-dark mb-1">Tiêu đề:@item.TieuDe</h6>
+
+                                <div class="mb-2 p-2 bg-light rounded shadow-sm">
+                                    <p class="mb-0 user-query-text">Bạn:" @item.NoiDung "</p>
+                                </div>
+
+                                <div class="reply-content-box">
+                                    <p class="admin-text mb-0">
+                                        <i class="fas fa-comment-dots me-1 opacity-50"></i>
+                                        Admin: @item.PhanHoiAdmin
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,181 @@
+﻿@model HKDN_GroupUTE_BookStore.Models.LienHe
+@{
+    ViewBag.Title = "Phản Hồi Liên Hệ - Admin";
+    Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
+}
+
+<style>
+    /* --- TỐI ƯU GIAO DIỆN THON GỌN --- */
+    body {
+        background-color: #1A202C;
+        font-size: 14px; /* Giảm size chữ tổng thể */
+    }
+
+    .reply-container {
+        max-width: 800px; /* Thu hẹp khung để thon gọn hơn */
+        margin: 2rem auto;
+        background-color: #2D3748;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        padding: 1.5rem 2rem; /* Giảm padding cho gọn */
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- INFO SECTION --- */
+    .customer-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        background: rgba(15, 23, 42, 0.5);
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .info-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #4FD1C5;
+        margin-bottom: 0.2rem;
+        display: block;
+        font-weight: 700;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #FFFFFF;
+        font-size: 0.95rem;
+    }
+
+    /* --- NỘI DUNG KHÁCH GỬI --- */
+    .message-quote {
+        background-color: #111827;
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        border-left: 4px solid #4FD1C5;
+        margin-bottom: 1.5rem;
+    }
+
+    .message-text {
+        font-style: italic;
+        color: #F8FAFC;
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+
+    /* --- TEXTAREA TỐI ƯU --- */
+    .form-label-custom {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #4FD1C5;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control-dark {
+        width: 100% !important;
+        background-color: #0F172A !important;
+        border: 1px solid #4A5568 !important;
+        color: #FFFFFF !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
+        resize: vertical;
+        min-height: 180px; /* Giảm chiều cao mặc định cho thon gọn */
+        font-size: 0.95rem !important;
+        line-height: 1.5;
+        box-sizing: border-box;
+    }
+
+        .form-control-dark:focus {
+            border-color: #4FD1C5 !important;
+            box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15) !important;
+        }
+
+    /* --- BUTTON GỌN GÀNG --- */
+    .btn-submit-modern {
+        background: linear-gradient(135deg, #4FD1C5 0%, #38B2AC 100%);
+        color: #1A202C !important;
+        font-weight: 700;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: none;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+        .btn-submit-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 209, 197, 0.3);
+        }
+</style>
+
+<div class="container-fluid">
+    <div class="reply-container animate__animated animate__fadeIn">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-gray-700">
+            <div>
+                <h3 class="m-0 font-bold" style="color: #4FD1C5; font-size: 1.35rem;">
+                    <i class="fas fa-reply-all me-2"></i>Phản hồi khách hàng
+                </h3>
+            </div>
+            <a href="@Url.Action("DanhSachLienHe")" class="btn btn-outline-light btn-sm rounded-pill px-3" style="font-size: 0.75rem; border-color: #4A5568;">
+                <i class="fas fa-chevron-left me-1"></i> Quay lại
+            </a>
+        </div>
+
+        <div class="customer-info-grid">
+            <div class="info-item">
+                <span class="info-label">Khách hàng</span>
+                <div class="info-value">@Model.HoTen</div>
+                <div style="color: #63B3ED; font-size: 0.8rem;">@Model.Email</div>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Thời gian</span>
+                <div class="info-value">@Model.NgayGui.ToString("dd/MM/yyyy")</div>
+                <div style="color: #cbd5e0; font-size: 0.8rem;">@Model.NgayGui.ToString("HH:mm")</div>
+            </div>
+        </div>
+
+        <div class="message-quote">
+            <span class="info-label" style="font-size: 0.7rem; margin-bottom: 0.4rem;">Chủ đề: @Model.TieuDe</span>
+            <p class="message-text">"@Model.NoiDung"</p>
+        </div>
+
+        <form asp-action="LuuPhanHoi" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="MaLienHe" value="@Model.MaLienHe" />
+
+            <div class="mb-3">
+                <label class="form-label-custom">
+                    <i class="fas fa-pen-nib me-2"></i> Soạn phản hồi
+                </label>
+                <textarea name="PhanHoiAdmin" class="form-control form-control-dark"
+                          placeholder="Nhập nội dung trả lời..." required>@Model.PhanHoiAdmin</textarea>
+
+                <div class="d-flex align-items-center mt-3 p-2 rounded" style="background: rgba(79, 209, 197, 0.05); border: 1px solid rgba(79, 209, 197, 0.1);">
+                    <i class="fas fa-info-circle text-info me-2" style="font-size: 0.8rem;"></i>
+                    <span class="text-gray-400" style="font-size: 0.75rem;">
+                        Thông báo sẽ gửi đến chuông của khách hàng ngay lập tức.
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-submit-modern shadow-lg">
+                <span>Xác nhận gửi phản hồi</span>
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+</div>
