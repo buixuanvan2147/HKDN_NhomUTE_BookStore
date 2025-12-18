@@ -191,9 +191,21 @@
 
                 <div class="form-group">
                     <label class="control-label">Trạng Thái Đơn Hàng</label>
-                    @Html.DropDownList("TrangThaiDonHang", new SelectList(new[] { "Chờ xử lý", "Đang giao", "Hoàn thành", "Đã hủy" }, Model.TrangThaiDonHang), "Chọn trạng thái", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.TrangThaiDonHang, "", new { @class = "text-danger" })
+
+                    @Html.DropDownListFor(m => m.TrangThaiDonHang,
+                             new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Đang xử lý", Value = "DangXuLy", Selected = (Model.TrangThaiDonHang == "DangXuLy") },
+                                new SelectListItem { Text = "Đã giao",     Value = "DaGiao",   Selected = (Model.TrangThaiDonHang == "DaGiao") },
+                                new SelectListItem { Text = "Đã huỷ",      Value = "DaHuy",    Selected = (Model.TrangThaiDonHang == "DaHuy") },
+                            },
+                             "Chọn trạng thái",
+                             new { @class = "form-control" }
+                             )
+
+                    @Html.ValidationMessageFor(m => m.TrangThaiDonHang, "", new { @class = "text-danger" })
                 </div>
+
 
                 <div class="form-group">
                     <label class="control-label">Địa Chỉ Giao</label>

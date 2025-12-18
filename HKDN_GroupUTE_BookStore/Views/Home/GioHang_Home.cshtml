@@ -244,18 +244,47 @@
                         </thead>
                         <tbody>
                             @{
-                                string sessionKey = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null ? "GioHang_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung").ToString() : "GioHang_Temp";
+                                string sessionKey = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null
+                                ? "GioHang_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung").ToString()
+                                : "GioHang_Temp";
+
                                 var gioHang = HttpContextAccessor.HttpContext.Session
                                 .GetObject<List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>>(sessionKey)
                                 ?? new List<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CartItem>();
+
                                 decimal tongTien = 0;
+
+                                // ✅ Tính tổng tiền trước
+                                if (gioHang != null && gioHang.Any())
+                                {
+                                    foreach (var item in gioHang)
+                                    {
+                                        tongTien += item.Gia * item.SoLuong;
+                                    }
+                                }
+
+                                // ✅ Lấy coupon 1 lần
+                                var couponKey = HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung") != null
+                                ? "Voucher_" + HttpContextAccessor.HttpContext.Session.GetString("UserMaNguoiDung")
+                                : "Voucher_Temp";
+
+                                var coupon = HttpContextAccessor.HttpContext.Session
+                                .GetObject<HKDN_GroupUTE_BookStore.Controllers.KhachHangController.CouponSession>(couponKey);
+
+                                // ✅ Tính giảm giá 1 lần
+                                decimal giamGia = 0;
+                                if (coupon != null)
+                                {
+                                    giamGia = Math.Round(tongTien * (coupon.PhanTramGiam / 100m), 0);
+                                    if (giamGia < 0) giamGia = 0;
+                                    if (giamGia > tongTien) giamGia = tongTien;
+                                }
 
                                 if (gioHang != null && gioHang.Any())
                                 {
                                     foreach (var item in gioHang)
                                     {
                                         var thanhTien = item.Gia * item.SoLuong;
-                                        tongTien += thanhTien;
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
@@ -304,6 +333,7 @@
                                 }
                             }
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -312,7 +342,8 @@
             {
                 <div class="cart-card mt-4 p-4 animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
                     <div class="d-flex flex-wrap align-items-center">
-                        <input type="text" class="checkout-input me-3 mb-0" style="max-width: 300px;" placeholder="Nhập mã giảm giá (nếu có)">
+                        <input id="couponCode" type="text" class="checkout-input me-3 mb-0" style="max-width: 300px;"
+                               placeholder="Nhập mã giảm giá (VD: SALE10)">
                         <button class="btn-coupon" type="button">Áp dụng</button>
                     </div>
                 </div>
@@ -332,6 +363,13 @@
                     <span class="text-muted">Vận chuyển:</span>
                     <span class="fw-bold">30.000đ</span>
                 </div>
+                @if (coupon != null)
+                {
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Giảm giá (@coupon.MaVoucher - @coupon.PhanTramGiam%):</span>
+                        <span class="fw-bold text-danger">-@((int)giamGia)đ</span>
+                    </div>
+                }
 
                 <div class="alert alert-info py-2 small rounded-3 mb-4">
                     <i class="fas fa-truck me-2"></i> Vận chuyển đến: <strong>Đà Nẵng</strong>
@@ -341,7 +379,7 @@
 
                 <div class="d-flex justify-content-between mb-4">
                     <h5 class="fw-bold text-primary">Tổng cộng:</h5>
-                    <h5 class="fw-bold text-primary">@((int)(tongTien + 30000))đ</h5>
+                    <h5 class="fw-bold text-primary">@((int)(tongTien - giamGia + 30000))đ</h5>
                 </div>
 
                 <div class="mb-4">
@@ -432,6 +470,33 @@
                     error: function () { alert("Lỗi xóa sản phẩm."); }
                 });
             });
+                    $(".btn-coupon").click(function () {
+            var code = $("#couponCode").val();
+
+            if (!code) {
+                alert("Vui lòng nhập mã giảm giá.");
+                $("#couponCode").focus();
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("ApDungMaGiamGia", "KhachHang")',
+                type: 'POST',
+                data: { maVoucher: code },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload(); // đơn giản + chắc chắn đúng tổng tiền
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Lỗi áp dụng mã giảm giá.");
+                }
+            });
+        });
+
 
             // Xử lý đặt hàng
             $(".btn-dat-hang").click(function () {
