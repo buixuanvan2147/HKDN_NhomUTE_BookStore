@@ -5,25 +5,37 @@
 }
 
 <style>
-    /* --- BIẾN MÀU SẮC & STYLE CHUNG --- */
+    /* --- 1. CONFIG MÀU SẮC (THEME MINT & PASTEL) --- */
     :root {
-        --primary-color: #0F9D58;
+        --primary-color: #0F9D58; /* Xanh lá chủ đạo */
         --primary-hover: #0B8043;
-        --bg-soft-mint: #f2fbf7;
-        --text-dark: #333;
+        --bg-soft-mint: #f0fdf4; /* Nền trang rất nhạt */
+        --text-dark: #1e293b; /* Màu chữ đen xám hiện đại */
+        /* Màu trạng thái (Nền nhạt + Chữ đậm) */
+        --warning-bg: #fffbeb;
+        --warning-text: #b45309;
+        --info-bg: #eff6ff;
+        --info-text: #1d4ed8;
+        --primary-bg: #ecfdf5;
+        --primary-text: #047857;
+        --success-bg: #f0fdfa;
+        --success-text: #0f766e;
+        --danger-bg: #fef2f2;
+        --danger-text: #b91c1c;
     }
 
     body {
         background-color: var(--bg-soft-mint);
+        color: var(--text-dark);
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* --- HEADER VỚI WAVE --- */
+    /* --- 2. HEADER WAVE --- */
     .page-header-wave {
-        background: linear-gradient(135deg, rgba(204, 251, 241, 0.95) 0%, rgba(224, 242, 254, 0.95) 100%);
-        padding: 60px 0 100px 0;
+        background: linear-gradient(135deg, #d1fae5 0%, #e0f2fe 100%);
+        padding: 50px 0 90px 0;
         position: relative;
         text-align: center;
-        overflow: hidden;
     }
 
     .custom-shape-divider-bottom {
@@ -39,125 +51,268 @@
             position: relative;
             display: block;
             width: calc(130% + 1.3px);
-            height: 70px;
+            height: 60px;
         }
 
         .custom-shape-divider-bottom .shape-fill {
             fill: var(--bg-soft-mint);
         }
 
-    /* --- USER CARD --- */
+    /* --- 3. LAYOUT & CARDS --- */
     .user-container {
+        margin-top: -40px;
         position: relative;
         z-index: 2;
-        margin-top: -50px;
     }
 
     .info-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(15, 157, 88, 0.1);
-        border: none;
-        padding: 30px;
-        margin-bottom: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        padding: 24px;
+        height: 100%;
+        border: 1px solid #e2e8f0;
     }
 
-        .info-card h2 {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
+    .sticky-user-info {
+        position: sticky;
+        top: 20px;
+    }
 
-    /* Form Styles */
+    .info-card h2 {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
+
+    /* --- 4. FORM INPUT --- */
     .form-label {
+        font-size: 0.85rem;
         font-weight: 600;
-        font-size: 0.9rem;
-        color: #555;
+        color: #475569;
+        margin-bottom: 6px;
     }
 
     .custom-input {
-        background: #f9f9f9;
-        border: 1px solid #eee;
-        border-radius: 10px;
-        padding: 12px 15px;
-        transition: all 0.3s;
+        background-color: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        padding: 10px 12px;
+        transition: all 0.2s;
     }
 
         .custom-input:focus {
+            background-color: white;
             border-color: var(--primary-color);
-            background: #fff;
-            outline: none;
             box-shadow: 0 0 0 3px rgba(15, 157, 88, 0.1);
         }
 
-    .btn-save-info {
-        background: var(--primary-color);
-        border: none;
-        box-shadow: 0 4px 10px rgba(15, 157, 88, 0.3);
-        transition: all 0.3s;
-        font-weight: 600;
+    /* --- 5. TABLE STYLES --- */
+    .table-container {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-        .btn-save-info:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-    /* Table Styles */
     .table thead th {
-        border-bottom: 2px solid #eee;
-        color: var(--text-dark);
-        font-weight: 700;
+        background-color: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        background-color: #f8f9fa;
+        font-weight: 700;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 14px 10px;
+        white-space: nowrap;
     }
 
     .table tbody td {
         vertical-align: middle;
-        padding: 15px;
-        color: #555;
         font-size: 0.9rem;
+        padding: 12px 10px;
+        border-bottom: 1px solid #f1f5f9;
     }
 
-    .table img {
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    /* Status Badge */
+    /* --- 6. BADGES (FIXED WIDTH - QUAN TRỌNG) --- */
     .badge-status {
-        padding: 5px 10px;
+        display: inline-block;
+        width: 120px; /* Độ rộng cố định để không bị so le */
+        padding: 6px 0;
         border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .status-cho-xac-nhan {
+        background-color: var(--warning-bg);
+        color: var(--warning-text);
+    }
+
+    .status-dang-xu-ly {
+        background-color: var(--info-bg);
+        color: var(--info-text);
+    }
+
+    .status-dang-giao {
+        background-color: var(--primary-bg);
+        color: var(--primary-text);
+    }
+
+    .status-hoan-thanh {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+    }
+
+    .status-da-huy {
+        background-color: var(--danger-bg);
+        color: var(--danger-text);
+    }
+
+    /* --- 7. BUTTONS --- */
+    .btn-icon-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        background: white;
+    }
+
+    .btn-view {
+        color: var(--primary-color);
+        border-color: #bbf7d0;
+    }
+
+        .btn-view:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+    .btn-edit {
+        color: #d97706;
+        border-color: #fed7aa;
+    }
+
+        .btn-edit:hover {
+            background-color: #d97706;
+            color: white;
+            border-color: #d97706;
+        }
+
+    .btn-cancel-mini {
+        color: #ef4444;
+        border-color: #fecaca;
+    }
+
+        .btn-cancel-mini:hover {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+    .btn-confirm-received {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 14px;
         font-size: 0.8rem;
         font-weight: 600;
     }
 
-    .status-processing {
-        background-color: #fff3cd;
-        color: #856404;
+        .btn-confirm-received:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+    .btn-save-info {
+        background-color: var(--primary-color);
+        border: none;
+        font-weight: 600;
     }
 
-    .status-completed {
-        background-color: #d4edda;
-        color: #155724;
+        .btn-save-info:hover {
+            background-color: var(--primary-hover);
+        }
+
+    /* --- 8. MODAL & CHI TIẾT SẢN PHẨM (QUAN TRỌNG) --- */
+    .product-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
     }
 
-    .status-cancelled {
-        background-color: #f8d7da;
-        color: #721c24;
+        .product-row:last-child {
+            border-bottom: none;
+        }
+
+    .product-img {
+        width: 50px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #eee;
+        flex-shrink: 0; /* Không bị co ảnh */
+    }
+
+    .product-info {
+        flex-grow: 1;
+        padding: 0 15px;
+        min-width: 0; /* Cần thiết để text-truncate hoạt động trong Flexbox */
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 2px;
+        /* Xử lý tràn dòng */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    .product-price {
+        white-space: nowrap; /* Giá tiền không xuống dòng */
+        font-weight: 700;
+        color: var(--primary-color);
+        flex-shrink: 0;
+    }
+
+    /* Modal Hủy Đơn đẹp */
+    .icon-danger-box {
+        width: 60px;
+        height: 60px;
+        background-color: #fef2f2;
+        color: #ef4444;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 24px;
     }
 </style>
 
 <div class="page-header-wave">
     <div class="container">
-        <h1 class="display-5 fw-bold text-dark mb-3">Hồ Sơ Của Bạn</h1>
+        <h1 class="display-6 fw-bold text-dark mb-2">Hồ Sơ Của Bạn</h1>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb justify-content-center mb-0">
+            <ol class="breadcrumb justify-content-center mb-0 small">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index_Home", "Home")" class="text-decoration-none text-muted">Trang chủ</a></li>
-                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Thông tin cá nhân</li>
+                <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Tài khoản</li>
             </ol>
         </nav>
     </div>
@@ -169,128 +324,221 @@
 </div>
 
 <div class="container pb-5 user-container">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="info-card sticky-user-info animate__animated animate__fadeInLeft">
+                <h2><i class="fas fa-id-card me-2"></i>Thông tin cá nhân</h2>
 
-    <div class="info-card animate__animated animate__fadeInUp">
-        <h2><i class="fas fa-user-edit me-2"></i>Thông tin cá nhân</h2>
-        <div class="row g-4">
-            <div class="col-md-6">
                 <div class="form-group mb-3">
-                    <label for="hoTen" class="form-label">Họ tên</label>
-                    <input type="text" class="form-control custom-input" id="hoTen" value="@Model.HoTen" required placeholder="Nhập họ tên của bạn">
+                    <label class="form-label">Họ tên</label>
+                    <input type="text" class="form-control custom-input" id="hoTen" value="@Model.HoTen" placeholder="Nhập họ tên">
                 </div>
+
                 <div class="form-group mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control custom-input" id="email" value="@Model.Email" required placeholder="Nhập địa chỉ email">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control custom-input" id="email" value="@Model.Email" placeholder="Nhập email">
                 </div>
-            </div>
-            <div class="col-md-6">
+
                 <div class="form-group mb-3">
-                    <label for="soDienThoai" class="form-label">Số điện thoại</label>
+                    <label class="form-label">Số điện thoại</label>
                     <input type="text" class="form-control custom-input" id="soDienThoai" value="@Model.SoDienThoai" placeholder="Nhập số điện thoại">
                 </div>
-                <div class="form-group mb-3">
-                    <label for="diaChi" class="form-label">Địa chỉ</label>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Địa chỉ</label>
                     <input type="text" class="form-control custom-input" id="diaChi" value="@Model.DiaChi" placeholder="Nhập địa chỉ giao hàng">
                 </div>
-            </div>
-            <div class="col-12 text-end">
-                <button class="btn btn-primary rounded-pill px-4 py-2 btn-save-info" type="button">
-                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+
+                <button class="btn btn-primary w-100 rounded-pill py-2 btn-save-info shadow-sm" type="button">
+                    <i class="fas fa-save me-2"></i> Lưu thay đổi
                 </button>
             </div>
         </div>
-    </div>
 
-    <div class="info-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
-        <h2><i class="fas fa-history me-2"></i>Lịch sử đơn hàng</h2>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th scope="col" style="min-width: 250px;">Sản phẩm</th>
-                        <th scope="col">Đơn giá</th>
-                        <th scope="col" class="text-center">SL</th>
-                        <th scope="col" style="min-width: 120px;">Ngày đặt</th>
-                        <th scope="col">Tổng đơn</th>
-                        <th scope="col" class="text-center">Trạng thái</th>
-                        <th scope="col" class="text-center">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.DonHangs != null && Model.DonHangs.Any())
-                    {
-                        foreach (var donHang in Model.DonHangs)
-                        {
-                            foreach (var chiTiet in donHang.ChiTiets)
-                            {
+        <div class="col-lg-8">
+            <div class="info-card animate__animated animate__fadeInRight" style="min-height: 500px;">
+                <h2><i class="fas fa-box-open me-2"></i>Lịch sử đơn hàng</h2>
+
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="~/images/@chiTiet.URLAnhBia" class="rounded-3 me-3" style="width: 50px; height: 70px; object-fit: cover;" alt="Ảnh sản phẩm">
-                                            <div>
-                                                <p class="mb-0 fw-bold text-dark text-truncate" style="max-width: 200px;" title="@chiTiet.TenSach">@chiTiet.TenSach</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>@((int)chiTiet.GiaBan)đ</td>
-                                    <td class="text-center">@chiTiet.SoLuong</td>
-                                    <td><small class="text-muted">@donHang.NgayTao.ToString("dd/MM/yyyy")</small></td>
-                                    <td class="fw-bold text-primary">@donHang.TongTien.ToString("N0") đ</td>
-                                    <td class="text-center">
-                                        @if (donHang.TrangThaiDonHang == "DangXuLy")
-                                        {
-                                            <span class="badge badge-status status-processing">Đang xử lý</span>
-                                        }
-                                        else if (donHang.TrangThaiDonHang == "DaHuy")
-                                        {
-                                            <span class="badge badge-status status-cancelled">Đã hủy</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge badge-status status-completed">Hoàn thành</span>
-                                        }
-                                    </td>
-                                    <td class="text-center">
-                                        @if (donHang.TrangThaiDonHang == "DangXuLy")
-                                        {
-                                            <button class="btn btn-sm btn-outline-danger rounded-pill btn-cancel-order" title="Hủy đơn hàng" data-madonhang="@donHang.MaDonHang">
-                                                <i class="fas fa-times"></i> Hủy
-                                            </button>
-                                        }
-                                    </td>
+                                    <th class="text-start ps-4">Mã Đơn</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Tổng Tiền</th>
+                                    <th class="text-center">Trạng Thái</th>
+                                    <th class="text-center">Chi Tiết</th>
+                                    <th class="text-end pe-4">Thao Tác</th>
                                 </tr>
-                            }
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="7" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="fas fa-box-open fa-3x mb-3 text-secondary"></i>
-                                    <p>Bạn chưa có đơn hàng nào.</p>
-                                    <a href="@Url.Action("Index_Home", "Home")" class="btn btn-sm btn-outline-primary rounded-pill">Mua sắm ngay</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            </thead>
+                            <tbody>
+                                @if (Model.DonHangs != null && Model.DonHangs.Any())
+                                {
+                                    foreach (var donHang in Model.DonHangs)
+                                    {
+                                        <tr>
+                                            <td class="text-start ps-4 fw-bold text-primary">@donHang.MaDonHang</td>
+                                            <td>@donHang.NgayTao.ToString("dd/MM/yy HH:mm")</td>
+                                            <td class="fw-bold">@donHang.TongTien.ToString("N0") đ</td>
+
+                                            <td class="text-center">
+                                                @if (donHang.TrangThaiDonHang == "ChoXacNhan")
+                                                {
+                                                    <span class="badge-status status-cho-xac-nhan">Chờ xác nhận</span>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DangXuLy")
+                                                {
+
+                                                    <span class="badge-status status-dang-xu-ly">Đang xử lý</span>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DangGiao")
+                                                {
+
+                                                    <span class="badge-status status-dang-giao">Đang giao</span>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DaGiao")
+                                                {
+
+                                                    <span class="badge-status status-hoan-thanh">Hoàn thành</span>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DaHuy")
+                                                {
+
+                                                    <span class="badge-status status-da-huy">Đã hủy</span>
+                                                }
+                                            </td>
+
+                                            <td class="text-center">
+                                                <button class="btn btn-icon-circle btn-view btn-view-detail"
+                                                        title="Xem chi tiết"
+                                                        data-madon="@donHang.MaDonHang"
+                                                        data-ngay="@donHang.NgayTao.ToString("dd/MM/yyyy")">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+
+                                                <div id="detail-data-@donHang.MaDonHang" class="d-none">
+                                                    @foreach (var ct in donHang.ChiTiets)
+                                                    {
+                                                        <div class="product-row">
+                                                            <img src="~/images/@ct.URLAnhBia" class="product-img">
+                                                            <div class="product-info">
+                                                                <div class="product-name" title="@ct.TenSach">@ct.TenSach</div>
+                                                                <small class="text-muted">SL: @ct.SoLuong</small>
+                                                            </div>
+                                                            <div class="product-price">
+                                                                @((ct.SoLuong * ct.GiaBan).ToString("N0"))đ
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <td class="text-end pe-4" style="min-width: 150px;">
+                                                @if (donHang.TrangThaiDonHang == "ChoXacNhan" || donHang.TrangThaiDonHang == "DangXuLy")
+                                                {
+                                                    <button class="btn btn-icon-circle btn-edit btn-edit-order" title="Sửa đơn">
+                                                        <i class="fas fa-pen small"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon-circle btn-cancel-mini btn-cancel-trigger"
+                                                            title="Hủy đơn"
+                                                            data-madonhang="@donHang.MaDonHang">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DangGiao")
+                                                {
+                                                    <button class="btn btn-confirm-received btn-received-order"
+                                                            data-madonhang="@donHang.MaDonHang">
+                                                        <i class="fas fa-check me-1"></i> Đã nhận
+                                                    </button>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DaGiao")
+                                                {
+                                                    <span class="text-success small fw-bold"><i class="fas fa-check-circle"></i> Xong</span>
+                                                }
+                                                else if (donHang.TrangThaiDonHang == "DaHuy")
+                                                {
+                                                    <span class="text-muted small"><i class="fas fa-ban"></i> Hủy</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="fas fa-shopping-basket fa-2x mb-2 opacity-50"></i>
+                                            <p class="mb-0">Chưa có đơn hàng nào</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmCancelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-body text-center p-4">
+                <div class="icon-danger-box animate__animated animate__pulse animate__infinite">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Hủy đơn hàng?</h5>
+                <p class="text-muted small mb-4">Bạn có chắc muốn hủy đơn <span id="cancelOrderIdDisplay" class="fw-bold text-dark"></span>? <br>Hành động này không thể hoàn tác.</p>
+
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-light rounded-pill w-50 fw-bold" data-bs-dismiss="modal">Không</button>
+                    <button type="button" class="btn btn-danger rounded-pill w-50 fw-bold" id="btnConfirmCancel">Hủy ngay</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-body text-center py-4">
+                <div class="mb-3 text-primary">
+                    <i class="fas fa-info-circle fa-2x"></i>
+                </div>
+                <p id="infoModalBody" class="fw-bold text-dark mb-0"></p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pt-0">
+                <button type="button" class="btn btn-primary rounded-pill px-4 btn-sm" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow rounded-4">
-            <div class="modal-header bg-primary text-white border-0 rounded-top-4">
-                <h5 class="modal-title"><i class="fas fa-bell me-2"></i>Thông báo</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header border-0 py-3" style="background-color: var(--bg-soft-mint);">
+                <h6 class="modal-title mb-0 fw-bold text-dark">
+                    <i class="fas fa-receipt me-2 text-primary"></i>Đơn hàng: <span id="detailModalId" class="text-primary"></span>
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center py-4 fs-5" id="infoModalBody">
+
+            <div class="modal-body p-0">
+                <div class="px-4 py-2 border-bottom d-flex justify-content-between bg-white">
+                    <span class="text-muted small">Ngày đặt hàng</span>
+                    <span id="detailModalDate" class="fw-bold text-dark small"></span>
+                </div>
+                <div id="detailModalContent" class="px-4 py-2" style="max-height: 400px; overflow-y: auto;">
+                </div>
             </div>
-            <div class="modal-footer border-0 justify-content-center">
-                <button type="button" class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">OK</button>
+
+            <div class="modal-footer border-0 py-3 justify-content-center">
+                <button type="button" class="btn btn-secondary rounded-pill btn-sm px-5" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -299,7 +547,47 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Xử lý lưu thông tin (LOGIC CŨ)
+
+            // --- XỬ LÝ XEM CHI TIẾT ---
+            $(".btn-view-detail").click(function() {
+                var maDon = $(this).data("madon");
+                var ngayDat = $(this).data("ngay");
+                var htmlContent = $("#detail-data-" + maDon).html();
+                $("#detailModalId").text(maDon);
+                $("#detailModalDate").text(ngayDat);
+                $("#detailModalContent").html(htmlContent);
+                $("#detailModal").modal('show');
+            });
+
+            // --- XỬ LÝ HỦY ĐƠN ---
+            var orderIdToCancel = "";
+            $(".btn-cancel-trigger").click(function () {
+                orderIdToCancel = $(this).data("madonhang");
+                $("#cancelOrderIdDisplay").text(orderIdToCancel);
+                $("#confirmCancelModal").modal('show');
+            });
+
+            $("#btnConfirmCancel").click(function() {
+                $("#confirmCancelModal").modal('hide');
+                $.ajax({
+                    url: '@Url.Action("HuyDonHang", "KhachHang")',
+                    type: 'POST',
+                    data: { maDonHang: orderIdToCancel },
+                    success: function (response) {
+                        $("#infoModalBody").text(response.message);
+                        $("#infoModal").modal('show');
+                        if (response.success) {
+                            setTimeout(function () { location.reload(); }, 1500);
+                        }
+                    },
+                    error: function () {
+                        $("#infoModalBody").text("Lỗi kết nối server.");
+                        $("#infoModal").modal('show');
+                    }
+                });
+            });
+
+            // --- LƯU THÔNG TIN ---
             $(".btn-save-info").click(function () {
                 var hoTen = $("#hoTen").val();
                 var email = $("#email").val();
@@ -307,15 +595,14 @@
                 var diaChi = $("#diaChi").val();
 
                 if (!hoTen || !email) {
-                    $("#infoModalBody").text("Họ tên và email không được để trống.");
+                    $("#infoModalBody").text("Vui lòng nhập họ tên và email.");
                     $("#infoModal").modal('show');
                     return;
                 }
 
-                // Hiệu ứng loading nút
                 var btn = $(this);
                 var originalHtml = btn.html();
-                btn.html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...').prop('disabled', true);
+                btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
 
                 $.ajax({
                     url: '@Url.Action("CapNhatThongTin", "KhachHang")',
@@ -330,19 +617,19 @@
                         btn.html(originalHtml).prop('disabled', false);
                     },
                     error: function () {
-                        $("#infoModalBody").text("Đã có lỗi xảy ra khi cập nhật thông tin.");
+                        $("#infoModalBody").text("Có lỗi xảy ra, vui lòng thử lại.");
                         $("#infoModal").modal('show');
                         btn.html(originalHtml).prop('disabled', false);
                     }
                 });
             });
 
-            // Xử lý hủy đơn hàng (LOGIC CŨ)
-            $(".btn-cancel-order").click(function () {
+            // --- NHẬN HÀNG ---
+            $(".btn-received-order").click(function () {
                 var maDonHang = $(this).data("madonhang");
-                if (confirm("Bạn có chắc muốn hủy đơn hàng này?")) {
-                    $.ajax({
-                        url: '@Url.Action("HuyDonHang", "KhachHang")',
+                if (confirm("Xác nhận bạn đã nhận hàng thành công?")) {
+                     $.ajax({
+                        url: '@Url.Action("XacNhanNhanHang", "KhachHang")',
                         type: 'POST',
                         data: { maDonHang: maDonHang },
                         success: function (response) {
@@ -353,11 +640,17 @@
                             }
                         },
                         error: function () {
-                            $("#infoModalBody").text("Đã có lỗi xảy ra khi hủy đơn hàng.");
+                            $("#infoModalBody").text("Lỗi kết nối server.");
                             $("#infoModal").modal('show');
                         }
                     });
                 }
+            });
+
+            // --- NÚT SỬA ---
+             $(".btn-edit-order").click(function() {
+                $("#infoModalBody").text("Tính năng đang phát triển.");
+                $("#infoModal").modal('show');
             });
         });
     </script>
