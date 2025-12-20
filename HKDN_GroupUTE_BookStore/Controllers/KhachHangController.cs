@@ -264,7 +264,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                     MaDonHang = maDon,
                     MaNguoiDung = maNguoiDung,
                     TongTien = tongSauGiam,              // ✅ đã trừ giảm giá
-                    TrangThaiDonHang = "DangXuLy",
+                    TrangThaiDonHang = "ChoXacNhan",
                     DiaChiGiao = diaChiGiao.Trim(),
                     NgayTao = DateTime.Now
                 };
@@ -414,11 +414,13 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             if (donHang == null)
                 return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
 
-            if (donHang.TrangThaiDonHang != "DangXuLy")
-                return Json(new { success = false, message = "Không thể hủy đơn đã xử lý!" });
+            // Cập nhật: Cho phép hủy nếu đang Chờ xác nhận (ChoXacNhan) hoặc Đang xử lý (DangXuLy)
+            if (donHang.TrangThaiDonHang != "DangXuLy" && donHang.TrangThaiDonHang != "ChoXacNhan")
+                return Json(new { success = false, message = "Không thể hủy đơn hàng ở trạng thái này!" });
 
             donHang.TrangThaiDonHang = "DaHuy";
 
+            // Hoàn lại số lượng tồn kho
             var details = _shopContext.Chitietdonhangs.Where(ct => ct.MaDonHang == maDonHang).ToList();
             foreach (var ct in details)
             {
@@ -430,6 +432,29 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             _shopContext.SaveChanges();
 
             return Json(new { success = true, message = "Hủy đơn thành công!" });
+        }
+
+        [HttpPost]
+        public JsonResult XacNhanNhanHang(string maDonHang)
+        {
+            var maNguoiDung = HttpContext.Session.GetString("UserMaNguoiDung");
+            if (maNguoiDung == null)
+                return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
+
+            var donHang = _shopContext.Donhangs
+                .FirstOrDefault(d => d.MaDonHang == maDonHang && d.MaNguoiDung == maNguoiDung);
+
+            if (donHang == null)
+                return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
+
+            // Chỉ cho phép xác nhận khi trạng thái là Đang giao (DangGiao)
+            if (donHang.TrangThaiDonHang != "DangGiao")
+                return Json(new { success = false, message = "Đơn hàng chưa được giao, không thể xác nhận!" });
+
+            donHang.TrangThaiDonHang = "DaGiao"; // Chuyển sang Hoàn thành/Đã giao
+            _shopContext.SaveChanges();
+
+            return Json(new { success = true, message = "Xác nhận đã nhận hàng thành công!" });
         }
 
         public IActionResult ThongBao()

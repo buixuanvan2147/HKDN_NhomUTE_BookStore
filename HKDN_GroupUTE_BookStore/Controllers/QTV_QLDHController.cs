@@ -20,24 +20,53 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         // GET: QTV_QLDH/Index
         public async Task<IActionResult> Index()
         {
+            // Thêm OrderByDescending để đơn mới nhất luôn nằm trên đầu, giúp bảng ổn định
             var donHangs = _shopContext.Donhangs
-                .Include(d => d.MaNguoiDungNavigation) // Tương đương Include("NguoiDung")
+                .Include(d => d.MaNguoiDungNavigation)
+                .OrderByDescending(d => d.NgayTao)
                 .AsNoTracking();
 
             var viewModel = new QTV_DoanhThuViewModel
             {
-                SoLuongDonHangDangXuLy = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DangXuLy"),
-                TongTienDangXuLy = await donHangs.Where(d => d.TrangThaiDonHang == "DangXuLy").SumAsync(d => d.TongTien),
-                SoLuongDonHangDaGiao = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DaGiao"),
-                TongTienDaGiao = await donHangs.Where(d => d.TrangThaiDonHang == "DaGiao").SumAsync(d => d.TongTien),
-                SoLuongDonHangDaHuy = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DaHuy"),
-                TongTienDaHuy = await donHangs.Where(d => d.TrangThaiDonHang == "DaHuy").SumAsync(d => d.TongTien)
+                //CHỜ XÁC NHẬN
+                SoLuongChoXacNhan = await donHangs
+                    .CountAsync(d => d.TrangThaiDonHang == "ChoXacNhan"),
+                TongTienChoXacNhan = await donHangs
+                    .Where(d => d.TrangThaiDonHang == "ChoXacNhan")
+                    .SumAsync(d => (decimal?)d.TongTien) ?? 0,
+
+                //ĐANG XỬ LÝ
+                SoLuongDangXuLy = await donHangs
+                    .CountAsync(d => d.TrangThaiDonHang == "DangXuLy"),
+                TongTienDangXuLy = await donHangs
+                    .Where(d => d.TrangThaiDonHang == "DangXuLy")
+                    .SumAsync(d => (decimal?)d.TongTien) ?? 0,
+
+                //ĐANG GIAO
+                SoLuongDangGiao = await donHangs
+                    .CountAsync(d => d.TrangThaiDonHang == "DangGiao"),
+                TongTienDangGiao = await donHangs
+                    .Where(d => d.TrangThaiDonHang == "DangGiao")
+                    .SumAsync(d => (decimal?)d.TongTien) ?? 0,
+
+                //ĐÃ GIAO
+                SoLuongDaGiao = await donHangs
+                    .CountAsync(d => d.TrangThaiDonHang == "DaGiao"),
+                TongTienDaGiao = await donHangs
+                    .Where(d => d.TrangThaiDonHang == "DaGiao")
+                    .SumAsync(d => (decimal?)d.TongTien) ?? 0,
+
+                //ĐÃ HỦY
+                SoLuongDaHuy = await donHangs
+                    .CountAsync(d => d.TrangThaiDonHang == "DaHuy"),
+                TongTienDaHuy = await donHangs
+                    .Where(d => d.TrangThaiDonHang == "DaHuy")
+                    .SumAsync(d => (decimal?)d.TongTien) ?? 0
+
             };
 
             ViewBag.DoanhThuThongKe = viewModel;
-
-            var listDonHang = await donHangs.ToListAsync();
-            return View(listDonHang);
+            return View(await donHangs.ToListAsync());
         }
 
         // GET: QTV_QLDH/Details/DH001
@@ -59,69 +88,23 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             return View(donHang);
         }
 
-        // GET: QTV_QLDH/Create
-        public IActionResult Create()
-        {
-            ViewBag.MaNguoiDung = new SelectList(_shopContext.Nguoidungs, "MaNguoiDung", "HoTen");
-            return View();
-        }
 
-        // POST: QTV_QLDH/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Donhang donHang)
+        [HttpPost]
+        public JsonResult CapNhatTrangThaiAjax(string id, string trangThaiMoi)
         {
-            if (ModelState.IsValid)
-            {
-                _shopContext.Donhangs.Add(donHang);
-                await _shopContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            var donHang = _shopContext.Donhangs.Find(id);
 
-            ViewBag.MaNguoiDung = new SelectList(_shopContext.Nguoidungs, "MaNguoiDung", "HoTen", donHang.MaNguoiDung);
-            return View(donHang);
-        }
-
-        // GET: QTV_QLDH/Edit/DH001
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest();
-
-            var donHang = await _shopContext.Donhangs.FindAsync(id);
             if (donHang == null)
-                return NotFound();
+                return Json(new { success = false, msg = "Không tìm thấy đơn hàng!" });
 
-            ViewBag.MaNguoiDung = new SelectList(_shopContext.Nguoidungs, "MaNguoiDung", "HoTen", donHang.MaNguoiDung);
-            return View(donHang);
+            // Có thể chặn nghiệp vụ tại đây nếu muốn
+            donHang.TrangThaiDonHang = trangThaiMoi;
+            _shopContext.SaveChanges();
+
+            return Json(new { success = true, msg = "Cập nhật trạng thái thành công!" });
         }
 
-        // POST: QTV_QLDH/Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Donhang donHang)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _shopContext.Update(donHang);
-                    await _shopContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await _shopContext.Donhangs.AnyAsync(d => d.MaDonHang == donHang.MaDonHang))
-                        return NotFound();
-
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewBag.MaNguoiDung = new SelectList(_shopContext.Nguoidungs, "MaNguoiDung", "HoTen", donHang.MaNguoiDung);
-            return View(donHang);
-        }
 
         // GET: QTV_QLDH/Delete/DH001
         public async Task<IActionResult> Delete(string id)

@@ -128,7 +128,8 @@ VALUES
 ('ND002', 'Tran Thi B', 'b@gmail.com', 'password2', '0912345679', 'Da Nang', 'KhachHang', NOW()),
 ('ND003', 'Pham Van C', 'c@gmail.com', 'password3', '0912345680', 'Tp. Ho Chi Minh', 'KhachHang', NOW()),
 ('ND004', 'Le Thi D', 'd@gmail.com', 'password4', '0912345681', 'Hai Phong', 'Admin', NOW()),
-('ND005', 'Hoang Van E', 'e@gmail.com', 'password5', '0912345682', 'Can Tho', 'KhachHang', NOW());
+('ND005', 'Hoang Van E', 'e@gmail.com', 'password5', '0912345682', 'Can Tho', 'KhachHang', NOW()),
+('ND006', 'Bùi Xuân Văn', 'f@gmail.com', 'Pass123@', '0555555555', 'Can Tho', 'KhachHang', NOW());
 
 INSERT INTO TheLoai (MaTheLoai, TenTheLoai)
 VALUES 
@@ -181,36 +182,42 @@ VALUES
 ('S014', 'Mật Mã Da Vinci', 'Dan Brown', 'Kim Đồng', 2018, 'TL001', 120000, 40, 0, 'Một cuốn tiểu thuyết về các bí mật lịch sử và tín ngưỡng.', 'matMaDaVinci.jpg'),
 ('S015', 'Những Điều Kỳ Diệu Của Cuộc Sống', 'Haruki Murakami', 'NXB Văn Học', 2022, 'TL001', 130000, 55, 0, 'Một câu chuyện kể về những kỳ diệu trong cuộc sống hàng ngày.', 'nhungDieuKyDieuCuaCuocSong.jpg');
 
-INSERT INTO DonHang (MaDonHang, MaNguoiDung, TongTien, TrangThaiDonHang, DiaChiGiao, NgayTao)
-VALUES 
-('DH001', 'ND001', 185000, 'DangXuLy', 'Ha Noi', NOW()),
-('DH002', 'ND002', 120000, 'DaGiao', 'Da Nang', NOW()),
-('DH003', 'ND003', 150000, 'DaHuy', 'Tp. Ho Chi Minh', NOW()),
-('DH004', 'ND001', 50000, 'DangXuLy', 'Hai Phong', NOW()),
-('DH005', 'ND005', 100000, 'DangXuLy', 'Can Tho', NOW());
+INSERT INTO DonHang (MaDonHang, MaNguoiDung, TongTien, TrangThaiDonHang, DiaChiGiao, NgayTao) VALUES 
+('DH001', 'ND001', 170000, 'ChoXacNhan', '123 Cau Giay, Ha Noi', NOW()),
+('DH002', 'ND002', 220000, 'ChoXacNhan', '456 Le Duan, Da Nang', NOW()),
+('DH003', 'ND003', 100000, 'ChoXacNhan', '789 Nguyen Hue, TP.HCM', NOW()),
+('DH004', 'ND001', 500000, 'DangXuLy', '11 Lach Tray, Hai Phong', NOW()),
+('DH005', 'ND004', 150000, 'DangXuLy', '22 Tran Phu, Nha Trang', NOW()),
+('DH006', 'ND002', 240000, 'DangXuLy', '33 Hung Vuong, Can Tho', NOW()),
+('DH007', 'ND003', 120000, 'DangGiao', '44 Ly Thuong Kiet, Hue', NOW()),
+('DH008', 'ND005', 85000,  'DangGiao', '55 Nguyen Van Linh, Da Nang', NOW()),
+('DH009', 'ND004', 200000, 'DangGiao', '66 Vo Van Kiet, TP.HCM', NOW()),
+('DH010', 'ND001', 280000, 'DaGiao', '77 Ba Trieu, Ha Noi', NOW()),
+('DH011', 'ND002', 100000, 'DaGiao', '88 Hoang Dieu, Da Nang', NOW()),
+('DH012', 'ND005', 190000, 'DaGiao', '99 Tran Hung Dao, TP.HCM', NOW()),
+('DH013', 'ND003', 85000,  'DaHuy', '101 Le Loi, Vung Tau', NOW()),
+('DH014', 'ND004', 240000, 'DaHuy', '202 Nguyen Trai, Ha Noi', NOW()),
+('DH015', 'ND005', 130000, 'DaHuy', '303 3/2, Can Tho', NOW());
 
 INSERT INTO ChiTietDonHang (MaDonHang, MaSach, SoLuong, GiaBan)
 VALUES 
-('DH001', 'S001', 2, 150000),
-('DH001', 'S002', 3, 120000),
-('DH001', 'S003', 1, 200000),
-('DH001', 'S004', 5, 85000),
-('DH002', 'S005', 4, 170000),
-('DH002', 'S006', 2, 140000),
-('DH002', 'S007', 3, 95000),
-('DH002', 'S008', 6, 100000),
-('DH003', 'S009', 1, 220000),
-('DH003', 'S010', 3, 130000),
-('DH003', 'S001', 2, 180000),
-('DH003', 'S002', 4, 110000),
-('DH004', 'S003', 5, 160000),
-('DH004', 'S004', 2, 125000),
-('DH004', 'S005', 6, 90000),
-('DH004', 'S006', 3, 110000),
-('DH005', 'S007', 2, 250000),
-('DH005', 'S008', 4, 95000),
-('DH005', 'S009', 1, 300000),
-('DH005', 'S006', 5, 105000);
+('DH001', 'S001', 2, 85000),
+('DH002', 'S002', 1, 120000),
+('DH002', 'S003', 1, 100000),
+('DH003', 'S011', 1, 100000),
+('DH004', 'S004', 10, 50000),
+('DH005', 'S005', 1, 150000),
+('DH006', 'S014', 2, 120000),
+('DH007', 'S002', 1, 120000),
+('DH008', 'S013', 1, 85000),
+('DH009', 'S003', 2, 100000),
+('DH010', 'S010', 2, 140000),
+('DH011', 'S009', 1, 80000), 
+('DH011', 'S004', 1, 20000),
+('DH012', 'S006', 2, 95000),
+('DH013', 'S001', 1, 85000),
+('DH014', 'S002', 2, 120000),
+('DH015', 'S007', 1, 130000);
 
 INSERT INTO DanhGia (MaSach, MaNguoiDung, DiemDanhGia, BinhLuan, NgayTao)
 VALUES 
