@@ -143,6 +143,29 @@
     }
 
     }
+    /* Style cho container chứa input password và icon */
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .password-wrapper .custom-input {
+            padding-right: 40px; /* Chừa chỗ cho icon */
+        }
+
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        cursor: pointer;
+        color: #666;
+        z-index: 10;
+        transition: color 0.3s;
+    }
+
+        .toggle-password:hover {
+            color: var(--primary-color);
+        }
 </style>
 
 <div class="register-page-wrapper">
@@ -188,7 +211,10 @@
 
             <div class="form-group">
                 @Html.LabelFor(m => m.MatKhau, "Mật khẩu", new { @class = "fw-bold small mb-1" })
-                @Html.PasswordFor(m => m.MatKhau, new { @class = "custom-input", placeholder = "Nhập mật khẩu" })
+                <div class="password-wrapper">
+                    @Html.PasswordFor(m => m.MatKhau, new { @class = "custom-input", placeholder = "Nhập mật khẩu", id = "password-field" })
+                    <i class="fa-regular fa-eye toggle-password" id="eye-icon"></i>
+                </div>
                 @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger small mt-1 d-block", style = "font-size: 0.8rem;" })
             </div>
 
@@ -209,4 +235,20 @@
     <script src="~/scripts/jquery.validate.unobtrusive.js"></script>
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#eye-icon").click(function () {
+                // Đổi icon giữa eye và eye-slash
+                $(this).toggleClass("fa-eye fa-eye-slash");
+
+                // Đổi type của input giữa password và text
+                var input = $("#password-field");
+                if (input.attr("type") === "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+            });
+        });
+    </script>
 }

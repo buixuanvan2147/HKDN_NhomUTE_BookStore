@@ -241,15 +241,96 @@
             font-size: 0.9rem;
         }
     }
+    /* Style cho thanh công cụ tìm kiếm và lọc */
+    .search-filter-wrapper {
+        background-color: #2D3748;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .search-input-group {
+        flex: 1;
+        min-width: 250px;
+    }
+
+        .search-input-group input, .search-input-group select {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1A202C;
+            border: 1px solid #4A5568;
+            color: #E2E8F0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+            .search-input-group input:focus, .search-input-group select:focus {
+                border-color: #4FD1C5;
+            }
+
+    .btn-filter {
+        padding: 10px 25px;
+        background-color: #4FD1C5;
+        color: #1A202C;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .btn-filter:hover {
+            background-color: #38B2AC;
+            transform: translateY(-2px);
+        }
+
+    .btn-clear {
+        color: #A0AEC0;
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+        .btn-clear:hover {
+            color: #E2E8F0;
+        }
 </style>
 
 <div class="user-list-container">
     <h2 class="page-title">DANH SÁCH NGƯỜI DÙNG TRONG HỆ THỐNG</h2>
 
-    <div class="add-new-button-container">
-        <a href="@Url.Action("Create", "QTV_QLND")" class="add-new-button">
-            <i class="fas fa-plus-circle"></i> Thêm Người Dùng Mới
-        </a>
+    <div class="search-filter-wrapper">
+        <form action="@Url.Action("Index", "QTV_QLND")" method="get" class="search-form">
+            <div class="search-input-group">
+                <input type="text" name="searchString" placeholder="Tìm theo tên, email, SĐT..." value="@ViewBag.CurrentSearch">
+            </div>
+            <div class="search-input-group" style="max-width: 200px;">
+                <select name="roleFilter">
+                    <option value="">-- Tất cả vai trò --</option>
+                    <option value="Admin" selected="@(ViewBag.CurrentRole == "Admin")">Quản trị viên (Admin)</option>
+                    <option value="KhachHang" selected="@(ViewBag.CurrentRole == "KhachHang")">Khách hàng</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-filter">
+                <i class="fas fa-search"></i> LỌC
+            </button>
+            <a href="@Url.Action("Index", "QTV_QLND")" class="btn-clear">Xóa lọc</a>
+
+            <div style="margin-left: auto;">
+                <a href="@Url.Action("Create", "QTV_QLND")" class="add-new-button">
+                    <i class="fas fa-plus-circle"></i> Thêm mới
+                </a>
+            </div>
+        </form>
     </div>
 
     <div class="table-responsive">

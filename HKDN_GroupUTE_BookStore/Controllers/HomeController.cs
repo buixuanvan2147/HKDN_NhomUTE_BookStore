@@ -107,12 +107,44 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return View(model);
             }
 
-            if (user.MatKhau != model.MatKhau)
+            bool isValidPassword = false;
+
+            // KIỂM TRA ĐỊNH DẠNG CHUỖI TRONG DATABASE
+            // Chuỗi BCrypt luôn bắt đầu bằng $2a$, $2b$ hoặc $2y$
+            if (user.MatKhau != null && user.MatKhau.StartsWith("$2"))
+            {
+                try
+                {
+                    // Nếu là dạng Hash -> Dùng Verify
+                    isValidPassword = BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau);
+                }
+                catch (BCrypt.Net.SaltParseException)
+                {
+                    // Phòng trường hợp chuỗi bắt đầu bằng $2 nhưng không phải hash hợp lệ
+                    isValidPassword = (user.MatKhau == model.MatKhau);
+                }
+            }
+            else
+            {
+                // Nếu không phải dạng Hash -> So sánh trực tiếp chuỗi thuần
+                isValidPassword = (user.MatKhau == model.MatKhau);
+            }
+
+            if (!isValidPassword)
             {
                 ModelState.AddModelError("", "Mật khẩu không đúng.");
                 return View(model);
             }
 
+            // Trong HttpPost DangNhap, sau khi isValidPassword == true
+            if (!user.MatKhau.StartsWith("$2"))
+            {
+                // Nếu họ vừa đăng nhập đúng bằng mật khẩu cũ, hãy băm và lưu lại ngay
+                user.MatKhau = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
+                _shopContext.SaveChanges();
+            }
+
+            // Đăng nhập thành công, lưu Session
             HttpContext.Session.SetString("UserMaNguoiDung", user.MaNguoiDung);
             HttpContext.Session.SetString("UserName", user.HoTen);
 
@@ -145,30 +177,49 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            // 1. Kiểm tra trùng lặp (Email hoặc Số điện thoại)
             if (_shopContext.Nguoidungs.Any(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("Email", "Email đã được sử dụng.");
                 return View(model);
             }
 
-            string maND = GenerateMaNguoiDung();
-
-            var user = new Nguoidung
+            if (_shopContext.Nguoidungs.Any(u => u.SoDienThoai == model.SoDienThoai))
             {
-                MaNguoiDung = maND,
-                HoTen = model.HoTen,
-                MatKhau = model.MatKhau,
-                Email = model.Email,
-                SoDienThoai = model.SoDienThoai,
-                VaiTro = "KhachHang",
-                NgayTao = DateTime.Now
-            };
+                ModelState.AddModelError("SoDienThoai", "Số điện thoại đã được sử dụng.");
+                return View(model);
+            }
 
-            _shopContext.Nguoidungs.Add(user);
-            _shopContext.SaveChanges();
+            try
+            {
+                string maND = GenerateMaNguoiDung();
 
-            TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-            return RedirectToAction("DangNhap");
+                // 2. LUÔN BĂM MẬT KHẨU KHI ĐĂNG KÝ MỚI
+                // Việc này đảm bảo các tài khoản mới sẽ có chuỗi bắt đầu bằng $2...
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
+
+                var user = new Nguoidung
+                {
+                    MaNguoiDung = maND,
+                    HoTen = model.HoTen,
+                    MatKhau = passwordHash, // Lưu chuỗi đã băm
+                    Email = model.Email,
+                    SoDienThoai = model.SoDienThoai,
+                    VaiTro = "KhachHang",
+                    NgayTao = DateTime.Now
+                };
+
+                _shopContext.Nguoidungs.Add(user);
+                _shopContext.SaveChanges();
+
+                TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+                return RedirectToAction("DangNhap");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Có lỗi xảy ra trong quá trình đăng ký: " + ex.Message);
+                return View(model);
+            }
         }
 
         private string GenerateMaNguoiDung()

@@ -107,35 +107,46 @@ namespace HKDN_GroupUTE_BookStore.Controllers
 
 
         // GET: QuanTriVien/QuanLySanPham_QuanTriVien
-        public IActionResult QuanLySanPham_QuanTriVien()
+        public IActionResult QuanLySanPham_QuanTriVien(string searchString, string categoryId)
         {
             ViewBag.TheLoais = new SelectList(
                 _shopContext.Theloais,
                 "MaTheLoai",
-                "TenTheLoai"
+                "TenTheLoai",
+                categoryId
             );
 
-            var books = _shopContext.Saches
-                .Include(s => s.MaTheLoaiNavigation)
-                .Select(s => new QTV_QuanLySanPham_LoadDuLieu_VM
-                {
-                    MaSach = s.MaSach,
-                    AnhBia = string.IsNullOrEmpty(s.UrlanhBia)
-                        ? "sach_default.jpg"
-                        : s.UrlanhBia,
-                    TenSach = s.TenSach,
-                    TheLoai = s.MaTheLoaiNavigation != null
-                        ? s.MaTheLoaiNavigation.TenTheLoai
-                        : "Không xác định",
-                    MaTheLoai = s.MaTheLoai,
-                    TacGia = s.TacGia,
-                    Gia = s.Gia,
-                    DaBan = s.SoLuongDaBan ?? 0,
-                    TonKho = s.SoLuongTon ?? 0
-                })
-                .ToList();
+            var query = _shopContext.Saches.Include(s => s.MaTheLoaiNavigation).AsQueryable();
 
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.ToLower();
+                query = query.Where(s => s.TenSach.ToLower().Contains(searchString)
+                                      || s.TacGia.ToLower().Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(categoryId))
+            {
+                query = query.Where(s => s.MaTheLoai == categoryId);
+            }
+
+            var books = query.Select(s => new QTV_QuanLySanPham_LoadDuLieu_VM
+            {
+                MaSach = s.MaSach,
+                AnhBia = string.IsNullOrEmpty(s.UrlanhBia) ? "sach_default.jpg" : s.UrlanhBia,
+                TenSach = s.TenSach,
+                TheLoai = s.MaTheLoaiNavigation != null ? s.MaTheLoaiNavigation.TenTheLoai : "Không xác định",
+                MaTheLoai = s.MaTheLoai,
+                TacGia = s.TacGia,
+                Gia = s.Gia,
+                DaBan = s.SoLuongDaBan ?? 0,
+                TonKho = s.SoLuongTon ?? 0
+            }).ToList();
+
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentCategory = categoryId;
             ViewBag.Books = books;
+
             return View();
         }
 
