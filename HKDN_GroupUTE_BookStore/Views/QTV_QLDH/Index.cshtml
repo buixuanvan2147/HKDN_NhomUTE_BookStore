@@ -4,233 +4,114 @@
     ViewBag.Title = "Quản Lý Đơn Hàng";
     Layout = "~/Views/Shared/_LayoutQuanTriVien.cshtml";
 
-    // Ép kiểu ViewBag.DoanhThuThongKe về đúng loại ViewModel để sử dụng Intellisense
-    HKDN_GroupUTE_BookStore.ViewModel.QTV_DoanhThuViewModel thongKe = ViewBag.DoanhThuThongKe as HKDN_GroupUTE_BookStore.ViewModel.QTV_DoanhThuViewModel;
+    var thongKe = ViewBag.DoanhThuThongKe as HKDN_GroupUTE_BookStore.ViewModel.QTV_DoanhThuViewModel;
+    int index = 1;
 }
 
 <style>
-    /* Container chính cho toàn bộ nội dung */
-    .order-list-container {
-        padding: 60px 2vw 30px 2vw; /* Dùng vw để padding tự điều chỉnh */
-        color: #E2E8F0;
-        min-height: calc(100vh - 56px);
-        box-sizing: border-box;
-        background-color: #1A202C; /* Nền tối cho toàn bộ khu vực */
+    /* --- CSS CŨ (GIỮ NGUYÊN) --- */
+    .order-list-container { padding: 60px 2vw 30px 2vw; color: #E2E8F0; min-height: calc(100vh - 56px); box-sizing: border-box; background-color: #1A202C; }
+    .page-title { text-align: center; font-size: clamp(1.8rem, 5vw, 2.2rem); font-weight: 700; color: #4FD1C5; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1.5px; }
+    
+    /* --- [ĐÃ SỬA] Thống kê: Xếp gọn trên 1 hàng --- */
+    .stats-cards-container { 
+        display: flex;                 /* Sử dụng Flexbox để xếp hàng ngang */
+        flex-wrap: nowrap;             /* Không cho phép xuống dòng */
+        gap: 15px;                     /* Khoảng cách giữa các thẻ */
+        margin-bottom: 40px;
+        overflow-x: auto;              /* Hiện thanh cuộn ngang nếu màn hình quá nhỏ */
+        padding-bottom: 10px;          /* Khoảng đệm cho thanh cuộn */
     }
 
-    /* Tiêu đề trang */
-    .page-title {
-        text-align: center;
-        font-size: clamp(1.8rem, 5vw, 2.2rem); /* Font size tự điều chỉnh */
-        font-weight: 700;
-        color: #4FD1C5; /* Màu xanh ngọc */
-        margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
+    .stat-card { 
+        flex: 1;                       /* Các thẻ chia đều chiều rộng */
+        min-width: 180px;              /* Đảm bảo thẻ không bị co quá nhỏ */
+        background-color: #2D3748; 
+        border-radius: 12px; 
+        padding: 20px 15px;            /* Padding gọn hơn */
+        text-align: center; 
+        border: 1px solid #4A5568; 
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        white-space: nowrap;           /* Giữ nội dung trên 1 dòng */
     }
 
-    /* Container cho các thẻ thống kê */
-    .stats-cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Tự động chia cột */
-        gap: 25px; /* Khoảng cách giữa các thẻ */
-        margin-bottom: 50px; /* Khoảng cách với bảng bên dưới */
+    .stat-card h3 { 
+        color: #A0AEC0; 
+        font-size: 1rem;               /* Chữ tiêu đề nhỏ lại xíu cho cân đối */
+        margin-bottom: 10px; 
     }
-
-    .stat-card {
-        background-color: #2D3748; /* Màu nền thẻ thống kê */
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        padding: 25px;
-        text-align: center;
-        border: 1px solid #4A5568; /* Viền nhẹ */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    .stat-card .value { 
+        font-size: 1.8rem;             /* Giảm size số liệu một chút */
+        font-weight: 700; 
+        color: #4FD1C5; 
     }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
-        }
-
-        .stat-card h3 {
-            font-size: clamp(1rem, 3vw, 1.3rem);
-            color: #A0AEC0; /* Màu chữ tiêu đề thẻ */
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .stat-card .value {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            font-weight: 700;
-            color: #4FD1C5; /* Màu chữ giá trị chính */
-            margin-bottom: 10px;
-        }
-
-        .stat-card .sub-value {
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            color: #E2E8F0; /* Màu chữ phụ */
-            font-weight: 500;
-        }
-
-            .stat-card .sub-value .label {
-                color: #A0AEC0;
-                font-weight: 400;
-                margin-right: 5px;
-            }
-
-    /* Nút "Tạo đơn hàng mới" */
-    .add-new-button-container {
-        text-align: right;
-        margin-bottom: 25px;
+    
+    .stat-card .sub-value { 
+        color: #E2E8F0; 
+        font-size: 0.85rem; 
+        margin-top: 5px; 
     }
-
-    .add-new-button {
-        display: inline-flex;
-        align-items: center;
-        padding: 12px 25px;
-        background: linear-gradient(45deg, #10B981, #059669);
-        border: none;
-        color: #ffffff;
-        font-size: clamp(0.9rem, 2.5vw, 1rem);
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-        text-decoration: none;
-    }
-
-        .add-new-button:hover {
-            background: linear-gradient(45deg, #059669, #10B981);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .add-new-button i {
-            margin-right: 8px;
-        }
 
     /* Bảng */
-    .table-custom {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+    .table-responsive { overflow-x: auto; }
+    .table-custom { width: 100%; border-collapse: separate; border-spacing: 0; background-color: #2D3748; border-radius: 12px; overflow: hidden; border: 1px solid #4A5568; }
+    .table-custom thead { background-color: #1A202C; color: #4FD1C5; }
+    .table-custom thead th { padding: 15px; text-align: center; border-bottom: 1px solid #4A5568; font-weight: 600; white-space: nowrap; }
+    .table-custom tbody td { padding: 12px 10px; border-bottom: 1px solid #4A5568; font-size: 0.9rem; color: #E2E8F0; vertical-align: middle; text-align: center; }
+    .col-address { text-align: left !important; white-space: normal; word-wrap: break-word; max-width: 250px; }
+    .table-custom tbody tr:hover { background-color: #2d3748; }
+
+    /* Badge & Button */
+    .status-badge { min-width: 120px;  padding: 6px 12px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; display: inline-block; white-space: nowrap; }
+    .st-ChoXacNhan { background-color: #4A5568; color: #E2E8F0; }
+    .st-DangXuLy { background-color: #F6E05E; color: #1A202C; }
+    .st-DangGiao { background-color: #4299E1; color: white; }
+    .st-DaGiao { background-color: #48BB78; color: white; }
+    .st-DaHuy { background-color: #F56565; color: white; }
+
+    .action-buttons-group { display: flex; justify-content: center; align-items: center; gap: 8px; height: 100%; }
+    .action-button { display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; height: 34px; border-radius: 6px; border: none; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+    .action-button:hover { opacity: 0.9; transform: translateY(-1px); color: white; }
+    .btn-details { background-color: #3182CE; }
+    .btn-confirm { background-color: #38A169; }
+    .btn-ship { background-color: #D69E2E; color: white; }
+    .btn-delete { background-color: #E53E3E; }
+    .btn-confirm i, .btn-ship i { margin-right: 5px; }
+
+    /* --- CSS CHO POPUP CONFIRM --- */
+    .custom-modal-overlay {
+        display: none; /* Mặc định ẩn */
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Nền đen mờ */
+        z-index: 9999;
+        justify-content: center; align-items: center;
+        backdrop-filter: blur(4px); /* Hiệu ứng mờ đục */
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .custom-modal-box {
         background-color: #2D3748;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        color: #E2E8F0;
-        margin-bottom: 70px;
         border: 1px solid #4A5568;
-    }
-
-        .table-custom thead {
-            background-color: #1A202C;
-            color: #4FD1C5;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-
-            .table-custom thead th {
-                padding: 15px 1vw;
-                text-align: left;
-                border: 1px solid #4A5568;
-            }
-
-        .table-custom tbody tr {
-            transition: background-color 0.2s ease;
-        }
-
-            .table-custom tbody tr:nth-child(even) {
-                background-color: #262D3B;
-            }
-
-            .table-custom tbody tr:hover {
-                background-color: #3D4A5E;
-            }
-
-        .table-custom tbody td {
-            padding: 12px 1vw;
-            border: 1px solid #4A5568;
-            font-size: clamp(0.8rem, 2vw, 0.9rem);
-            color: #E2E8F0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-    /* Cột "Hành động" */
-    .action-column {
+        border-radius: 12px;
+        padding: 30px;
+        width: 90%; max-width: 400px;
         text-align: center;
-        white-space: nowrap;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        transform: scale(0.95);
+        animation: scaleUp 0.2s ease-out forwards;
     }
 
-    .action-buttons-group {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
+    .modal-icon { font-size: 3rem; color: #4FD1C5; margin-bottom: 15px; }
+    .modal-title { font-size: 1.25rem; font-weight: bold; color: white; margin-bottom: 10px; }
+    .modal-desc { color: #A0AEC0; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.5; }
 
-    .action-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 12px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: clamp(0.75rem, 2vw, 0.85rem);
-        font-weight: 600;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        border: none;
-        color: #ffffff;
-    }
-
-        .action-button i {
-            margin-right: 5px;
-        }
-
-        .action-button.edit {
-            background-color: #FCD34D;
-            color: #1A202C;
-        }
-
-            .action-button.edit:hover {
-                background-color: #FBBF24;
-                transform: translateY(-2px);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-            }
-
-        .action-button.details {
-            background-color: #60A5FA;
-        }
-
-            .action-button.details:hover {
-                background-color: #3B82F6;
-                transform: translateY(-2px);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-            }
-
-        .action-button.delete {
-            background-color: #EF4444;
-        }
-
-            .action-button.delete:hover {
-                background-color: #DC2626;
-                transform: translateY(-2px);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-            }
-
-    /* Responsive bằng cách sử dụng đơn vị tương đối và cuộn ngang */
-    .table-responsive {
-        overflow-x: auto; /* Thêm cuộn ngang khi cần */
-        -webkit-overflow-scrolling: touch; /* Cải thiện cuộn trên mobile */
-    }
+    .modal-actions { display: flex; justify-content: center; gap: 15px; }
+    .btn-modal { padding: 10px 24px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-yes { background-color: #38A169; color: white; }
+    .btn-yes:hover { background-color: #2F855A; }
+    .btn-no { background-color: #4A5568; color: white; }
+    .btn-no:hover { background-color: #718096; }
 
     /* Media queries cho màn hình nhỏ hơn */
     @@media (max-width: 768px) {
@@ -349,27 +230,44 @@
 <div class="order-list-container">
     <h2 class="page-title">QUẢN LÝ ĐƠN HÀNG</h2>
 
-    @if (thongKe != null)
-    {
+    @if (thongKe != null) {
         <div class="stats-cards-container">
-            <div class="stat-card">
-                <h3>Đơn hàng đang xử lý</h3>
-                <div class="value">@thongKe.SoLuongDonHangDangXuLy</div>
-                <div class="sub-value"><span class="label">Tổng tiền:</span> @thongKe.TongTienDangXuLy.ToString("N0")₫</div>
-            </div>
-
-            <div class="stat-card">
-                <h3>Đơn hàng đã giao</h3>
-                <div class="value">@thongKe.SoLuongDonHangDaGiao</div>
-                <div class="sub-value"><span class="label">Tổng tiền:</span> @thongKe.TongTienDaGiao.ToString("N0")₫</div>
-            </div>
-
-            <div class="stat-card">
-                <h3>Đơn hàng đã hủy</h3>
-                <div class="value">@thongKe.SoLuongDonHangDaHuy</div>
-                <div class="sub-value"><span class="label">Tổng tiền:</span> @thongKe.TongTienDaHuy.ToString("N0")₫</div>
+        <div class="stat-card">
+            <h3>Chờ xác nhận</h3>
+            <div class="value">@thongKe.SoLuongChoXacNhan</div>
+            <div class="sub-value">
+                @thongKe.TongTienChoXacNhan.ToString("N0")₫
             </div>
         </div>
+        <div class="stat-card">
+            <h3>Đang xử lý</h3>
+            <div class="value">@thongKe.SoLuongDangXuLy</div>
+            <div class="sub-value">
+                @thongKe.TongTienDangXuLy.ToString("N0")₫
+            </div>
+        </div>
+        <div class="stat-card">
+            <h3>Đang giao</h3>
+            <div class="value">@thongKe.SoLuongDangGiao</div>
+            <div class="sub-value">
+                @thongKe.TongTienDangGiao.ToString("N0")₫
+            </div>
+        </div>
+        <div class="stat-card stat-card-success">
+            <h3>Đã giao</h3>
+            <div class="value">@thongKe.SoLuongDaGiao</div>
+            <div class="sub-value">
+                @thongKe.TongTienDaGiao.ToString("N0")₫
+            </div>
+        </div>
+        <div class="stat-card stat-card-danger">
+            <h3>Đã hủy</h3>
+            <div class="value">@thongKe.SoLuongDaHuy</div>
+            <div class="sub-value">
+                @thongKe.TongTienDaHuy.ToString("N0")₫
+            </div>
+        </div>
+    </div>
     }
 
     <div class="search-filter-wrapper">
@@ -403,12 +301,14 @@
         <table class="table-custom">
             <thead>
                 <tr>
+                    <th style="width: 50px">STT</th>
+                    <th>Mã ĐH</th>
                     <th>Khách Hàng</th>
-                    <th>Địa Chỉ Giao</th>
+                    <th style="width: 25%">Địa Chỉ Giao</th>
                     <th>Ngày Tạo</th>
                     <th>Tổng Tiền</th>
                     <th>Trạng Thái</th>
-                    <th>Hành động</th>
+                    <th colspan="2" style="width: 200px">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -417,46 +317,144 @@
                     foreach (var item in Model)
                     {
                         <tr>
+                            <td>@(index++)</td>
+                            <td style="font-weight:bold; color:#4FD1C5">@item.MaDonHang</td>
+                            <td>@item.MaNguoiDungNavigation?.HoTen</td>
+                            <td class="col-address">@item.DiaChiGiao</td>
+                            <td>@(item.NgayTao.HasValue ? item.NgayTao.Value.ToString("dd/MM/yyyy HH:mm") : "---")</td>
+                            <td style="font-weight:600">@item.TongTien.ToString("N0")₫</td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.MaNguoiDungNavigation.HoTen)
+                                <span class="status-badge st-@item.TrangThaiDonHang">
+                                    @(item.TrangThaiDonHang switch {
+                                        "ChoXacNhan" => "Chờ xác nhận",
+                                        "DangXuLy" => "Đang xử lý",
+                                        "DangGiao" => "Đang giao hàng",
+                                        "DaGiao" => "Đã giao",
+                                        "DaHuy" => "Đã hủy",
+                                        _ => item.TrangThaiDonHang
+                                    })
+                                </span>
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.DiaChiGiao)
+                                <a href="@Url.Action("Details", new { id = item.MaDonHang })" class="action-button btn-details" title="Xem chi tiết">
+                                    <i class="fas fa-eye"></i> Chi tiết
+                                </a>
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.NgayTao)
-                            </td>
-                            <td>
-                                @item.TongTien.ToString("N0")₫
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.TrangThaiDonHang)
-                            </td>
-                            <td class="action-column">
-                                <div class="action-buttons-group">                                   
-                                    <a href="@Url.Action("Details", new { id=item.MaDonHang })" class="action-button details" title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i> Chi tiết
-                                    </a>
-                                    <a href="@Url.Action("Edit", new { id = item.MaDonHang })" class="action-button edit" title="Sửa">
-                                        <i class="fas fa-edit"></i> Cập nhật
-                                    </a>
-                                    <a href="@Url.Action("Delete", new { id=item.MaDonHang })" class="action-button delete" title="Xóa">
-                                        <i class="fas fa-trash-alt"></i> Xóa
-                                    </a>
+                                <div class="action-buttons-group">
+                                    @if (item.TrangThaiDonHang == "ChoXacNhan")
+                                    {
+                                        <button onclick="askConfirmation('@item.MaDonHang', 'DangXuLy', 'Xác nhận đơn hàng này?')" class="action-button btn-confirm">
+                                            <i class="fas fa-check"></i> Xác nhận
+                                        </button>
+                                    }
+                                    else if (item.TrangThaiDonHang == "DangXuLy")
+                                    {
+                                        <button onclick="askConfirmation('@item.MaDonHang', 'DangGiao', 'Chuyển đơn hàng sang giao hàng?')" class="action-button btn-ship">
+                                            <i class="fas fa-shipping-fast"></i> Giao hàng
+                                        </button>
+                                    }
+
+                                    @if (item.TrangThaiDonHang == "DaGiao" || item.TrangThaiDonHang == "DaHuy")
+                                    {
+                                        <a href="@Url.Action("Delete", new { id = item.MaDonHang })" class="action-button btn-delete" 
+                                           onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này vĩnh viễn?')" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    }
                                 </div>
                             </td>
                         </tr>
                     }
                 }
-                else
-                {
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 20px; color: #A0AEC0;">
-                            Không có đơn hàng nào được tìm thấy.
-                        </td>
-                    </tr>
-                }
             </tbody>
         </table>
     </div>
 </div>
+
+<div id="confirmModal" class="custom-modal-overlay">
+    <div class="custom-modal-box">
+        <div class="modal-icon">
+            <i class="fas fa-question-circle"></i>
+        </div>
+        <h3 class="modal-title">Xác Nhận Thay Đổi</h3>
+        <p class="modal-desc" id="modalMessage">Bạn có chắc chắn muốn thực hiện?</p>
+        
+        <div class="modal-actions">
+            <button onclick="performUpdate()" class="btn-modal btn-yes">Đồng Ý</button>
+            <button onclick="closeModal()" class="btn-modal btn-no">Hủy Bỏ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Biến toàn cục lưu trạng thái tạm
+    let pendingOrderId = "";
+    let pendingNewStatus = "";
+
+    // 1. Hàm mở Popup
+    function askConfirmation(orderId, newStatus, message) {
+        pendingOrderId = orderId;
+        pendingNewStatus = newStatus;
+        
+        // Cập nhật nội dung thông báo
+        document.getElementById('modalMessage').innerText = message;
+        
+        // Hiện Popup
+        document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    // 2. Hàm đóng Popup
+    function closeModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+        pendingOrderId = "";
+        pendingNewStatus = "";
+    }
+
+    // 3. Hàm thực hiện Update khi bấm Đồng Ý
+    function performUpdate() {
+        if (!pendingOrderId) return;
+
+        // Thay đổi nút bấm để báo hiệu đang xử lý
+        const btnYes = document.querySelector('.btn-yes');
+        const originalText = btnYes.innerText;
+        btnYes.innerText = "Đang xử lý...";
+        btnYes.disabled = true;
+
+        fetch('/QTV_QLDH/CapNhatTrangThaiAjax', {
+            method: 'POST',
+            headers: {
+                // SỬ DỤNG Form-UrlEncoded ĐỂ TRÁNH LỖI "KHÔNG TÌM THẤY ĐƠN HÀNG" TRÊN MỘT SỐ CẤU HÌNH SERVER
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `id=${encodeURIComponent(pendingOrderId)}&trangThaiMoi=${encodeURIComponent(pendingNewStatus)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Tải lại trang
+            } else {
+                alert("Lỗi: " + data.msg);
+                closeModal();
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Lỗi kết nối!");
+            closeModal();
+        })
+        .finally(() => {
+            // Khôi phục nút bấm (phòng trường hợp lỗi không reload)
+            btnYes.innerText = originalText;
+            btnYes.disabled = false;
+        });
+    }
+
+    // Đóng popup khi click ra ngoài
+    window.onclick = function(event) {
+        const modal = document.getElementById('confirmModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
