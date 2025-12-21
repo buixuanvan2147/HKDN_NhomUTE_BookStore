@@ -18,25 +18,39 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         }
 
         // GET: QTV_QLDH/Index
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string statusFilter)
         {
-            var donHangs = _shopContext.Donhangs
-                .Include(d => d.MaNguoiDungNavigation) // Tương đương Include("NguoiDung")
+            var query = _shopContext.Donhangs
+                .Include(d => d.MaNguoiDungNavigation)
                 .AsNoTracking();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.ToLower();
+                query = query.Where(d => d.MaDonHang.ToLower().Contains(searchString) ||
+                                         d.MaNguoiDungNavigation.HoTen.ToLower().Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                query = query.Where(d => d.TrangThaiDonHang == statusFilter);
+            }
 
             var viewModel = new QTV_DoanhThuViewModel
             {
-                SoLuongDonHangDangXuLy = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DangXuLy"),
-                TongTienDangXuLy = await donHangs.Where(d => d.TrangThaiDonHang == "DangXuLy").SumAsync(d => d.TongTien),
-                SoLuongDonHangDaGiao = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DaGiao"),
-                TongTienDaGiao = await donHangs.Where(d => d.TrangThaiDonHang == "DaGiao").SumAsync(d => d.TongTien),
-                SoLuongDonHangDaHuy = await donHangs.CountAsync(d => d.TrangThaiDonHang == "DaHuy"),
-                TongTienDaHuy = await donHangs.Where(d => d.TrangThaiDonHang == "DaHuy").SumAsync(d => d.TongTien)
+                SoLuongDonHangDangXuLy = await query.CountAsync(d => d.TrangThaiDonHang == "DangXuLy"),
+                TongTienDangXuLy = await query.Where(d => d.TrangThaiDonHang == "DangXuLy").SumAsync(d => d.TongTien),
+                SoLuongDonHangDaGiao = await query.CountAsync(d => d.TrangThaiDonHang == "DaGiao"),
+                TongTienDaGiao = await query.Where(d => d.TrangThaiDonHang == "DaGiao").SumAsync(d => d.TongTien),
+                SoLuongDonHangDaHuy = await query.CountAsync(d => d.TrangThaiDonHang == "DaHuy"),
+                TongTienDaHuy = await query.Where(d => d.TrangThaiDonHang == "DaHuy").SumAsync(d => d.TongTien)
             };
 
             ViewBag.DoanhThuThongKe = viewModel;
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentStatus = statusFilter;
 
-            var listDonHang = await donHangs.ToListAsync();
+            var listDonHang = await query.OrderByDescending(d => d.NgayTao).ToListAsync();
             return View(listDonHang);
         }
 

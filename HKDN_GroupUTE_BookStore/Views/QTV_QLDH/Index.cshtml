@@ -285,6 +285,65 @@
             gap: 5px;
         }
     }
+    /* Style cho thanh tìm kiếm đơn hàng */
+    .search-filter-wrapper {
+        background-color: #2D3748;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: 1px solid #4A5568;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #1A202C;
+            border: 1px solid #4A5568;
+            color: #E2E8F0;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+            .filter-group input:focus, .filter-group select:focus {
+                border-color: #4FD1C5;
+            }
+
+    .btn-search-action {
+        padding: 10px 25px;
+        background-color: #4FD1C5;
+        color: #1A202C;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .btn-search-action:hover {
+            background-color: #38B2AC;
+            transform: translateY(-2px);
+        }
+
+    .btn-reset-filter {
+        color: #A0AEC0;
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 10px;
+    }
 </style>
 
 <div class="order-list-container">
@@ -312,6 +371,26 @@
             </div>
         </div>
     }
+
+    <div class="search-filter-wrapper">
+        <form action="@Url.Action("Index", "QTV_QLDH")" method="get" class="search-form">
+            <div class="filter-group">
+                <input type="text" name="searchString" placeholder="Mã đơn hoặc tên khách hàng..." value="@ViewBag.CurrentSearch">
+            </div>
+            <div class="filter-group" style="max-width: 250px;">
+                <select name="statusFilter">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="DangXuLy" selected="@(ViewBag.CurrentStatus == "DangXuLy")">Đang xử lý</option>
+                    <option value="DaGiao" selected="@(ViewBag.CurrentStatus == "DaGiao")">Đã giao</option>
+                    <option value="DaHuy" selected="@(ViewBag.CurrentStatus == "DaHuy")">Đã hủy</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-search-action">
+                <i class="fas fa-filter"></i> LỌC
+            </button>
+            <a href="@Url.Action("Index", "QTV_QLDH")" class="btn-reset-filter">Làm mới</a>
+        </form>
+    </div>
 
     @* Bạn có thể bỏ comment phần này nếu bạn muốn hiển thị nút tạo đơn hàng mới *@
     @*<div class="add-new-button-container">
