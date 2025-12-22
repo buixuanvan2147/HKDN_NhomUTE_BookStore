@@ -18,85 +18,83 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         // GET: QuanTriVien/TrangChu_QuanTriVien
         public IActionResult TrangChu_QuanTriVien()
         {
-            // ===== NGƯỜI DÙNG =====
+            // ===== 1. NGƯỜI DÙNG =====
             var soKhachHang = _shopContext.Nguoidungs.Count(x => x.VaiTro == "KhachHang");
             var soQuanTriVien = _shopContext.Nguoidungs.Count(x => x.VaiTro == "Admin");
 
-            // ===== ĐƠN HÀNG =====
+            // ===== 2. ĐƠN HÀNG (ĐẾM SỐ LƯỢNG HIỆN TẠI) =====
             var tongDonHang = _shopContext.Donhangs.Count();
-            var daGiao = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaGiao");
-            var daHuy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaHuy");
-            var dangXuLy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DangXuLy");
 
-            // ===== SÁCH =====
+            // Đếm đủ 5 trạng thái
+            var slChoXacNhan = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "ChoXacNhan");
+            var slDangXuLy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DangXuLy");
+            var slDangGiao = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DangGiao");
+            var slDaGiao = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaGiao");
+            var slDaHuy = _shopContext.Donhangs.Count(x => x.TrangThaiDonHang == "DaHuy");
+
+            // ===== 3. SÁCH =====
             var tongSachTonKho = _shopContext.Saches.Sum(x => (int?)x.SoLuongTon) ?? 0;
             var tongSachDaBan = _shopContext.Saches.Sum(x => (int?)x.SoLuongDaBan) ?? 0;
             var tongTheLoai = _shopContext.Theloais.Count();
 
-            // ===== BIỂU ĐỒ THEO NĂM HIỆN TẠI =====
+            // ===== 4. XỬ LÝ DỮ LIỆU BIỂU ĐỒ (12 THÁNG) =====
             int namHienTai = DateTime.Now.Year;
 
+            // Lấy dữ liệu thô (Raw Data)
             var dataTheoThang = _shopContext.Donhangs
                 .Where(x => x.NgayTao.HasValue && x.NgayTao.Value.Year == namHienTai)
-                .GroupBy(x => new
+                .Select(x => new
                 {
                     Thang = x.NgayTao.Value.Month,
-                    x.TrangThaiDonHang
-                })
-                .Select(g => new
-                {
-                    Thang = g.Key.Thang,
-                    TrangThai = g.Key.TrangThaiDonHang,
-                    SoLuong = g.Count()
+                    TrangThai = x.TrangThaiDonHang,
+                    TongTien = x.TongTien
                 })
                 .ToList();
 
-            var thang = Enumerable.Range(1, 12)
-                .Select(t => $"Tháng {t}")
-                .ToList();
+            var thang = new List<string>();
 
+            // 5 List cho 5 đường biểu đồ
+            var donChoXacNhan = new List<int>();
             var donDangXuLy = new List<int>();
+            var donDangGiao = new List<int>();
             var donDaGiao = new List<int>();
             var donDaHuy = new List<int>();
-
-            var doanhThuData = _shopContext.Donhangs
-                .Where(x => x.NgayTao.HasValue && x.NgayTao.Value.Year == namHienTai && x.TrangThaiDonHang == "DaGiao")
-                .GroupBy(x => x.NgayTao.Value.Month)
-                .Select(g => new { Thang = g.Key, DoanhThu = g.Sum(x => x.TongTien) })
-                .ToList();
 
             var doanhThuTheoThang = new List<decimal>();
 
             for (int i = 1; i <= 12; i++)
             {
-                donDangXuLy.Add(dataTheoThang
-                    .Where(x => x.Thang == i && x.TrangThai == "DangXuLy")
-                    .Sum(x => x.SoLuong));
+                thang.Add($"Tháng {i}");
 
-                donDaGiao.Add(dataTheoThang
-                    .Where(x => x.Thang == i && x.TrangThai == "DaGiao")
-                    .Sum(x => x.SoLuong));
+                // Lọc data của tháng i
+                var dataThang = dataTheoThang.Where(x => x.Thang == i).ToList();
 
-                donDaHuy.Add(dataTheoThang
-                    .Where(x => x.Thang == i && x.TrangThai == "DaHuy")
-                    .Sum(x => x.SoLuong));
+                donChoXacNhan.Add(dataThang.Count(x => x.TrangThai == "ChoXacNhan"));
+                donDangXuLy.Add(dataThang.Count(x => x.TrangThai == "DangXuLy"));
+                donDangGiao.Add(dataThang.Count(x => x.TrangThai == "DangGiao"));
+                donDaGiao.Add(dataThang.Count(x => x.TrangThai == "DaGiao"));
+                donDaHuy.Add(dataThang.Count(x => x.TrangThai == "DaHuy"));
 
-                doanhThuTheoThang.Add(doanhThuData.FirstOrDefault(x => x.Thang == i)?.DoanhThu ?? 0);
+                // Doanh thu (chỉ tính đơn đã giao)
+                doanhThuTheoThang.Add(dataThang
+                    .Where(x => x.TrangThai == "DaGiao")
+                    .Sum(x => x.TongTien));
             }
 
             var model = new QTV_TrangChu_LoadDuLieu_VM
             {
-                // Người dùng
+                // User
                 TongSoNguoiDung = soKhachHang + soQuanTriVien,
                 TongSoKhachHang = soKhachHang,
                 TongSoQuanTriVien = soQuanTriVien,
 
-                // Đơn hàng
+                // Đơn hàng tổng quan
                 TongDonHang = tongDonHang,
-                DaHoanThanh = daGiao, // CHỈ ĐÃ GIAO
-                ChuaHoanThanh = dangXuLy,
-                DaGiao = daGiao,
-                DaHuy = daHuy,
+                SlChoXacNhan = slChoXacNhan,
+                SlDangXuLy = slDangXuLy,
+                SlDangGiao = slDangGiao,
+                SlDaGiao = slDaGiao,
+                SlDaHuy = slDaHuy,
 
                 // Sách
                 TongSach = tongSachTonKho + tongSachDaBan,
@@ -104,9 +102,11 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 TongSachDaBan = tongSachDaBan,
                 TongTheLoai = tongTheLoai,
 
-                // Chart
+                // Chart Data
                 Thang = thang,
+                DonChoXacNhan = donChoXacNhan,
                 DonDangXuLy = donDangXuLy,
+                DonDangGiao = donDangGiao,
                 DonDaGiao = donDaGiao,
                 DonDaHuy = donDaHuy,
                 DoanhThuTheoThang = doanhThuTheoThang

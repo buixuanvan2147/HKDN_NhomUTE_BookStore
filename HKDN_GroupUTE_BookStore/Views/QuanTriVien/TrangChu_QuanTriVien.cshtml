@@ -10,16 +10,13 @@
         max-width: none;
         margin: 0 auto;
         padding: 2rem 1.5rem;
-        background-color: #1A202C; /* Màu nền chủ đạo */
+        background-color: #1A202C;
         min-height: calc(100vh - 4rem);
         display: flex;
         flex-direction: column;
         gap: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-        .view-trangchu main {
-            background-color: #1A202C !important; /* Đảm bảo đồng bộ với theme */
-        }
 
         .view-trangchu .dashboard-header {
             padding-bottom: 1rem;
@@ -40,6 +37,7 @@
             font-weight: 400;
         }
 
+        /* --- STATS GRID (3 Thẻ to) --- */
         .view-trangchu .stats-grid {
             display: flex;
             flex-wrap: wrap;
@@ -50,209 +48,162 @@
         .view-trangchu .stat-card {
             background: #2D3748;
             border-radius: 1rem;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            overflow: hidden;
             flex: 1;
-            min-width: 300px;
-            max-width: 32%;
+            min-width: 280px;
+            border: 1px solid #4A5568;
         }
 
             .view-trangchu .stat-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
                 background: linear-gradient(135deg, #2D3748, #3b4a66);
             }
 
         .view-trangchu .stat-header {
             display: flex;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .view-trangchu .stat-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.5rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 1rem;
-            transition: background-color 0.3s ease;
         }
 
-            .view-trangchu .stat-icon svg {
-                width: 1.25rem;
-                height: 1.25rem;
+            .view-trangchu .stat-icon i, .view-trangchu .stat-icon svg {
+                font-size: 1.5rem;
                 color: white;
             }
 
-        .view-trangchu .stat-title {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .view-trangchu .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-        .view-trangchu .stat-description {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.85rem;
-            line-height: 1.3;
-        }
-
         .view-trangchu .icon-primary {
-            background-color: #4FD1C5;
+            background-color: #3182CE;
         }
 
         .view-trangchu .icon-success {
-            background-color: #28a745;
+            background-color: #38A169;
         }
 
         .view-trangchu .icon-warning {
-            background-color: #f1c40f;
+            background-color: #D69E2E;
         }
 
-        .view-trangchu .icon-danger {
-            background-color: #dc3545;
+        .view-trangchu .stat-title {
+            color: #EDF2F7;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
+        .view-trangchu .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #EDF2F7;
+            margin-bottom: 0.5rem;
+        }
+
+        .view-trangchu .stat-description {
+            color: #EDF2F7;
+            font-size: 0.85rem;
+        }
+
+        /* --- ORDERS SECTION & STATUS GRID (5 Thẻ nhỏ) --- */
         .view-trangchu .orders-section {
             background: #2D3748;
             border-radius: 1rem;
             padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .view-trangchu .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .view-trangchu .section-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #ffffff;
+            color: #E2E8F0;
         }
 
         .view-trangchu .status-grid {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
-            justify-content: space-between;
+            margin-bottom: 2.5rem;
         }
 
         .view-trangchu .status-card {
-            background: #2D3748;
-            border: 2px solid transparent;
+            background: #1A202C;
             border-radius: 0.75rem;
-            padding: 0.75rem;
+            padding: 1rem;
             text-align: center;
             transition: all 0.3s ease;
-            flex: 1;
-            min-width: 200px;
-            max-width: 32%;
+            border: 1px solid #4A5568;
             position: relative;
+            overflow: hidden;
         }
 
             .view-trangchu .status-card:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-                border-color: #4FD1C5;
-                background: linear-gradient(135deg, #2D3748, #3b4a66);
+                background-color: #232d3f;
             }
 
         .view-trangchu .status-value {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            color: #ffffff;
             margin-bottom: 0.25rem;
         }
 
         .view-trangchu .status-label {
-            color: rgba(255, 255, 255, 0.7);
+            color: #EDF2F7;
             font-size: 0.9rem;
             font-weight: 500;
             text-transform: uppercase;
         }
 
+        /* --- CHARTS LAYOUT --- */
+        .view-trangchu .charts-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .view-trangchu .chart-half {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .view-trangchu .chart-full {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
         .view-trangchu .chart-container {
-            margin-top: 2.5rem;
-            height: 300px;
+            background: rgba(26, 32, 44, 0.6);
+            border: 1px solid #4A5568;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 350px;
             position: relative;
         }
 
         .view-trangchu .card-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #ffffff;
-            margin-top: 1rem;
-            text-align: center;
             margin-bottom: 1rem;
+            text-align: center;
         }
 
-    @@media (max-width: 768px) {
-        .view-trangchu {
-            padding: 1rem;
-        }
-
-            .view-trangchu .dashboard-title {
-                font-size: 1.75rem;
-            }
-
-            .view-trangchu .stat-value {
-                font-size: 1.5rem;
-            }
-
-            .view-trangchu .section-title {
-                font-size: 1.25rem;
-            }
-
-            .view-trangchu .status-value {
-                font-size: 1.25rem;
-            }
-
-            .view-trangchu .chart-container {
-                height: 250px;
-            }
-
-            .view-trangchu .stat-card, .view-trangchu .status-card {
-                max-width: 100%;
-            }
-    }
-    /* ===== LAYOUT BIỂU ĐỒ ===== */
-    .view-trangchu .charts-row {
-        display: flex;
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .view-trangchu .chart-half {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .view-trangchu .chart-full {
-        width: 100%;
-        margin-top: 2rem;
-        height: 400px;
-    }
-
-    /* Responsive: mobile thì xếp dọc */
+    /* Responsive */
     @@media (max-width: 992px) {
         .view-trangchu .charts-row
 
@@ -261,110 +212,127 @@
     }
 
     }
+    @@media (max-width: 768px) {
+        .view-trangchu
+
+    {
+        padding: 1rem;
+    }
+
+    .view-trangchu .dashboard-title {
+        font-size: 1.8rem;
+    }
+
+    .view-trangchu .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    }
 </style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
 <div class="view-trangchu">
     <header class="dashboard-header">
         <h1 class="dashboard-title">Tổng quan hệ thống</h1>
-        <p class="dashboard-subtitle">Cập nhật lúc @DateTime.Now.ToString("hh:mm tt zz, dddd, dd/MM/yyyy")</p>
+        <p class="dashboard-subtitle">Cập nhật lúc @DateTime.Now.ToString("HH:mm - dddd, dd/MM/yyyy")</p>
     </header>
 
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon icon-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
+                    <i class="fas fa-users"></i>
                 </div>
-                <div>
-                    <div class="stat-title">Tổng người dùng</div>
-                </div>
+                <div class="stat-title">Tổng người dùng</div>
             </div>
-            <div class="stat-value">@Model.TongSoNguoiDung người dùng</div>
+            <div class="stat-value">@Model.TongSoNguoiDung</div>
             <div class="stat-description">
-                Khách hàng: @Model.TongSoKhachHang | Quản trị viên: @Model.TongSoQuanTriVien
+                Khách: @Model.TongSoKhachHang | Admin: @Model.TongSoQuanTriVien
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon icon-success">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
+                    <i class="fas fa-shopping-bag"></i>
                 </div>
-                <div>
-                    <div class="stat-title">Tổng đơn hàng</div>
-                </div>
+                <div class="stat-title">Tổng đơn hàng</div>
             </div>
-            <div class="stat-value">@Model.TongDonHang đơn hàng</div>
+            <div class="stat-value">@Model.TongDonHang</div>
             <div class="stat-description">
-                Đã hoàn thành: @Model.DaHoanThanh | Chưa hoàn thành: @Model.ChuaHoanThanh
+                Doanh thu dự kiến tăng trưởng tốt
             </div>
         </div>
+
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-icon icon-warning">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <i class="fas fa-book"></i>
                 </div>
-                <div>
-                    <div class="stat-title">Tổng sách trong hệ thống</div>
-                </div>
+                <div class="stat-title">Kho sách</div>
             </div>
-            <div class="stat-value">@Model.TongSach quyển - @Model.TongTheLoai loại</div>
-            <div class="stat-description">Tồn kho: @Model.TongSachTonKho | Đã bán: @Model.TongSachDaBan</div>
+            <div class="stat-value">@Model.TongSach</div>
+            <div class="stat-description">
+                Tồn: @Model.TongSachTonKho | Đã bán: @Model.TongSachDaBan
+            </div>
         </div>
     </div>
 
     <div class="orders-section">
         <div class="section-header">
-            <h2 class="section-title">Phân tích dữ liệu hệ thống</h2>
+            <h2 class="section-title">Chi tiết trạng thái đơn hàng</h2>
         </div>
 
         <div class="status-grid">
-            <div class="status-card">
-                <div class="status-value">@Model.ChuaHoanThanh</div>
+            <div class="status-card" style="border-bottom: 4px solid #ECC94B;">
+                <div class="status-value" style="color: #ECC94B;">@Model.SlChoXacNhan</div>
+                <div class="status-label">Chờ xác nhận</div>
+            </div>
+
+            <div class="status-card" style="border-bottom: 4px solid #4FD1C5;">
+                <div class="status-value" style="color: #4FD1C5;">@Model.SlDangXuLy</div>
                 <div class="status-label">Đang xử lý</div>
             </div>
-            <div class="status-card">
-                <div class="status-value">@Model.DaGiao</div>
+
+            <div class="status-card" style="border-bottom: 4px solid #805AD5;">
+                <div class="status-value" style="color: #805AD5;">@Model.SlDangGiao</div>
+                <div class="status-label">Đang giao</div>
+            </div>
+
+            <div class="status-card" style="border-bottom: 4px solid #48BB78;">
+                <div class="status-value" style="color: #48BB78;">@Model.SlDaGiao</div>
                 <div class="status-label">Đã giao</div>
             </div>
-            <div class="status-card">
-                <div class="status-value">@Model.DaHuy</div>
+
+            <div class="status-card" style="border-bottom: 4px solid #F56565;">
+                <div class="status-value" style="color: #F56565;">@Model.SlDaHuy</div>
                 <div class="status-label">Đã hủy</div>
             </div>
         </div>
 
-        <!-- BIỂU ĐỒ 1 + 2 (TRÊN) -->
         <div class="charts-row">
-            <!-- Biểu đồ 1: Line (BÊN TRÁI) -->
             <div class="chart-half">
-                <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px;">
-                    <h3 class="card-title" style="color: #4FD1C5;">📈 Xu hướng đơn hàng</h3>
+                <div class="chart-container">
+                    <h3 class="card-title" style="color: #63B3ED;">📉 Xu hướng theo tháng</h3>
                     <canvas id="lineChartMulti"></canvas>
                 </div>
             </div>
 
-            <!-- Biểu đồ 2: Doughnut (BÊN PHẢI) -->
             <div class="chart-half">
-                <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px;">
-                    <h3 class="card-title" style="color: #F6AD55;">🥧 Tỷ lệ trạng thái</h3>
+                <div class="chart-container">
+                    <h3 class="card-title" style="color: #F6AD55;">🥧 Tỷ lệ trạng thái hiện tại</h3>
                     <canvas id="doughnutChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- BIỂU ĐỒ 3 (DƯỚI – FULL WIDTH) -->
         <div class="chart-full">
-            <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px; height: 370px;">
-                <h3 class="card-title" style="color: #63B3ED;">💰 Báo cáo doanh thu (VNĐ)</h3>
+            <div class="chart-container" style="height: 400px;">
+                <h3 class="card-title" style="color: #48BB78;">💰 Doanh thu thực tế (Đã giao thành công)</h3>
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -372,111 +340,140 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // === 1. LẤY DỮ LIỆU TỪ C# ===
         const labels = @Html.Raw(Json.Serialize(Model.Thang));
-        const dataDangXuLy = @Html.Raw(Json.Serialize(Model.DonDangXuLy));
-        const dataDaGiao = @Html.Raw(Json.Serialize(Model.DonDaGiao));
-        const dataDaHuy = @Html.Raw(Json.Serialize(Model.DonDaHuy));
-        const dataDoanhThu = @Html.Raw(Json.Serialize(Model.DoanhThuTheoThang));
 
-        // --- BIỂU ĐỒ 1: BIỂU ĐỒ ĐƯỜNG ĐA SẮC (LINE CHART) ---
+        // Dữ liệu biểu đồ đường (History)
+        const dChoXacNhan = @Html.Raw(Json.Serialize(Model.DonChoXacNhan));
+        const dDangXuLy   = @Html.Raw(Json.Serialize(Model.DonDangXuLy));
+        const dDangGiao   = @Html.Raw(Json.Serialize(Model.DonDangGiao));
+        const dDaGiao     = @Html.Raw(Json.Serialize(Model.DonDaGiao));
+        const dDaHuy      = @Html.Raw(Json.Serialize(Model.DonDaHuy));
+        const dDoanhThu   = @Html.Raw(Json.Serialize(Model.DoanhThuTheoThang));
+
+        // Dữ liệu biểu đồ tròn (Snapshot hiện tại - lấy từ số liệu Card)
+        const snapshotData = [
+            @Model.SlChoXacNhan,
+            @Model.SlDangXuLy,
+            @Model.SlDangGiao,
+            @Model.SlDaGiao,
+            @Model.SlDaHuy
+        ];
+
+        // === 2. CẤU HÌNH MÀU SẮC CHUẨN ===
+        const colors = {
+            yellow: '#ECC94B',
+            teal:   '#4FD1C5',
+            purple: '#805AD5',
+            green:  '#48BB78',
+            red:    '#F56565'
+        };
+
+        // --- CHART 1: LINE CHART (5 TRẠNG THÁI) ---
         const ctxLine = document.getElementById('lineChartMulti').getContext('2d');
-
-        // Tạo Gradient cho các đường
-        const gradSuccess = ctxLine.createLinearGradient(0, 0, 0, 400);
-        gradSuccess.addColorStop(0, '#00F2FE'); // Xanh neon
-        gradSuccess.addColorStop(1, '#4FACFE');
-
-        const gradWarning = ctxLine.createLinearGradient(0, 0, 0, 400);
-        gradWarning.addColorStop(0, '#F6D365'); // Vàng rực
-        gradWarning.addColorStop(1, '#FDA085');
-
-        const gradDanger = ctxLine.createLinearGradient(0, 0, 0, 400);
-        gradDanger.addColorStop(0, '#FF0844'); // Đỏ hồng rực rỡ
-        gradDanger.addColorStop(1, '#FFB199');
-
         new Chart(ctxLine, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [
                     {
+                        label: 'Chờ xác nhận',
+                        data: dChoXacNhan,
+                        borderColor: colors.yellow,
+                        backgroundColor: colors.yellow,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
+                    },
+                    {
                         label: 'Đang xử lý',
-                        data: dataDangXuLy,
-                        borderColor: '#4FD1C5',
-                        backgroundColor: 'rgba(79, 209, 197, 0.2)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointHoverRadius: 8
+                        data: dDangXuLy,
+                        borderColor: colors.teal,
+                        backgroundColor: colors.teal,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Đang giao',
+                        data: dDangGiao,
+                        borderColor: colors.purple,
+                        backgroundColor: colors.purple,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
                     },
                     {
                         label: 'Đã giao',
-                        data: dataDaGiao,
-                        borderColor: '#F6D365',
-                        backgroundColor: 'rgba(246, 211, 101, 0.2)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5
+                        data: dDaGiao,
+                        borderColor: colors.green,
+                        backgroundColor: colors.green,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
                     },
                     {
                         label: 'Đã hủy',
-                        data: dataDaHuy,
-                        borderColor: '#FC8181',
-                        backgroundColor: 'rgba(252, 129, 129, 0.2)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5
+                        data: dDaHuy,
+                        borderColor: colors.red,
+                        backgroundColor: colors.red,
+                        tension: 0.3,
+                        borderWidth: 2,
+                        pointRadius: 3
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: 40
+                },
                 plugins: {
-                    legend: { labels: { color: '#fff', font: { size: 12, weight: 'bold' } } }
+                    legend: { labels: { color: '#EDF2F7', usePointStyle: true } }
                 },
                 scales: {
-                    x: { ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                    y: { ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    x: { ticks: { color: '#EDF2F7' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#EDF2F7' }, grid: { color: 'rgba(255,255,255,0.05)' } }
                 }
             }
         });
 
-        // --- BIỂU ĐỒ 2: BIỂU ĐỒ VÒNG TRÒN (DOUGHNUT CHART) ---
+        // --- CHART 2: DOUGHNUT CHART (TỈ LỆ HIỆN TẠI) ---
         const ctxPie = document.getElementById('doughnutChart').getContext('2d');
         new Chart(ctxPie, {
             type: 'doughnut',
             data: {
-                labels: ['Đang xử lý', 'Đã giao', 'Đã hủy'],
+                labels: ['Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy'],
                 datasets: [{
-                    data: [@Model.ChuaHoanThanh, @Model.DaGiao, @Model.DaHuy],
-                    backgroundColor: [
-                        '#4FD1C5', // Teal rực
-                        '#F6E05E', // Vàng rực
-                        '#F56565'  // Đỏ rực
-                    ],
-                    hoverOffset: 20,
-                    borderWidth: 0
+                    data: snapshotData,
+                    backgroundColor: [colors.yellow, colors.teal, colors.purple, colors.green, colors.red],
+                    borderWidth: 0,
+                    hoverOffset: 10
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: 40 
+                },
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: { color: '#fff', padding: 20 }
+                        position: 'right',
+                        labels: { color: '#E2E8F0', padding: 15, usePointStyle: true }
                     }
                 },
-                cutout: '70%' // Làm vòng tròn thanh thoát hơn
+                cutout: '70%'
             }
         });
 
-        // --- BIỂU ĐỒ 3: BIỂU ĐỒ DOANH THU (BAR CHART) ---
+        // --- CHART 3: BAR CHART (DOANH THU) ---
         const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        // Tạo gradient xanh dương đẹp
         const gradRev = ctxRev.createLinearGradient(0, 0, 0, 400);
-        gradRev.addColorStop(0, '#63B3ED'); // Xanh dương sáng
-        gradRev.addColorStop(1, '#3182CE');// Xanh đậm [cite: 297, 298]
+        gradRev.addColorStop(0, '#63B3ED');
+        gradRev.addColorStop(1, '#3182CE');
 
         new Chart(ctxRev, {
             type: 'bar',
@@ -484,31 +481,34 @@
                 labels: labels,
                 datasets: [{
                     label: 'Doanh thu (VNĐ)',
-                    data: dataDoanhThu,
+                    data: dDoanhThu,
                     backgroundColor: gradRev,
-                    borderRadius: 8,
-                    borderWidth: 0
+                    borderRadius: 6,
+                    barPercentage: 0.6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: 40
+                },
                 plugins: {
-                    legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                return context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
+                            label: function(c) {
+                                return c.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
                             }
                         }
                     }
                 },
                 scales: {
-                    x: { ticks: { color: '#A0AEC0' }, grid: { display: false } },
+                    x: { ticks: { color: '#EDF2F7' }, grid: { display: false } },
                     y: {
                         ticks: {
-                            color: '#A0AEC0',
-                            callback: function(value) { return value.toLocaleString('vi-VN'); }
+                            color: '#EDF2F7',
+                            callback: function(v) { return v.toLocaleString('vi-VN'); }
                         },
                         grid: { color: 'rgba(255,255,255,0.05)' }
                     }
