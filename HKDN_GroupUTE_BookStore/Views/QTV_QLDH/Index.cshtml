@@ -278,7 +278,9 @@
             <div class="filter-group" style="max-width: 250px;">
                 <select name="statusFilter">
                     <option value="">-- Tất cả trạng thái --</option>
+                    <option value="ChoXacNhan" selected="@(ViewBag.CurrentStatus == "ChoXacNhan")">Chờ xác nhận</option>
                     <option value="DangXuLy" selected="@(ViewBag.CurrentStatus == "DangXuLy")">Đang xử lý</option>
+                    <option value="DangGiao" selected="@(ViewBag.CurrentStatus == "DangGiao")">Đang giao</option>
                     <option value="DaGiao" selected="@(ViewBag.CurrentStatus == "DaGiao")">Đã giao</option>
                     <option value="DaHuy" selected="@(ViewBag.CurrentStatus == "DaHuy")">Đã hủy</option>
                 </select>
