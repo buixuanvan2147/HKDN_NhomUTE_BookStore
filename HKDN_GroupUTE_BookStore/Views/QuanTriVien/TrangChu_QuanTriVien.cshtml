@@ -234,6 +234,33 @@
                 max-width: 100%;
             }
     }
+    /* ===== LAYOUT BIỂU ĐỒ ===== */
+    .view-trangchu .charts-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .view-trangchu .chart-half {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .view-trangchu .chart-full {
+        width: 100%;
+        margin-top: 2rem;
+        height: 400px;
+    }
+
+    /* Responsive: mobile thì xếp dọc */
+    @@media (max-width: 992px) {
+        .view-trangchu .charts-row
+
+    {
+        flex-direction: column;
+    }
+
+    }
 </style>
 
 <div class="view-trangchu">
@@ -293,7 +320,7 @@
 
     <div class="orders-section">
         <div class="section-header">
-            <h2 class="section-title">Thống kê đơn hàng</h2>
+            <h2 class="section-title">Phân tích dữ liệu hệ thống</h2>
         </div>
 
         <div class="status-grid">
@@ -310,10 +337,34 @@
                 <div class="status-label">Đã hủy</div>
             </div>
         </div>
-        <div class="chart-container">
-            <canvas id="barChart" style="width: 100%; height: 100%;"></canvas>
+
+        <!-- BIỂU ĐỒ 1 + 2 (TRÊN) -->
+        <div class="charts-row">
+            <!-- Biểu đồ 1: Line (BÊN TRÁI) -->
+            <div class="chart-half">
+                <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px;">
+                    <h3 class="card-title" style="color: #4FD1C5;">📈 Xu hướng đơn hàng</h3>
+                    <canvas id="lineChartMulti"></canvas>
+                </div>
+            </div>
+
+            <!-- Biểu đồ 2: Doughnut (BÊN PHẢI) -->
+            <div class="chart-half">
+                <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px;">
+                    <h3 class="card-title" style="color: #F6AD55;">🥧 Tỷ lệ trạng thái</h3>
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
         </div>
-        <h3 style="margin-top:12px;" class="card-title">Biểu đồ thống kê số lượng đơn hàng theo từng tháng</h3>
+
+        <!-- BIỂU ĐỒ 3 (DƯỚI – FULL WIDTH) -->
+        <div class="chart-full">
+            <div class="chart-container" style="background: rgba(45, 55, 72, 0.5); border-radius: 15px; padding: 15px; height: 370px;">
+                <h3 class="card-title" style="color: #63B3ED;">💰 Báo cáo doanh thu (VNĐ)</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -321,30 +372,60 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        var labels = @Html.Raw(Json.Serialize(Model.Thang));
-        var dangXuLy = @Html.Raw(Json.Serialize(Model.DonDangXuLy));
-        var daGiao = @Html.Raw(Json.Serialize(Model.DonDaGiao));
-        var daHuy = @Html.Raw(Json.Serialize(Model.DonDaHuy));
+        const labels = @Html.Raw(Json.Serialize(Model.Thang));
+        const dataDangXuLy = @Html.Raw(Json.Serialize(Model.DonDangXuLy));
+        const dataDaGiao = @Html.Raw(Json.Serialize(Model.DonDaGiao));
+        const dataDaHuy = @Html.Raw(Json.Serialize(Model.DonDaHuy));
+        const dataDoanhThu = @Html.Raw(Json.Serialize(Model.DoanhThuTheoThang));
 
-        new Chart(document.getElementById('barChart'), {
-            type: 'bar',
+        // --- BIỂU ĐỒ 1: BIỂU ĐỒ ĐƯỜNG ĐA SẮC (LINE CHART) ---
+        const ctxLine = document.getElementById('lineChartMulti').getContext('2d');
+
+        // Tạo Gradient cho các đường
+        const gradSuccess = ctxLine.createLinearGradient(0, 0, 0, 400);
+        gradSuccess.addColorStop(0, '#00F2FE'); // Xanh neon
+        gradSuccess.addColorStop(1, '#4FACFE');
+
+        const gradWarning = ctxLine.createLinearGradient(0, 0, 0, 400);
+        gradWarning.addColorStop(0, '#F6D365'); // Vàng rực
+        gradWarning.addColorStop(1, '#FDA085');
+
+        const gradDanger = ctxLine.createLinearGradient(0, 0, 0, 400);
+        gradDanger.addColorStop(0, '#FF0844'); // Đỏ hồng rực rỡ
+        gradDanger.addColorStop(1, '#FFB199');
+
+        new Chart(ctxLine, {
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [
                     {
                         label: 'Đang xử lý',
-                        data: dangXuLy,
-                        backgroundColor: 'rgba(40,167,69,0.7)'
+                        data: dataDangXuLy,
+                        borderColor: '#4FD1C5',
+                        backgroundColor: 'rgba(79, 209, 197, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointHoverRadius: 8
                     },
                     {
                         label: 'Đã giao',
-                        data: daGiao,
-                        backgroundColor: 'rgba(241,196,15,0.7)'
+                        data: dataDaGiao,
+                        borderColor: '#F6D365',
+                        backgroundColor: 'rgba(246, 211, 101, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5
                     },
                     {
                         label: 'Đã hủy',
-                        data: daHuy,
-                        backgroundColor: 'rgba(220,53,69,0.7)'
+                        data: dataDaHuy,
+                        borderColor: '#FC8181',
+                        backgroundColor: 'rgba(252, 129, 129, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5
                     }
                 ]
             },
@@ -352,36 +433,87 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
+                    legend: { labels: { color: '#fff', font: { size: 12, weight: 'bold' } } }
+                },
+                scales: {
+                    x: { ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+
+        // --- BIỂU ĐỒ 2: BIỂU ĐỒ VÒNG TRÒN (DOUGHNUT CHART) ---
+        const ctxPie = document.getElementById('doughnutChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: ['Đang xử lý', 'Đã giao', 'Đã hủy'],
+                datasets: [{
+                    data: [@Model.ChuaHoanThanh, @Model.DaGiao, @Model.DaHuy],
+                    backgroundColor: [
+                        '#4FD1C5', // Teal rực
+                        '#F6E05E', // Vàng rực
+                        '#F56565'  // Đỏ rực
+                    ],
+                    hoverOffset: 20,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
                     legend: {
-                        labels: {
-                            color: '#ffffff', // Màu chữ chú thích
-                            font: {
-                                size: 14 // Kích thước chữ
+                        position: 'bottom',
+                        labels: { color: '#fff', padding: 20 }
+                    }
+                },
+                cutout: '70%' // Làm vòng tròn thanh thoát hơn
+            }
+        });
+
+        // --- BIỂU ĐỒ 3: BIỂU ĐỒ DOANH THU (BAR CHART) ---
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        const gradRev = ctxRev.createLinearGradient(0, 0, 0, 400);
+        gradRev.addColorStop(0, '#63B3ED'); // Xanh dương sáng
+        gradRev.addColorStop(1, '#3182CE');// Xanh đậm [cite: 297, 298]
+
+        new Chart(ctxRev, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: dataDoanhThu,
+                    backgroundColor: gradRev,
+                    borderRadius: 8,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('vi-VN') + ' VNĐ';
                             }
                         }
                     }
                 },
-                //Chỉnh màu chữ cho trục X và Y (Tháng 1, 2... và số lượng) cho dễ đọc trên nền tối
                 scales: {
-                    x: {
-                        ticks: {
-                            color: '#ffffff' // Màu chữ trục ngang
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
-                        }
-                    },
+                    x: { ticks: { color: '#A0AEC0' }, grid: { display: false } },
                     y: {
                         ticks: {
-                            color: '#ffffff' // Màu chữ trục dọc
+                            color: '#A0AEC0',
+                            callback: function(value) { return value.toLocaleString('vi-VN'); }
                         },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)' // Màu đường kẻ lưới mờ
-                        }
+                        grid: { color: 'rgba(255,255,255,0.05)' }
                     }
                 }
             }
         });
     </script>
-
 }

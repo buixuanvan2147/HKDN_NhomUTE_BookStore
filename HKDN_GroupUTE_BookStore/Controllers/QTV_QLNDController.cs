@@ -14,12 +14,27 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         }
 
         // GET: QTV_QLND/Index
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string roleFilter)
         {
-            var nguoiDungs = await _shopContext.Nguoidungs
-                .AsNoTracking()
-                .ToListAsync();
+            var query = _shopContext.Nguoidungs.AsNoTracking().AsQueryable();
 
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.ToLower();
+                query = query.Where(u => u.HoTen.ToLower().Contains(searchString) ||
+                                         u.Email.ToLower().Contains(searchString) ||
+                                         u.SoDienThoai.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(roleFilter))
+            {
+                query = query.Where(u => u.VaiTro == roleFilter);
+            }
+
+            ViewBag.CurrentSearch = searchString;
+            ViewBag.CurrentRole = roleFilter;
+
+            var nguoiDungs = await query.ToListAsync();
             return View(nguoiDungs);
         }
 

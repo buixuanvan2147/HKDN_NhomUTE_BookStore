@@ -288,6 +288,47 @@
             min-width: 650px;
         }
     }
+    /* Style cho thanh tìm kiếm và lọc */
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background-color: #2D3748;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .filter-input {
+        background-color: #1A202C;
+        border: 1px solid #4A5568;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        outline: none;
+    }
+
+        .filter-input:focus {
+            border-color: #4CAF50;
+        }
+
+    .btn-search {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-reset {
+        background-color: #718096;
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
 </style>
 
 <div class="container-fluid">
@@ -307,6 +348,21 @@
             <i class="fas fa-tags me-2"></i> Quản Lý Thể Loại
         </a>
     </div>
+
+    <form asp-action="QuanLySanPham_QuanTriVien" method="get" class="filter-form">
+        <input type="text" name="searchString" value="@ViewBag.CurrentSearch"
+               class="filter-input" placeholder="Tìm tên sách hoặc tác giả..." style="flex-grow: 1;" />
+
+        <select name="categoryId" class="filter-input" asp-items="ViewBag.TheLoais">
+            <option value="">-- Tất cả thể loại --</option>
+        </select>
+
+        <button type="submit" class="btn-search">
+            <i class="fas fa-filter"></i> LỌC
+        </button>
+
+        <a href="@Url.Action("QuanLySanPham_QuanTriVien")" class="btn-reset"> Làm mới</a>
+    </form>
 
     <div class="table-container">
         <table class="table table-bordered table-hover align-middle" id="booksTable">

@@ -25,5 +25,8 @@
         public List<int> DonDangXuLy { get; set; }
         public List<int> DonDaGiao { get; set; }
         public List<int> DonDaHuy { get; set; }
+
+        // ===== DỮ LIỆU DOANH THU =====
+        public List<decimal> DoanhThuTheoThang { get; set; }
     }
 }

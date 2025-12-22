@@ -95,8 +95,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         [HttpPost]
         public IActionResult DangNhap(LoginVM model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
             var user = _shopContext.Nguoidungs
                 .FirstOrDefault(u => u.SoDienThoai == model.SoDienThoai);
@@ -107,7 +106,34 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return View(model);
             }
 
-            if (user.MatKhau != model.MatKhau)
+            bool isValidPassword = false;
+
+            // Kiểm tra nếu mật khẩu trong DB bắt đầu bằng $2 (định dạng BCrypt)
+            if (user.MatKhau != null && user.MatKhau.StartsWith("$2"))
+            {
+                try
+                {
+                    isValidPassword = BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau);
+                }
+                catch
+                {
+                    isValidPassword = (user.MatKhau == model.MatKhau);
+                }
+            }
+            else
+            {
+                // Mật khẩu cũ chưa băm
+                isValidPassword = (user.MatKhau == model.MatKhau);
+
+                // Tự động nâng cấp lên mã băm nếu đăng nhập đúng
+                if (isValidPassword)
+                {
+                    user.MatKhau = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
+                    _shopContext.SaveChanges();
+                }
+            }
+
+            if (!isValidPassword)
             {
                 ModelState.AddModelError("", "Mật khẩu không đúng.");
                 return View(model);
@@ -116,10 +142,9 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             HttpContext.Session.SetString("UserMaNguoiDung", user.MaNguoiDung);
             HttpContext.Session.SetString("UserName", user.HoTen);
 
-            if (user.VaiTro == "Admin")
-                return RedirectToAction("TrangChu_QuanTriVien", "QuanTriVien");
-
-            return RedirectToAction("Index_Home");
+            return (user.VaiTro == "Admin")
+                ? RedirectToAction("TrangChu_QuanTriVien", "QuanTriVien")
+                : RedirectToAction("Index_Home");
         }
 
         // ĐĂNG XUẤT
@@ -142,8 +167,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
         [HttpPost]
         public IActionResult DangKy(RegisterVM model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
             if (_shopContext.Nguoidungs.Any(u => u.Email == model.Email))
             {
@@ -151,13 +175,14 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return View(model);
             }
 
-            string maND = GenerateMaNguoiDung();
+            // Luôn băm mật khẩu khi đăng ký mới
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
 
             var user = new Nguoidung
             {
-                MaNguoiDung = maND,
+                MaNguoiDung = GenerateMaNguoiDung(),
                 HoTen = model.HoTen,
-                MatKhau = model.MatKhau,
+                MatKhau = passwordHash, // Lưu bản đã băm
                 Email = model.Email,
                 SoDienThoai = model.SoDienThoai,
                 VaiTro = "KhachHang",
@@ -167,7 +192,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             _shopContext.Nguoidungs.Add(user);
             _shopContext.SaveChanges();
 
-            TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+            TempData["Success"] = "Đăng ký thành công!";
             return RedirectToAction("DangNhap");
         }
 
