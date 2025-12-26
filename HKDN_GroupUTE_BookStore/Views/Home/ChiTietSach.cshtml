@@ -243,6 +243,57 @@
         align-items: center;
         justify-content: center;
     }
+    /* --- REVIEW SYSTEM STYLE --- */
+    .review-section {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 35px;
+        margin-top: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+    }
+
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1.8rem;
+            color: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 2px;
+        }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label,
+            .star-rating input:checked ~ label {
+                color: #f6ad55; /* Màu vàng cam rực rỡ */
+                transform: scale(1.1);
+            }
+
+    .review-item {
+        padding: 20px 0;
+        border-bottom: 1px solid #edf2f7;
+        transition: background 0.2s;
+    }
+
+        .review-item:hover {
+            background: #fcfdfd;
+        }
+
+    .avg-score-box {
+        background: linear-gradient(135deg, #0f9d58 0%, #0b8043 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
 </style>
 
 <div class="page-header-wave">
@@ -303,9 +354,19 @@
                         </div>
                     </div>
 
-                    <div class="mb-4 text-warning small">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        <span class="text-muted ms-2">(Đánh giá khách hàng)</span>
+                    <div class="mb-4 d-flex align-items-center">
+                        <div class="text-warning me-2">
+                            @{
+                                double avg = ViewBag.DiemTrungBinh ?? 0;
+                                int total = ViewBag.TongSoDanhGia ?? 0;
+                                int fullStars = (int)Math.Floor(avg);
+                            }
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="@(i <= fullStars ? "fas" : (avg - fullStars >= 0.5 && i == fullStars + 1 ? "fas fa-star-half-alt" : "far")) fa-star"></i>
+                            }
+                        </div>
+                        <span class="text-muted small">(@avg.ToString("0.0")/5) - @total đánh giá</span>
                     </div>
 
                     <h3 class="product-price">@Model.DonGia.ToString("N0") đ</h3>
@@ -361,7 +422,56 @@
             </div>
         </div>
     </div>
+    <div class="review-section">
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="avg-score-box">
+                    <h2 class="display-4 fw-bold mb-0">@avg.ToString("0.0")</h2>
+                    <p class="mb-0">Điểm trung bình</p>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h4 class="fw-bold mt-2">Gửi nhận xét của bạn</h4>
+                <p class="text-muted small">* Chỉ dành cho khách hàng đã hoàn tất đơn mua sách này.</p>
+            </div>
+        </div>
+
+        <form id="reviewForm" class="mb-5">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="maSach" value="@Model.MaSach" />
+            <div class="star-rating mb-3">
+                <input type="radio" id="s5" name="diem" value="5" checked /><label for="s5" class="fas fa-star"></label>
+                <input type="radio" id="s4" name="diem" value="4" /><label for="s4" class="fas fa-star"></label>
+                <input type="radio" id="s3" name="diem" value="3" /><label for="s3" class="fas fa-star"></label>
+                <input type="radio" id="s2" name="diem" value="2" /><label for="s2" class="fas fa-star"></label>
+                <input type="radio" id="s1" name="diem" value="1" /><label for="s1" class="fas fa-star"></label>
+            </div>
+            <textarea name="binhLuan" class="form-control rounded-4 p-3 mb-3 shadow-sm" rows="3" placeholder="Bạn thấy cuốn sách này thế nào?"></textarea>
+            <button type="submit" class="btn btn-add-cart px-5">Gửi đánh giá</button>
+        </form>
+
+        <div id="reviewList">
+            @foreach (var dg in (ViewBag.DanhGia as List<HKDN_GroupUTE_BookStore.Models.Danhgium> ?? new List<HKDN_GroupUTE_BookStore.Models.Danhgium>()))
+            {
+                <div class="review-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">@dg.MaNguoiDungNavigation?.HoTen</span>
+                        <span class="text-muted x-small">@dg.NgayTao?.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="text-warning mb-2" style="font-size: 0.8rem;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="@(i <= dg.DiemDanhGia ? "fas" : "far") fa-star"></i>
+                        }
+                    </div>
+                    <p class="text-secondary mb-0">@dg.BinhLuan</p>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+
 
 @if (listTuongTu != null && listTuongTu.Count > 0)
 {
@@ -419,6 +529,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Lấy số lượng tồn kho từ Server truyền xuống
         var maxStock = @stockAvailable;
@@ -502,6 +613,36 @@
                         // Nếu Action KiemTraDangNhap không tồn tại hoặc lỗi
                         alert("Lỗi kiểm tra trạng thái đăng nhập. Vui lòng thử lại.");
                         btn.html(originalHtml).prop('disabled', false);
+                    }
+                });
+            });
+        });
+
+        // Hàm 4: Ajax Gửi đánh giá
+        $(document).ready(function() {
+            $("#reviewForm").on("submit", function(e) {
+                e.preventDefault();
+                const $btn = $(this).find("button[type='submit']");
+                const originalText = $btn.html();
+
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...').prop("disabled", true);
+
+                $.ajax({
+                    url: '@Url.Action("GuiDanhGia", "Home")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        if (res.success) {
+                            Swal.fire({ icon: 'success', title: 'Thành công', text: 'Cảm ơn bạn đã đóng góp ý kiến!' })
+                            .then(() => location.reload());
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Thông báo', text: res.message });
+                            $btn.html(originalText).prop("disabled", false);
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối máy chủ.' });
+                        $btn.html(originalText).prop("disabled", false);
                     }
                 });
             });
