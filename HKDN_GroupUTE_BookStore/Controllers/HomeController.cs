@@ -82,6 +82,26 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             // Truyền dữ liệu sách tương tự qua ViewBag
             ViewBag.SachTuongTu = sachTuongTu;
 
+            // 4. BỔ SUNG: LOGIC TÍNH ĐIỂM ĐÁNH GIÁ (Phần bạn đang thiếu)
+            var danhGias = _shopContext.Danhgia
+                .Include(dg => dg.MaNguoiDungNavigation) // Include để hiển thị tên người đánh giá
+                .Where(dg => dg.MaSach == maSach)
+                .OrderByDescending(dg => dg.NgayTao)
+                .ToList();
+
+            ViewBag.DanhGia = danhGias;
+
+            if (danhGias.Any())
+            {
+                ViewBag.DiemTrungBinh = danhGias.Average(dg => (double)dg.DiemDanhGia); // Tính trung bình cộng
+                ViewBag.TongSoDanhGia = danhGias.Count; // Đếm tổng số lượng
+            }
+            else
+            {
+                ViewBag.DiemTrungBinh = 0.0;
+                ViewBag.TongSoDanhGia = 0;
+            }
+
             return View(viewModel);
         }
 
@@ -282,6 +302,61 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             ViewBag.TuKhoa = tuKhoa;
 
             return View("Index_Home", vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult GuiDanhGia(string maSach, int diem, string binhLuan)
+        {
+            var maND = HttpContext.Session.GetString("UserMaNguoiDung");
+            if (string.IsNullOrEmpty(maND))
+            {
+                return Json(new { success = false, message = "Bạn cần đăng nhập để đánh giá." });
+            }
+
+            // 1. ĐIỀU KIỆN: Chỉ người đã mua và nhận hàng thành công mới được đánh giá
+            var daMua = _shopContext.Donhangs
+                .Include(dh => dh.Chitietdonhangs)
+                .Any(dh => dh.MaNguoiDung == maND &&
+                           dh.TrangThaiDonHang == "DaGiao" &&
+                           dh.Chitietdonhangs.Any(ct => ct.MaSach == maSach));
+
+            if (!daMua)
+            {
+                return Json(new { success = false, message = "Quyền đánh giá chỉ dành cho khách hàng đã mua sản phẩm này." });
+            }
+
+            // 2. ĐIỀU KIỆN: Giới hạn 24h giữa 2 lần đánh giá
+            var danhGiaCu = _shopContext.Danhgia
+                .Where(dg => dg.MaSach == maSach && dg.MaNguoiDung == maND)
+                .OrderByDescending(dg => dg.NgayTao)
+                .FirstOrDefault();
+
+            if (danhGiaCu != null && danhGiaCu.NgayTao >= DateTime.Now.AddDays(-1))
+            {
+                return Json(new { success = false, message = "Bạn đã gửi đánh giá gần đây. Vui lòng quay lại sau 24 giờ." });
+            }
+
+            try
+            {
+                // 3. LƯU LỊCH SỬ: Luôn thêm mới để lưu vết
+                var dg = new Danhgium
+                {
+                    MaSach = maSach,
+                    MaNguoiDung = maND,
+                    DiemDanhGia = diem,
+                    BinhLuan = binhLuan,
+                    NgayTao = DateTime.Now
+                };
+                _shopContext.Danhgia.Add(dg);
+                _shopContext.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Lỗi hệ thống khi lưu dữ liệu." });
+            }
         }
     }
 }
