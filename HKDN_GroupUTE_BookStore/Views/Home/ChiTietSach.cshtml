@@ -243,56 +243,53 @@
         align-items: center;
         justify-content: center;
     }
-    /* --- REVIEW SYSTEM STYLE --- */
-    .review-section {
-        background: #ffffff;
-        border-radius: 20px;
-        padding: 35px;
-        margin-top: 40px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-    }
 
-    .star-rating {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
-
-        .star-rating input {
-            display: none;
-        }
-
-        .star-rating label {
-            font-size: 1.8rem;
-            color: #cbd5e0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 0 2px;
-        }
-
-            .star-rating label:hover,
-            .star-rating label:hover ~ label,
-            .star-rating input:checked ~ label {
-                color: #f6ad55; /* Màu vàng cam rực rỡ */
-                transform: scale(1.1);
-            }
-
-    .review-item {
-        padding: 20px 0;
-        border-bottom: 1px solid #edf2f7;
-        transition: background 0.2s;
-    }
-
-        .review-item:hover {
-            background: #fcfdfd;
-        }
-
-    .avg-score-box {
-        background: linear-gradient(135deg, #0f9d58 0%, #0b8043 100%);
-        color: white;
+    .community-reviews {
+        margin-top: 30px;
         padding: 20px;
+        background: #fff;
         border-radius: 15px;
-        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .review-card-all {
+        display: flex;
+        gap: 15px;
+        padding: 20px;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.3s;
+    }
+
+        .review-card-all:hover {
+            background: #f8fafc;
+        }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        background: #0F9D58;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .review-content-right {
+        flex-grow: 1;
+    }
+
+    .book-tag {
+        display: inline-block;
+        padding: 2px 10px;
+        background: #ecfdf5;
+        color: #059669;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        margin-bottom: 5px;
+        text-decoration: none;
     }
 </style>
 
@@ -355,18 +352,37 @@
                     </div>
 
                     <div class="mb-4 d-flex align-items-center">
-                        <div class="text-warning me-2">
+                        <div class="text-warning me-2" style="font-size: 1.1rem;">
                             @{
+                                // Lấy dữ liệu từ ViewBag, nếu null thì mặc định là 0
                                 double avg = ViewBag.DiemTrungBinh ?? 0;
                                 int total = ViewBag.TongSoDanhGia ?? 0;
+
+                                // Tính số sao đầy
                                 int fullStars = (int)Math.Floor(avg);
+                                // Kiểm tra có sao rưỡi không (phần thập phân >= 0.5)
+                                bool hasHalfStar = (avg - fullStars) >= 0.5;
                             }
+
                             @for (int i = 1; i <= 5; i++)
                             {
-                                <i class="@(i <= fullStars ? "fas" : (avg - fullStars >= 0.5 && i == fullStars + 1 ? "fas fa-star-half-alt" : "far")) fa-star"></i>
+                                if (i <= fullStars)
+                                {
+                                    <i class="fas fa-star"></i>
+                                }
+                                else if (i == fullStars + 1 && hasHalfStar)
+                                {
+                                    <i class="fas fa-star-half-alt"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star"></i>
+                                }
                             }
                         </div>
-                        <span class="text-muted small">(@avg.ToString("0.0")/5) - @total đánh giá</span>
+                        <span class="text-muted small">
+                            (@(avg > 0 ? avg.ToString("0.0") : "0"))/5 - @total đánh giá khách hàng
+                        </span>
                     </div>
 
                     <h3 class="product-price">@Model.DonGia.ToString("N0") đ</h3>
@@ -422,50 +438,51 @@
             </div>
         </div>
     </div>
-    <div class="review-section">
-        <div class="row mb-5">
-            <div class="col-md-4">
-                <div class="avg-score-box">
-                    <h2 class="display-4 fw-bold mb-0">@avg.ToString("0.0")</h2>
-                    <p class="mb-0">Điểm trung bình</p>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <h4 class="fw-bold mt-2">Gửi nhận xét của bạn</h4>
-                <p class="text-muted small">* Chỉ dành cho khách hàng đã hoàn tất đơn mua sách này.</p>
-            </div>
-        </div>
+    <div class="community-reviews">
+        <h5 class="fw-bold mb-4">
+            <i class="fas fa-users text-success me-2"></i>Đánh giá từ cộng đồng người mua
+        </h5>
 
-        <form id="reviewForm" class="mb-5">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="maSach" value="@Model.MaSach" />
-            <div class="star-rating mb-3">
-                <input type="radio" id="s5" name="diem" value="5" checked /><label for="s5" class="fas fa-star"></label>
-                <input type="radio" id="s4" name="diem" value="4" /><label for="s4" class="fas fa-star"></label>
-                <input type="radio" id="s3" name="diem" value="3" /><label for="s3" class="fas fa-star"></label>
-                <input type="radio" id="s2" name="diem" value="2" /><label for="s2" class="fas fa-star"></label>
-                <input type="radio" id="s1" name="diem" value="1" /><label for="s1" class="fas fa-star"></label>
-            </div>
-            <textarea name="binhLuan" class="form-control rounded-4 p-3 mb-3 shadow-sm" rows="3" placeholder="Bạn thấy cuốn sách này thế nào?"></textarea>
-            <button type="submit" class="btn btn-add-cart px-5">Gửi đánh giá</button>
-        </form>
+        <div class="review-list-wrapper">
+            @{
+                var tatCaDG = ViewBag.TatCaDanhGia as List<HKDN_GroupUTE_BookStore.Models.Danhgium>;
+            }
 
-        <div id="reviewList">
-            @foreach (var dg in (ViewBag.DanhGia as List<HKDN_GroupUTE_BookStore.Models.Danhgium> ?? new List<HKDN_GroupUTE_BookStore.Models.Danhgium>()))
+            @if (tatCaDG != null && tatCaDG.Any())
             {
-                <div class="review-item">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold">@dg.MaNguoiDungNavigation?.HoTen</span>
-                        <span class="text-muted x-small">@dg.NgayTao?.ToString("dd/MM/yyyy HH:mm")</span>
+                foreach (var dg in tatCaDG)
+                {
+                    <div class="review-card-all">
+                        <div class="user-avatar">
+                            @(string.IsNullOrEmpty(dg.MaNguoiDungNavigation?.HoTen) ? "?" : dg.MaNguoiDungNavigation.HoTen.Substring(0, 1).ToUpper())
+                        </div>
+
+                        <div class="review-content-right">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-0">@dg.MaNguoiDungNavigation?.HoTen</h6>
+                                    <a href="@Url.Action("ChiTietSach", "Home", new { maSach = dg.MaSach })" class="book-tag">
+                                        <i class="fas fa-book me-1"></i> @dg.MaSachNavigation?.TenSach
+                                    </a>
+                                </div>
+                                <small class="text-muted">@dg.NgayTao?.ToString("dd/MM/yyyy")</small>
+                            </div>
+
+                            <div class="text-warning mb-2" style="font-size: 0.8rem;">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="@(i <= dg.DiemDanhGia ? "fas" : "far") fa-star"></i>
+                                }
+                            </div>
+
+                            <p class="text-secondary small mb-0">@dg.BinhLuan</p>
+                        </div>
                     </div>
-                    <div class="text-warning mb-2" style="font-size: 0.8rem;">
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <i class="@(i <= dg.DiemDanhGia ? "fas" : "far") fa-star"></i>
-                        }
-                    </div>
-                    <p class="text-secondary mb-0">@dg.BinhLuan</p>
-                </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-muted py-4">Chưa có đánh giá nào trên hệ thống.</p>
             }
         </div>
     </div>
@@ -529,7 +546,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Lấy số lượng tồn kho từ Server truyền xuống
         var maxStock = @stockAvailable;
@@ -617,35 +633,15 @@
                 });
             });
         });
-
-        // Hàm 4: Ajax Gửi đánh giá
-        $(document).ready(function() {
-            $("#reviewForm").on("submit", function(e) {
-                e.preventDefault();
-                const $btn = $(this).find("button[type='submit']");
-                const originalText = $btn.html();
-
-                $btn.html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...').prop("disabled", true);
-
-                $.ajax({
-                    url: '@Url.Action("GuiDanhGia", "Home")',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(res) {
-                        if (res.success) {
-                            Swal.fire({ icon: 'success', title: 'Thành công', text: 'Cảm ơn bạn đã đóng góp ý kiến!' })
-                            .then(() => location.reload());
-                        } else {
-                            Swal.fire({ icon: 'error', title: 'Thông báo', text: res.message });
-                            $btn.html(originalText).prop("disabled", false);
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối máy chủ.' });
-                        $btn.html(originalText).prop("disabled", false);
-                    }
-                });
-            });
+        // Hiệu ứng hiện dần cho từng card đánh giá
+        $(".review-card").each(function(i) {
+            $(this).css({
+                'opacity': '0',
+                'margin-top': '20px'
+            }).delay(100 * i).animate({
+                'opacity': '1',
+                'margin-top': '0px'
+            }, 400);
         });
     </script>
 }

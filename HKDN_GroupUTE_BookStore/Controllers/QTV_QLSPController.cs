@@ -28,10 +28,20 @@ namespace HKDN_GroupUTE_BookStore.Controllers
 
             var sach = await _shopContext.Saches
                 .Include(s => s.MaTheLoaiNavigation)
+                .Include(s => s.Danhgia) // Nạp danh sách đánh giá
+                    .ThenInclude(dg => dg.MaNguoiDungNavigation) // Nạp thông tin người dùng đánh giá
                 .FirstOrDefaultAsync(s => s.MaSach == id);
 
             if (sach == null)
                 return NotFound();
+
+            // Tính điểm trung bình để dùng cho hiển thị sao tổng quát
+            double diemTrungBinh = 0;
+            if (sach.Danhgia != null && sach.Danhgia.Any())
+            {
+                diemTrungBinh = sach.Danhgia.Average(dg => (double)(dg.DiemDanhGia ?? 0));
+            }
+            ViewBag.DiemTrungBinh = diemTrungBinh;
 
             return View(sach);
         }

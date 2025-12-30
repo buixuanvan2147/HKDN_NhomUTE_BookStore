@@ -3,6 +3,7 @@ using HKDN_GroupUTE_BookStore.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HKDN_GroupUTE_BookStore.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HKDN_GroupUTE_BookStore.Controllers
 {
@@ -434,6 +435,7 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             return Json(new { success = true, message = "Hủy đơn thành công!" });
         }
 
+        // -------------------- XÁC NHẬN NHẬN HÀNG --------------------
         [HttpPost]
         public JsonResult XacNhanNhanHang(string maDonHang)
         {
@@ -442,6 +444,8 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return Json(new { success = false, message = "Bạn chưa đăng nhập!" });
 
             var donHang = _shopContext.Donhangs
+                .Include(d => d.Chitietdonhangs)
+                    .ThenInclude(ct => ct.MaSachNavigation)
                 .FirstOrDefault(d => d.MaDonHang == maDonHang && d.MaNguoiDung == maNguoiDung);
 
             if (donHang == null)
@@ -454,9 +458,22 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             donHang.TrangThaiDonHang = "DaGiao"; // Chuyển sang Hoàn thành/Đã giao
             _shopContext.SaveChanges();
 
-            return Json(new { success = true, message = "Xác nhận đã nhận hàng thành công!" });
+            // Lấy danh sách sách để trả về cho Popup
+            var products = donHang.Chitietdonhangs.Select(ct => new
+            {
+                maSach = ct.MaSach,
+                tenSach = ct.MaSachNavigation.TenSach,
+                anhBia = ct.MaSachNavigation.UrlanhBia
+            }).ToList();
+
+            return Json(new { 
+                success = true, 
+                message = "Xác nhận đã nhận hàng thành công!", 
+                products = products 
+            });
         }
 
+        // -------------------- TRANG THÔNG BÁO --------------------
         public IActionResult ThongBao()
         {
             string uId = HttpContext.Session.GetString("UserMaNguoiDung");
