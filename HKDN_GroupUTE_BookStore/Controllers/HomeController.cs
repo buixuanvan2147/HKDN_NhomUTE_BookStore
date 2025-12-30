@@ -82,14 +82,15 @@ namespace HKDN_GroupUTE_BookStore.Controllers
             // Truyền dữ liệu sách tương tự qua ViewBag
             ViewBag.SachTuongTu = sachTuongTu;
 
-            // 4. BỔ SUNG: LOGIC TÍNH ĐIỂM ĐÁNH GIÁ (Phần bạn đang thiếu)
+            // 4. BỔ SUNG: LOGIC TÍNH ĐIỂM ĐÁNH GIÁ
             var danhGias = _shopContext.Danhgia
-                .Include(dg => dg.MaNguoiDungNavigation) // Include để hiển thị tên người đánh giá
+                .Include(dg => dg.MaNguoiDungNavigation)
+                .Include(dg => dg.MaSachNavigation)
                 .Where(dg => dg.MaSach == maSach)
                 .OrderByDescending(dg => dg.NgayTao)
                 .ToList();
 
-            ViewBag.DanhGia = danhGias;
+            ViewBag.TatCaDanhGia = danhGias;
 
             if (danhGias.Any())
             {

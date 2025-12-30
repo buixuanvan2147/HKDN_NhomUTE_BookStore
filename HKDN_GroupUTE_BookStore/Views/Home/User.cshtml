@@ -304,6 +304,52 @@
         margin: 0 auto 15px;
         font-size: 24px;
     }
+
+    /* --- Style cho Modal Đánh Giá Nhanh --- */
+    #reviewProductList .card {
+        border: none;
+        transition: all 0.3s ease;
+        border-radius: 15px;
+    }
+
+        #reviewProductList .card:hover {
+            background-color: #f0fdf4 !important; /* Màu xanh mint cực nhạt khi hover */
+            transform: translateY(-2px);
+        }
+
+    /* Style cho hệ thống chọn sao mini */
+    .star-rating-mini {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+        .star-rating-mini input {
+            display: none;
+        }
+
+        .star-rating-mini label {
+            font-size: 1.8rem;
+            color: #cbd5e0;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+            /* Hiệu ứng khi hover hoặc được chọn */
+            .star-rating-mini label:hover,
+            .star-rating-mini label:hover ~ label,
+            .star-rating-mini input:checked ~ label {
+                color: #fbbf24;
+                transform: scale(1.1);
+            }
+
+    .btn-submit-review {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 8px 20px;
+        transition: all 0.2s;
+    }
 </style>
 
 <div class="page-header-wave">
@@ -544,7 +590,27 @@
     </div>
 </div>
 
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title fw-bold"><i class="fas fa-star me-2"></i>Đánh giá sản phẩm</h5>
+                <button type="button" class="btn-close btn-close-white" onclick="location.reload()"></button>
+            </div>
+            <div class="modal-body p-4 bg-light">
+                <p class="text-center text-muted mb-4">Cảm ơn bạn đã mua hàng! Hãy chia sẻ cảm nhận về các cuốn sách bạn vừa nhận nhé.</p>
+                <div id="reviewProductList">
+                </div>
+            </div>
+            <div class="modal-footer bg-white border-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" onclick="location.reload()">Hoàn tất & Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+    <script src="~/libold/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -625,27 +691,113 @@
             });
 
             // --- NHẬN HÀNG ---
-            $(".btn-received-order").click(function () {
-                var maDonHang = $(this).data("madonhang");
-                if (confirm("Xác nhận bạn đã nhận hàng thành công?")) {
-                     $.ajax({
-                        url: '@Url.Action("XacNhanNhanHang", "KhachHang")',
-                        type: 'POST',
-                        data: { maDonHang: maDonHang },
-                        success: function (response) {
-                            $("#infoModalBody").text(response.message);
-                            $("#infoModal").modal('show');
-                            if (response.success) {
-                                setTimeout(function () { location.reload(); }, 1500);
+                $(".btn-received-order").off('click').on('click', function () {
+            var maDonHang = $(this).data("madonhang");
+            var btn = $(this);
+            var originalHtml = btn.html();
+
+            if (confirm("Xác nhận bạn đã nhận hàng thành công? Hệ thống sẽ mở mục đánh giá ngay sau đó.")) {
+                // Trạng thái loading trên nút bấm chính
+                btn.html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...').prop('disabled', true);
+
+                $.ajax({
+                    url: '@Url.Action("XacNhanNhanHang", "KhachHang")',
+                    type: 'POST',
+                    data: { maDonHang: maDonHang },
+                    success: function (response) {
+                        if (response.success) {
+                            // 1. Xây dựng nội dung HTML bằng cách cộng chuỗi (Tránh lỗi dấu backtick trong Razor)
+                            var htmlContent = "";
+                            if (response.products && response.products.length > 0) {
+                                $.each(response.products, function(i, p) {
+                                    htmlContent += '<div class="card mb-3 shadow-sm bg-white border border-light">' +
+                                        '<div class="card-body p-3">' +
+                                            '<div class="d-flex align-items-center mb-3">' +
+                                                '<img src="/Images/' + p.anhBia + '" style="width: 55px; height: 75px; object-fit: cover;" class="me-3 border rounded shadow-sm">' +
+                                                '<div>' +
+                                                    '<h6 class="fw-bold mb-0 text-dark">' + p.tenSach + '</h6>' +
+                                                    '<small class="text-muted small">Mã sách: ' + p.maSach + '</small>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<form class="quick-review-form" data-masach="' + p.maSach + '">' +
+                                                '<div class="d-flex align-items-center justify-content-between mb-3">' +
+                                                    '<span class="small text-muted fw-bold">Chất lượng sản phẩm:</span>' +
+                                                    '<div class="star-rating-mini">' +
+                                                        '<input type="radio" id="s5-' + p.maSach + '" name="rating-' + p.maSach + '" value="5" checked /><label for="s5-' + p.maSach + '" class="fas fa-star"></label>' +
+                                                        '<input type="radio" id="s4-' + p.maSach + '" name="rating-' + p.maSach + '" value="4" /><label for="s4-' + p.maSach + '" class="fas fa-star"></label>' +
+                                                        '<input type="radio" id="s3-' + p.maSach + '" name="rating-' + p.maSach + '" value="3" /><label for="s3-' + p.maSach + '" class="fas fa-star"></label>' +
+                                                        '<input type="radio" id="s2-' + p.maSach + '" name="rating-' + p.maSach + '" value="2" /><label for="s2-' + p.maSach + '" class="fas fa-star"></label>' +
+                                                        '<input type="radio" id="s1-' + p.maSach + '" name="rating-' + p.maSach + '" value="1" /><label for="s1-' + p.maSach + '" class="fas fa-star"></label>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<div class="input-group">' +
+                                                    '<textarea class="form-control border-light bg-light" placeholder="Viết cảm nhận của bạn về cuốn sách..." rows="2" style="resize:none; font-size: 0.9rem;"></textarea>' +
+                                                    '<button type="button" class="btn btn-success btn-submit-review px-3">' +
+                                                        '<i class="fas fa-paper-plane me-1"></i> Gửi' +
+                                                    '</button>' +
+                                                '</div>' +
+                                            '</form>' +
+                                        '</div>' +
+                                    '</div>';
+                                });
+                            } else {
+                                htmlContent = '<div class="alert alert-success border-0 shadow-sm">Đã cập nhật trạng thái đơn hàng. Không tìm thấy sản phẩm để đánh giá.</div>';
                             }
-                        },
-                        error: function () {
-                            $("#infoModalBody").text("Lỗi kết nối server.");
-                            $("#infoModal").modal('show');
+
+                            // 2. Đổ dữ liệu vào Modal và hiển thị
+                            $("#reviewProductList").html(htmlContent);
+                            var reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+                            reviewModal.show();
+
+                            // 3. Xử lý nút Gửi đánh giá cho từng sản phẩm
+                            $(".btn-submit-review").on('click', function() {
+                                var form = $(this).closest("form");
+                                var maSach = form.data("masach");
+                                var diem = form.find("input[type=radio]:checked").val();
+                                var binhLuan = form.find("textarea").val();
+                                var btnReview = $(this);
+                                var btnIcon = btnReview.html();
+
+                                btnReview.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+
+                                $.ajax({
+                                    url: '@Url.Action("GuiDanhGia", "Home")',
+                                    type: 'POST',
+                                    data: {
+                                        maSach: maSach,
+                                        diem: diem,
+                                        binhLuan: binhLuan,
+                                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                                    },
+                                    success: function(resRev) {
+                                        if(resRev.success) {
+                                            form.fadeOut(300, function() {
+                                                $(this).html('<div class="text-center text-success py-3 fw-bold"><i class="fas fa-check-circle me-2"></i> Đánh giá thành công!</div>').fadeIn();
+                                            });
+                                        } else {
+                                            alert(resRev.message);
+                                            btnReview.html(btnIcon).prop('disabled', false);
+                                        }
+                                    },
+                                    error: function() {
+                                        alert("Lỗi khi gửi đánh giá. Vui lòng thử lại.");
+                                        btnReview.html(btnIcon).prop('disabled', false);
+                                    }
+                                });
+                            });
+
+                        } else {
+                            alert(response.message);
+                            btn.html(originalHtml).prop('disabled', false);
                         }
-                    });
-                }
-            });
+                    },
+                    error: function () {
+                        alert("Lỗi kết nối server.");
+                        btn.html(originalHtml).prop('disabled', false);
+                    }
+                });
+            }
+        });
 
             // --- NÚT SỬA ---
              $(".btn-edit-order").click(function() {

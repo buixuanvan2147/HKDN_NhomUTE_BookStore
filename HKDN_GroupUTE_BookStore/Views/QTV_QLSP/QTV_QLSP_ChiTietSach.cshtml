@@ -385,11 +385,28 @@
                         <h5 class="fw-bold mb-3">Giá Bán: @Model.Gia.ToString("N0")</h5>
                         <div class="rating d-flex mb-4">
                             Đánh giá:
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star"></i>
+                            @{
+                                double avg = ViewBag.DiemTrungBinh ?? 0;
+                                int fullStars = (int)Math.Floor(avg); // Sao vàng nguyên
+                                bool hasHalfStar = (avg - fullStars) >= 0.5; // Kiểm tra sao rưỡi
+                            }
+
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= fullStars)
+                                {
+                                    <i class="fa fa-star text-secondary"></i> @* Class text-secondary của bạn là màu vàng *@
+                                }
+                                else if (i == fullStars + 1 && hasHalfStar)
+                                {
+                                    <i class="fa fa-star-half-alt text-secondary"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-star"></i> @* Sao xám/trống *@
+                                }
+                            }
+                            <span class="ms-2">(@avg.ToString("0.0")/5)</span>
                         </div>
                         <p class="mb-3">Thể Loại: @(Model.MaTheLoai != null ? Model.MaTheLoaiNavigation.TenTheLoai : "Không xác định")</p>
                         <p class="mb-3">Mã Sách: @(Model.MaSach ?? "Không có mã")</p>
@@ -446,40 +463,35 @@
                 </div>
 
                 <div id="reviews" class="tab-content">
-                    <div class="review-item">
-                        <img src="~/images/index_Home_defaultUser2.jpg" class="img-fluid rounded-circle p-3" alt="Reviewer">
-                        <div class="review-content">
-                            <p class="mb-2">24/05/2025</p>
-                            <div class="d-flex justify-content-between">
-                                <h5>Bùi Xuân Văn</h5>
-                                <div class="d-flex mb-3 rating">
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star"></i>
+                    @if (Model.Danhgia != null && Model.Danhgia.Count > 0)
+                    {
+                        foreach (var dg in Model.Danhgia)
+                        {
+                            <div class="review-item">
+                                <img src="~/images/index_Home_defaultUser2.jpg" class="img-fluid rounded-circle p-3" alt="Reviewer">
+                                <div class="review-content">
+                                    <p class="mb-2">@(dg.NgayTao?.ToString("dd/MM/yyyy") ?? "N/A")</p>
+                                    <div class="d-flex justify-content-between">
+                                        <h5>@(dg.MaNguoiDungNavigation?.HoTen ?? "Khách hàng ẩn danh")</h5>
+                                        <div class="d-flex mb-3 rating">
+                                            @* Hiển thị số sao mà khách hàng này đã chọn *@
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fa fa-star @(i <= (dg.DiemDanhGia ?? 0) ? "text-secondary" : "")"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <p>@dg.BinhLuan</p>
                                 </div>
                             </div>
-                            <p>Chính sách đổi trả rõ ràng, rất uy tín. Mình sẽ giới thiệu cho bạn bè.</p>
+                        }
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center">
+                            <p class="text-muted">Chưa có đánh giá nào cho cuốn sách này.</p>
                         </div>
-                    </div>
-                    <div class="review-item">
-                        <img src="~/images/index_Home_defaultUser1.jpg" class="img-fluid rounded-circle p-3" alt="Reviewer">
-                        <div class="review-content">
-                            <p class="mb-2">23/05/2025</p>
-                            <div class="d-flex justify-content-between">
-                                <h5>Nguyễn Văn Khánh</h5>
-                                <div class="d-flex mb-3 rating">
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                </div>
-                            </div>
-                            <p>Không gian mua sắm online thân thiện, gợi ý sách rất hay và sát với sở thích.</p>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
 
