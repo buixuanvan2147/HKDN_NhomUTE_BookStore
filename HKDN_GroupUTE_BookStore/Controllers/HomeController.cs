@@ -315,7 +315,6 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return Json(new { success = false, message = "Bạn cần đăng nhập để đánh giá." });
             }
 
-            // 1. ĐIỀU KIỆN: Chỉ người đã mua và nhận hàng thành công mới được đánh giá
             var daMua = _shopContext.Donhangs
                 .Include(dh => dh.Chitietdonhangs)
                 .Any(dh => dh.MaNguoiDung == maND &&
@@ -327,36 +326,47 @@ namespace HKDN_GroupUTE_BookStore.Controllers
                 return Json(new { success = false, message = "Quyền đánh giá chỉ dành cho khách hàng đã mua sản phẩm này." });
             }
 
-            // 2. ĐIỀU KIỆN: Giới hạn 24h giữa 2 lần đánh giá
-            var danhGiaCu = _shopContext.Danhgia
-                .Where(dg => dg.MaSach == maSach && dg.MaNguoiDung == maND)
-                .OrderByDescending(dg => dg.NgayTao)
-                .FirstOrDefault();
-
-            if (danhGiaCu != null && danhGiaCu.NgayTao >= DateTime.Now.AddDays(-1))
-            {
-                return Json(new { success = false, message = "Bạn đã gửi đánh giá gần đây. Vui lòng quay lại sau 24 giờ." });
-            }
-
             try
             {
-                // 3. LƯU LỊCH SỬ: Luôn thêm mới để lưu vết
-                var dg = new Danhgium
+                var danhGiaHienTai = _shopContext.Danhgia
+                    .FirstOrDefault(dg => dg.MaSach == maSach && dg.MaNguoiDung == maND);
+
+                if (danhGiaHienTai != null)
                 {
-                    MaSach = maSach,
-                    MaNguoiDung = maND,
-                    DiemDanhGia = diem,
-                    BinhLuan = binhLuan,
-                    NgayTao = DateTime.Now
-                };
-                _shopContext.Danhgia.Add(dg);
+
+                    if (danhGiaHienTai.NgayTao >= DateTime.Now.AddDays(-1))
+                    {
+                        return Json(new { success = false, message = "Bạn vừa đánh giá gần đây. Vui lòng quay lại sau 24 giờ để chỉnh sửa." });
+                    }
+
+                    // Cập nhật thông tin mới
+                    danhGiaHienTai.DiemDanhGia = diem;
+                    danhGiaHienTai.BinhLuan = binhLuan;
+                    danhGiaHienTai.NgayTao = DateTime.Now;
+
+                    _shopContext.Danhgia.Update(danhGiaHienTai);
+                }
+                else
+                {
+                    var dg = new Danhgium
+                    {
+                        MaSach = maSach,
+                        MaNguoiDung = maND,
+                        DiemDanhGia = diem,
+                        BinhLuan = binhLuan,
+                        NgayTao = DateTime.Now
+                    };
+                    _shopContext.Danhgia.Add(dg);
+                }
+
                 _shopContext.SaveChanges();
 
                 return Json(new { success = true });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi hệ thống khi lưu dữ liệu." });
+                Console.WriteLine("LỖI KHI LƯU ĐÁNH GIÁ: " + ex.Message);
+                return Json(new { success = false, message = "Lỗi hệ thống: " + ex.Message });
             }
         }
     }
